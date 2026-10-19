@@ -14,6 +14,7 @@ test('capture desktop and mobile visual review', async ({ page, context }) => {
   // Studio Visual Reviews
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/studio');
+  await expect(page.locator('astro-island')).not.toHaveAttribute('ssr');
   await page.screenshot({ path: '.impeccable/review/studio-step1-camera.png', fullPage: true });
 
   await page.getByRole('button', { name: /Nyalakan kamera/i }).click();

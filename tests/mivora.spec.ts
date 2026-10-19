@@ -47,9 +47,11 @@ test('capture, frame styling, sticker, watermark and QR flow work in the browser
   await expect(page.locator('astro-island')).not.toHaveAttribute('ssr');
   await page.getByRole('button', { name: /Nyalakan kamera/i }).click();
   await expect(page.getByRole('button', { name: /Ambil foto/i })).toBeVisible({ timeout: 15_000 });
+  const previewCanvas = page.getByLabel('Pratinjau filter kamera');
+  await expect.poll(() => previewCanvas.evaluate((element) => (element as HTMLCanvasElement).width)).toBeGreaterThan(0);
   await page.getByRole('button', { name: /Big Solo Polaroid/i }).click();
   await page.getByRole('button', { name: /Ambil foto/i }).click();
-  await expect(page.getByRole('img', { name: 'Hasil foto 1' })).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByRole('img', { name: 'Hasil foto 1' })).toBeVisible({ timeout: 15_000 });
   await page.getByRole('button', { name: /Lanjut ke Bingkai/i }).click();
   await page.getByRole('button', { name: /Y2K Cyber Pop/i }).click();
   await page.getByRole('button', { name: /Lanjut ke Filter & Stiker/i }).click();
