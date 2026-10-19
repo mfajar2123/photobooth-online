@@ -1,0 +1,295 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { brand } from '../data/brand';
+---
+
+<BaseLayout
+  title="Panduan Cara Pakai Studio Photobooth — Mivora Photo"
+  description="Panduan ringkas 4 langkah cara menggunakan photobooth Mivora Photo: atur kamera, pilih bingkai, pasang stiker, hingga unduh dan cetak."
+>
+  <!-- Site Header -->
+  <header class="site-header">
+    <a class="wordmark" href="/" aria-label="Mivora Photo, kembali ke beranda"><span>✦</span> MIVORA <i>PHOTO</i></a>
+    <nav aria-label="Navigasi panduan">
+      <a href="/#lenses">Efek lensa</a>
+      <a href="/#frames">Koleksi frame</a>
+      <a href="/panduan" style="color: var(--poppy);">Panduan</a>
+      <a href="/studio">Studio</a>
+    </nav>
+    <a class="header-cta" href="/studio">Buka photobooth <span>↗</span></a>
+  </header>
+
+  <main class="guide-page">
+    <!-- Hero Section: Clean, Calm & To The Point -->
+    <section class="guide-hero">
+      <div class="guide-hero-copy">
+        <a class="guide-breadcrumb" href="/"><span class="nav-arrow">←</span> Kembali ke beranda</a>
+        <h1>Panduan studio.<br /><em>4 langkah praktis.</em></h1>
+        <p class="hero-lede">
+          Alur pemotretan, kustomisasi bingkai, stiker, hingga simpan dan cetak langsung dari browser tanpa instalasi software apa pun.
+        </p>
+      </div>
+    </section>
+
+    <!-- 4 Clear Steps -->
+    <section class="guide-steps-container" id="langkah-langkah">
+      
+      <!-- STEP 1 -->
+      <article class="guide-step-card" id="step-1">
+        <div class="guide-step-info">
+          <span class="guide-step-tag">01 / KAMERA</span>
+          <h2 class="guide-step-title">Pilih format & jepret foto</h2>
+          <ul class="guide-features-list">
+            <li>
+              <span class="guide-check-icon">✓</span>
+              <div><strong>Format layout:</strong> Pilih Strip 4 klasik, Grid 2x2, Solo Polaroid, Mini 3, atau Wide 1.</div>
+            </li>
+            <li>
+              <span class="guide-check-icon">✓</span>
+              <div><strong>Timer & Burst:</strong> Atur jeda 3s, 5s, atau 10s. Aktifkan <em>Burst</em> untuk jepret otomatis beruntun.</div>
+            </li>
+            <li>
+              <span class="guide-check-icon">✓</span>
+              <div><strong>Lensa vintage:</strong> Ganti filter Fisheye 360°, Leica 35mm, Digicam 2004, VHS, atau Dreamy secara real-time.</div>
+            </li>
+            <li>
+              <span class="guide-check-icon">✓</span>
+              <div><strong>Re-take per slot:</strong> Klik salah satu kotak pose di bawah untuk foto ulang pose tersebut tanpa mengulang semuanya.</div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="guide-step-visual" aria-hidden="true">
+          <div class="visual-header-bar">
+            <span>● VIEWFINDER</span>
+            <span>01 KAMERA</span>
+          </div>
+          <div class="visual-mock-stage">
+            <div style="font: 800 13px var(--mono);">📷 KAMERA AKTIF</div>
+            <div style="color: #6d675b; font-size: 11px; margin-top: 4px;">Timer: 3s · Fisheye 360°</div>
+          </div>
+          <div class="mock-slots-grid">
+            <div class="mock-slot active">1 ✓</div>
+            <div class="mock-slot active">2 ✓</div>
+            <div class="mock-slot active">3 ✓</div>
+            <div class="mock-slot active">4 ✓</div>
+          </div>
+          <div class="mock-btn-row">
+            <span class="mock-pill poppy">Lanjut ke Bingkai <span class="nav-arrow">→</span></span>
+          </div>
+        </div>
+      </article>
+
+      <!-- STEP 2 -->
+      <article class="guide-step-card reverse" id="step-2">
+        <div class="guide-step-info">
+          <span class="guide-step-tag">02 / BINGKAI</span>
+          <h2 class="guide-step-title">Pilih tema & warna bingkai</h2>
+          <ul class="guide-features-list">
+            <li>
+              <span class="guide-check-icon">✓</span>
+              <div><strong>Koleksi tema:</strong> Pilihan desain Retro Analog, Y2K Cyber Pop, Minimalist Editorial, dan Cinema Ticket.</div>
+            </li>
+            <li>
+              <span class="guide-check-icon">✓</span>
+              <div><strong>Kustom warna:</strong> Klik palet warna siap pakai atau gunakan kode warna hex favoritmu.</div>
+            </li>
+            <li>
+              <span class="guide-check-icon">✓</span>
+              <div><strong>Pola latar:</strong> Tambahkan tekstur Polos, Bintik Halus, Garis Tipis, atau Serat Kertas.</div>
+            </li>
+            <li>
+              <span class="guide-check-icon">✓</span>
+              <div><strong>Kembali kapan saja:</strong> Klik tombol <em><span class="nav-arrow">←</span> Kembali ke Kamera</em> jika ingin memperbaiki pose.</div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="guide-step-visual" aria-hidden="true">
+          <div class="visual-header-bar">
+            <span>● BINGKAI & PALET</span>
+            <span>02 BINGKAI</span>
+          </div>
+          <div class="visual-mock-stage" style="background: #fff3b0;">
+            <div style="font: 800 11px var(--mono); color: #161412;">MIVORA PHOTO KEEPSAKE</div>
+            <div style="display: flex; gap: 6px; margin: 10px 0;">
+              <div style="width: 28px; height: 28px; background: #ea3d2f; border: 1.5px solid #000;"></div>
+              <div style="width: 28px; height: 28px; background: #8ecae6; border: 1.5px solid #000;"></div>
+              <div style="width: 28px; height: 28px; background: #161412; border: 1.5px solid #000;"></div>
+            </div>
+            <div style="font: 700 9px var(--mono); color: #555;">Kategori: Retro Analog</div>
+          </div>
+          <div class="mock-btn-row">
+            <span class="mock-pill"><span class="nav-arrow">←</span> Kembali</span>
+            <span class="mock-pill poppy">Lanjut ke Filter & Stiker <span class="nav-arrow">→</span></span>
+          </div>
+        </div>
+      </article>
+
+      <!-- STEP 3 -->
+      <article class="guide-step-card" id="step-3">
+        <div class="guide-step-info">
+          <span class="guide-step-tag">03 / STIKER</span>
+          <h2 class="guide-step-title">Tulis caption & tempel stiker</h2>
+          <ul class="guide-features-list">
+            <li>
+              <span class="guide-check-icon">✓</span>
+              <div><strong>Caption nama geng:</strong> Tuliskan nama geng, lokasi, atau tanggal (maks. 40 karakter) tercetak di frame.</div>
+            </li>
+            <li>
+              <span class="guide-check-icon">✓</span>
+              <div><strong>Stiker retro:</strong> Tempel stiker ikonik bintang ✦, hati ♡, pita 🎀, senyum ☻, bunga ✿, atau CHEESE!.</div>
+            </li>
+            <li>
+              <span class="guide-check-icon">✓</span>
+              <div><strong>Drag & drop:</strong> Geser stiker bebas ke posisi mana pun di atas photostrip.</div>
+            </li>
+            <li>
+              <span class="guide-check-icon">✓</span>
+              <div><strong>Hapus mudah:</strong> Dobel klik stiker untuk langsung menghapusnya.</div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="guide-step-visual" aria-hidden="true">
+          <div class="visual-header-bar">
+            <span>● STIKER & CAPTION</span>
+            <span>03 STIKER</span>
+          </div>
+          <div class="visual-mock-stage">
+            <div style="font: 800 12px var(--display);">BESTIE SELAMANYA</div>
+            <div style="display: flex; gap: 8px; margin: 10px 0; font-size: 18px;">
+              <span>✦</span><span>♡</span><span>🎀</span><span style="font: 800 10px var(--mono); border: 1px solid #000; padding: 2px 4px;">CHEESE!</span>
+            </div>
+            <div style="font: 700 9px var(--mono); color: #888;">✦ Geser stiker ke atas foto</div>
+          </div>
+          <div class="mock-btn-row">
+            <span class="mock-pill"><span class="nav-arrow">←</span> Kembali</span>
+            <span class="mock-pill poppy">Lanjut ke Simpan & Cetak <span class="nav-arrow">→</span></span>
+          </div>
+        </div>
+      </article>
+
+      <!-- STEP 4 -->
+      <article class="guide-step-card reverse" id="step-4">
+        <div class="guide-step-info">
+          <span class="guide-step-tag">04 / SIMPAN</span>
+          <h2 class="guide-step-title">Unduh PNG, Boomerang, atau scan QR</h2>
+          <ul class="guide-features-list">
+            <li>
+              <span class="guide-check-icon">✓</span>
+              <div><strong>Unduh PNG (300 DPI):</strong> File gambar tajam resolusi tinggi siap dicetak di kertas foto.</div>
+            </li>
+            <li>
+              <span class="guide-check-icon">✓</span>
+              <div><strong>Boomerang WebM:</strong> Simpan rekaman video gerak singkat sebelum blitz untuk IG Story & TikTok.</div>
+            </li>
+            <li>
+              <span class="guide-check-icon">✓</span>
+              <div><strong>Scan QR ke HP:</strong> Tampilkan kode QR dan pindai langsung lewat kamera ponselmu tanpa kabel.</div>
+            </li>
+            <li>
+              <span class="guide-check-icon">✓</span>
+              <div><strong>Edit ulang:</strong> Klik <em><span class="nav-arrow">←</span> Edit Bingkai & Stiker</em> kapan saja tanpa perlu foto ulang dari awal.</div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="guide-step-visual" aria-hidden="true">
+          <div class="visual-header-bar">
+            <span>● HASIL AKHIR & CETAK</span>
+            <span>04 SIMPAN</span>
+          </div>
+          <div class="visual-mock-stage" style="background: #fffdf5;">
+            <div style="font: 800 13px var(--display); color: var(--poppy); margin-bottom: 6px;">Kenanganmu Siap!</div>
+            <div style="font: 700 9px var(--mono); color: #333; margin-bottom: 8px;">Format: PNG 300 DPI & WebM</div>
+            <div style="width: 44px; height: 44px; border: 1.5px solid var(--ink); background: var(--butter); display: grid; place-items: center; font-size: 18px;">■</div>
+          </div>
+          <div class="mock-btn-row">
+            <span class="mock-pill poppy">Unduh PNG <span class="nav-arrow">↓</span></span>
+            <span class="mock-pill sky">Scan QR ■</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Clean Direct Action Link -->
+      <div style="text-align: center; padding-top: 10px;">
+        <a class="button-primary guide-cta-btn" href="/studio">Buka Studio Photobooth Sekarang <span class="nav-arrow">↗</span></a>
+      </div>
+
+    </section>
+
+    <!-- 3 Simple Pro-Tips -->
+    <section class="guide-tips-section">
+      <div class="guide-section-head">
+        <p class="section-kicker">TIPS & TRIK</p>
+        <h2>Hasil foto maksimal dalam 3 tips.</h2>
+      </div>
+
+      <div class="guide-tips-grid">
+        <div class="guide-tip-card">
+          <span class="tip-badge">01</span>
+          <h3>Cahaya Menghadap Wajah</h3>
+          <p>
+            Duduklah menghadap jendela atau lampu terang. Hindari membelakangi cahaya agar tone filter vintage terlihat tajam.
+          </p>
+        </div>
+
+        <div class="guide-tip-card">
+          <span class="tip-badge">02</span>
+          <h3>Mode Fullscreen</h3>
+          <p>
+            Klik tombol <strong>Fullscreen ⤢</strong> di kanan atas studio untuk merasakan pengalaman bilik photobooth tanpa gangguan tab browser.
+          </p>
+        </div>
+
+        <div class="guide-tip-card">
+          <span class="tip-badge">03</span>
+          <h3>100% Privasi di Browser</h3>
+          <p>
+            Foto diproses langsung di memori browsermu. Jangan lupa unduh file atau scan QR sebelum menutup jendela browser.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <a class="wordmark" href="/"><span>✦</span> MIVORA <i>PHOTO</i></a>
+        <p>Your Pocket Creative Photobooth.</p>
+        <div class="footer-social">
+          <a href={brand.instagram} target="_blank" rel="noopener noreferrer">Instagram ↗</a>
+          <a href={brand.tiktok} target="_blank" rel="noopener noreferrer">TikTok ↗</a>
+          <span>@mivora.photo</span>
+        </div>
+      </div>
+      <div class="footer-contact">
+        <h3>Datang atau sapa kami.</h3>
+        <address>{brand.address}</address>
+        <a href={`mailto:${brand.email}`}>{brand.email}</a>
+        <a href={`mailto:${brand.partnershipEmail}`}>{brand.partnershipEmail}</a>
+        <a href="https://wa.me/6281288994021">WhatsApp {brand.phone}</a>
+        <small>Senin–Minggu, 09.00–21.00 WIB</small>
+      </div>
+      <div class="footer-links">
+        <h3>Jelajahi Mivora.</h3>
+        <a href="/#lenses">Efek lensa</a>
+        <a href="/#frames">Koleksi bingkai</a>
+        <a href="/panduan">Panduan studio</a>
+        <a href="/studio">Buka studio</a>
+        <a href="/#faq">Bantuan & FAQ</a>
+        <a href={`mailto:${brand.partnershipEmail}?subject=Custom%20event%20frame`}>Request custom event frame</a>
+        <a href="/terms">Terms of service</a>
+        <a href="/brand">Brand guidelines</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 PT Mivora Kreasi Visual</span>
+      <span>FOTO KAMU. ATURAN KAMU. SEMUA TETAP DI PERANGKATMU.</span>
+      <a href="#top">Ke atas ↑</a>
+    </div>
+  </footer>
+</BaseLayout>

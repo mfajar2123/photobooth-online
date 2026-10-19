@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PhotoboothStudio from '../components/photobooth/PhotoboothStudio';
+---
+
+<BaseLayout
+  title="Studio Photobooth — Mivora Photo"
+  description="Ambil foto, pilih efek lensa dan bingkai, lalu simpan photostrip langsung dari perangkatmu."
+>
+  <header class="site-header studio-page-header">
+    <a class="wordmark" href="/" aria-label="Mivora Photo, kembali ke beranda"><span>✦</span> MIVORA <i>PHOTO</i></a>
+    <nav aria-label="Navigasi halaman studio">
+      <a href="/#lenses">Efek lensa</a>
+      <a href="/#frames">Koleksi frame</a>
+      <a href="/panduan">Panduan</a>
+    </nav>
+    <a class="header-cta" href="/">Kembali ke beranda <span>↗</span></a>
+  </header>
+
+  <main class="studio-page">
+    <section class="studio-section section-pad studio-page-section">
+      <a class="studio-back-link" href="/">← Kembali ke Mivora Photo</a>
+      <div class="studio-intro">
+        <div><h1>Senyum dulu.<br /><em>Pose belakangan.</em></h1></div>
+        <p>Kamera, filter, dan hasil akhir diproses langsung di browser. Nyalakan kamera kalau sudah siap — foto tidak diunggah atau disimpan di server.</p>
+      </div>
+      <PhotoboothStudio client:load />
+      <p class="studio-privacy-note">Foto tetap di perangkat ini. Matikan kamera setelah selesai atau tutup halaman untuk mengakhiri sesi.</p>
+    </section>
+  </main>
+
+  <footer class="studio-page-footer">
+    <a class="wordmark" href="/">✦ MIVORA <i>PHOTO</i></a>
+    <span>FOTO KAMU. ATURAN KAMU. SEMUA TETAP DI PERANGKATMU.</span>
+    <div style="display: flex; gap: 16px;">
+      <a href="/panduan">Panduan studio</a>
+      <a href="/terms">Ketentuan layanan</a>
+    </div>
+  </footer>
+</BaseLayout>

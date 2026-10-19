@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#FFF3B0"/>
+  <rect x="832" y="84" width="226" height="454" rx="2" fill="#FFFDF5" stroke="#121212" stroke-width="6" transform="rotate(8 832 84)"/>
+  <rect x="862" y="121" width="166" height="112" fill="#8ECAE6" stroke="#121212" stroke-width="3" transform="rotate(8 862 121)"/>
+  <rect x="850" y="246" width="166" height="112" fill="#D88D75" stroke="#121212" stroke-width="3" transform="rotate(8 850 246)"/>
+  <rect x="838" y="371" width="166" height="112" fill="#B4C2A5" stroke="#121212" stroke-width="3" transform="rotate(8 838 371)"/>
+  <text x="88" y="145" font-family="Arial,sans-serif" font-size="25" font-weight="700" letter-spacing="2">✦ MIVORA PHOTO</text>
+  <text x="84" y="285" font-family="Arial,sans-serif" font-size="82" font-weight="800" letter-spacing="-5" fill="#121212">Momen seru,</text>
+  <text x="84" y="375" font-family="Arial,sans-serif" font-size="82" font-weight="800" letter-spacing="-5" fill="#E63946">langsung dari browser.</text>
+  <text x="90" y="450" font-family="Arial,sans-serif" font-size="26" fill="#343127">Photobooth online · no app · semua tetap di perangkatmu</text>
+</svg>

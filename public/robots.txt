@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mivoraphoto.id/sitemap.xml

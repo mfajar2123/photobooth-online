@@ -1,0 +1,77 @@
+---
+import '../styles/global.css';
+import { brand } from '../data/brand';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Mivora Photo — Photobooth Online Estetik & Efek Lensa Pro di Browser',
+  description = 'Bikin photostrip bareng bestie langsung dari browser. Mainkan efek lensa, pilih frame, tambah stiker, lalu simpan — semua diproses di perangkatmu.',
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://mivoraphoto.id').toString();
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebApplication',
+      name: brand.name,
+      url: 'https://mivoraphoto.id',
+      applicationCategory: 'PhotographyApplication',
+      operatingSystem: 'Any modern web browser',
+      description,
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'IDR' },
+    },
+    {
+      '@type': 'Organization',
+      name: 'PT Mivora Kreasi Visual',
+      url: 'https://mivoraphoto.id',
+      email: brand.email,
+      telephone: brand.phone,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Gedung Kemang Point Lt. 3, Jl. Kemang Raya No. 3, Bangka',
+        addressLocality: 'Jakarta Selatan',
+        addressRegion: 'DKI Jakarta',
+        postalCode: '12730',
+        addressCountry: 'ID',
+      },
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#FFF3B0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; frame-ancestors 'none'; form-action 'self'; base-uri 'self'; upgrade-insecure-requests;" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="Permissions-Policy" content="camera=(self), microphone=(), geolocation=(), interest-cohort=()" />
+    <meta name="description" content={description} />
+    <meta name="robots" content="index,follow" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="id_ID" />
+    <meta property="og:site_name" content={brand.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content="https://mivoraphoto.id/images/og-share.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
