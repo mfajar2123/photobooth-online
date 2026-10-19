@@ -335,6 +335,7 @@ export default function PhotoboothStudio() {
             type="button"
             className={`stepper-btn ${step === 1 ? 'is-active' : ''}`}
             onClick={() => setStep(1)}
+            aria-label="Tahap 01: Kamera"
           >
             <span className="step-num">01</span>
             <span className="step-name">Kamera</span>
@@ -345,9 +346,10 @@ export default function PhotoboothStudio() {
             className={`stepper-btn ${step === 2 ? 'is-active' : ''}`}
             onClick={() => hasPhotos && setStep(2)}
             disabled={!hasPhotos}
+            aria-label="Tahap 02: Pilih bingkai"
           >
             <span className="step-num">02</span>
-            <span className="step-name">Pilih bingkai</span>
+            <span className="step-name"><span className="stepper-word-opt">Pilih </span>Bingkai</span>
           </button>
           <span className="stepper-arrow" aria-hidden="true">→</span>
           <button
@@ -355,9 +357,10 @@ export default function PhotoboothStudio() {
             className={`stepper-btn ${step === 3 ? 'is-active' : ''}`}
             onClick={() => hasPhotos && setStep(3)}
             disabled={!hasPhotos}
+            aria-label="Tahap 03: Filter dan stiker"
           >
             <span className="step-num">03</span>
-            <span className="step-name">Filter & stiker</span>
+            <span className="step-name"><span className="stepper-word-opt">Filter & </span>Stiker</span>
           </button>
           <span className="stepper-arrow" aria-hidden="true">→</span>
           <button
@@ -365,6 +368,7 @@ export default function PhotoboothStudio() {
             className={`stepper-btn ${step === 4 ? 'is-active' : ''}`}
             onClick={() => hasPhotos && setStep(4)}
             disabled={!hasPhotos}
+            aria-label="Tahap 04: Simpan dan cetak"
           >
             <span className="step-num">04</span>
             <span className="step-name">Simpan</span>
