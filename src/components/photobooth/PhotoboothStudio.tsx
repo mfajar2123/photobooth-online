@@ -71,7 +71,8 @@ export default function PhotoboothStudio() {
       const bytes = new TextEncoder().encode(JSON.stringify(data));
       const binary = Array.from(bytes, (byte) => String.fromCharCode(byte)).join('');
       const encoded = btoa(binary);
-      setQrPayload(`${window.location.origin}/share#data=${encoded}`);
+      const basePath = window.location.pathname.replace(/\/studio\/?$/, '').replace(/\/+$/, '');
+      setQrPayload(`${window.location.origin}${basePath}/share#data=${encoded}`);
     };
   }, [caption, frame, slots]);
 
@@ -820,7 +821,17 @@ export default function PhotoboothStudio() {
             <h2 id="qr-title">Bawa memorinya.</h2>
             <p>Scan untuk membuka kartu digital dengan pratinjau ringkas. QR ini menyimpan preview kecil di dalam kode; file resolusi tinggi tetap ada di perangkat ini.</p>
             <div className="qr-code">
-              <QRCodeSVG value={qrPayload || `${window.location.origin}/share`} size={210} level="M" marginSize={4} />
+              <QRCodeSVG
+                value={
+                  qrPayload ||
+                  (typeof window !== 'undefined'
+                    ? `${window.location.origin}${window.location.pathname.replace(/\/studio\/?$/, '').replace(/\/+$/, '')}/share`
+                    : '/share')
+                }
+                size={210}
+                level="M"
+                marginSize={4}
+              />
             </div>
             <button type="button" className="download-button" onClick={() => void exportImage()}>
               Unduh file penuh di perangkat ini ↓

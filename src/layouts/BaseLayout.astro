@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { brand } from '../data/brand';
+import { assetUrl } from '../lib/paths';
 
 interface Props {
   title?: string;
@@ -12,6 +13,9 @@ const {
   description = 'Bikin photostrip bareng bestie langsung dari browser. Mainkan efek lensa, pilih frame, tambah stiker, lalu simpan — semua diproses di perangkatmu.',
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://mivoraphoto.id').toString();
+const faviconUrl = assetUrl('/favicon.svg');
+const ogImageUrl = new URL(assetUrl('/images/og-share.svg'), Astro.site ?? 'https://mivoraphoto.id').toString();
+const livePhotoBg = `url('${assetUrl('/images/friends-photo-booth.jpg')}')`;
 const schema = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -62,14 +66,19 @@ const schema = {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content="https://mivoraphoto.id/images/og-share.svg" />
+    <meta property="og:image" content={ogImageUrl} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={faviconUrl} />
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
-    <title>{title}</title>
+    <style is:global define:vars={{ livePhotoBg }}>
+      .live-photo,
+      .sample-picture {
+        background-image: var(--livePhotoBg) !important;
+      }
+    </style>
   </head>
   <body>
     <slot />

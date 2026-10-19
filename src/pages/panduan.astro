@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { brand } from '../data/brand';
+import { assetUrl } from '../lib/paths';
 ---
 
 <BaseLayout
@@ -9,21 +10,21 @@ import { brand } from '../data/brand';
 >
   <!-- Site Header -->
   <header class="site-header">
-    <a class="wordmark" href="/" aria-label="Mivora Photo, kembali ke beranda"><span>✦</span> MIVORA <i>PHOTO</i></a>
+    <a class="wordmark" href={assetUrl('/')} aria-label="Mivora Photo, kembali ke beranda"><span>✦</span> MIVORA <i>PHOTO</i></a>
     <nav aria-label="Navigasi panduan">
-      <a href="/#lenses">Efek lensa</a>
-      <a href="/#frames">Koleksi frame</a>
-      <a href="/panduan" style="color: var(--poppy);">Panduan</a>
-      <a href="/studio">Studio</a>
+      <a href={assetUrl('/#lenses')}>Efek lensa</a>
+      <a href={assetUrl('/#frames')}>Koleksi frame</a>
+      <a href={assetUrl('/panduan')} style="color: var(--poppy);">Panduan</a>
+      <a href={assetUrl('/studio')}>Studio</a>
     </nav>
-    <a class="header-cta" href="/studio">Buka photobooth <span>↗</span></a>
+    <a class="header-cta" href={assetUrl('/studio')}>Buka photobooth <span>↗</span></a>
   </header>
 
   <main class="guide-page">
     <!-- Hero Section: Clean, Calm & To The Point -->
     <section class="guide-hero">
       <div class="guide-hero-copy">
-        <a class="guide-breadcrumb" href="/"><span class="nav-arrow">←</span> Kembali ke beranda</a>
+        <a class="guide-breadcrumb" href={assetUrl('/')}><span class="nav-arrow">←</span> Kembali ke beranda</a>
         <h1>Panduan studio.<br /><em>4 langkah praktis.</em></h1>
         <p class="hero-lede">
           Alur pemotretan, kustomisasi bingkai, stiker, hingga simpan dan cetak langsung dari browser tanpa instalasi software apa pun.
@@ -214,7 +215,7 @@ import { brand } from '../data/brand';
 
       <!-- Clean Direct Action Link -->
       <div style="text-align: center; padding-top: 10px;">
-        <a class="button-primary guide-cta-btn" href="/studio">Buka Studio Photobooth Sekarang <span class="nav-arrow">↗</span></a>
+        <a class="button-primary guide-cta-btn" href={assetUrl('/studio')}>Buka Studio Photobooth Sekarang <span class="nav-arrow">↗</span></a>
       </div>
 
     </section>
@@ -258,7 +259,7 @@ import { brand } from '../data/brand';
   <footer class="site-footer">
     <div class="footer-main">
       <div class="footer-brand">
-        <a class="wordmark" href="/"><span>✦</span> MIVORA <i>PHOTO</i></a>
+        <a class="wordmark" href={assetUrl('/')}><span>✦</span> MIVORA <i>PHOTO</i></a>
         <p>Your Pocket Creative Photobooth.</p>
         <div class="footer-social">
           <a href={brand.instagram} target="_blank" rel="noopener noreferrer">Instagram ↗</a>
@@ -276,14 +277,14 @@ import { brand } from '../data/brand';
       </div>
       <div class="footer-links">
         <h3>Jelajahi Mivora.</h3>
-        <a href="/#lenses">Efek lensa</a>
-        <a href="/#frames">Koleksi bingkai</a>
-        <a href="/panduan">Panduan studio</a>
-        <a href="/studio">Buka studio</a>
-        <a href="/#faq">Bantuan & FAQ</a>
+        <a href={assetUrl('/#lenses')}>Efek lensa</a>
+        <a href={assetUrl('/#frames')}>Koleksi bingkai</a>
+        <a href={assetUrl('/panduan')}>Panduan studio</a>
+        <a href={assetUrl('/studio')}>Buka studio</a>
+        <a href={assetUrl('/#faq')}>Bantuan & FAQ</a>
         <a href={`mailto:${brand.partnershipEmail}?subject=Custom%20event%20frame`}>Request custom event frame</a>
-        <a href="/terms">Terms of service</a>
-        <a href="/brand">Brand guidelines</a>
+        <a href={assetUrl('/terms')}>Terms of service</a>
+        <a href={assetUrl('/brand')}>Brand guidelines</a>
       </div>
     </div>
     <div class="footer-bottom">

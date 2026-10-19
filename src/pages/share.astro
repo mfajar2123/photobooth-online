@@ -1,17 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { assetUrl } from '../lib/paths';
 ---
 
 <BaseLayout title="Kartu Kenangan — Mivora Photo" description="Pratinjau kartu digital hasil photobooth Mivora Photo.">
   <main class="share-page">
-    <a class="wordmark" href="/"><span>✦</span> MIVORA <i>PHOTO</i></a>
+    <a class="wordmark" href={assetUrl('/')}><span>✦</span> MIVORA <i>PHOTO</i></a>
     <div class="share-card">
       <p class="section-kicker">DIGITAL COLLECTOR CARD</p>
       <h1 id="share-title">Satu momen kecil,<br /><em>disimpan bareng.</em></h1>
       <div class="share-art"><img id="share-preview" alt="Pratinjau kecil photostrip Mivora Photo" hidden /><span id="share-empty">✦</span></div>
       <p id="share-caption">Kartu ini dibuat di browser dengan Mivora Photo.</p>
       <p class="share-privacy">Preview ini tersimpan di QR yang kamu scan. Mivora Photo tidak mengunggah atau menyimpan foto. File kualitas penuh ada di perangkat pembuat.</p>
-      <a class="button-primary" href="/">Bikin photostrip kamu sendiri ↗</a>
+      <a class="button-primary" href={assetUrl('/')}>Bikin photostrip kamu sendiri ↗</a>
     </div>
   </main>
   <script>

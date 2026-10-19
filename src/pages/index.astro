@@ -1,6 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { brand, faqs } from '../data/brand';
+import { assetUrl } from '../lib/paths';
+
+const friendsPhoto = assetUrl('/images/friends-photo-booth.jpg');
 ---
 
 <BaseLayout>
@@ -9,10 +12,10 @@ import { brand, faqs } from '../data/brand';
     <nav aria-label="Navigasi utama">
       <a href="#lenses">Efek lensa</a>
       <a href="#frames">Koleksi frame</a>
-      <a href="/panduan">Panduan</a>
-      <a href="/studio">Studio</a>
+      <a href={assetUrl('/panduan')}>Panduan</a>
+      <a href={assetUrl('/studio')}>Studio</a>
     </nav>
-    <a class="header-cta" href="/studio">Buka photobooth <span>↗</span></a>
+    <a class="header-cta" href={assetUrl('/studio')}>Buka photobooth <span>↗</span></a>
   </header>
 
   <main id="top">
@@ -20,19 +23,19 @@ import { brand, faqs } from '../data/brand';
       <div class="hero-bg-photos" aria-hidden="true">
         <div class="hero-mini-photo photo-left-top">
           <div class="mini-frame">
-            <img src="/images/friends-photo-booth.jpg" alt="" class="mini-img img-classic-warm" />
+            <img src={friendsPhoto} alt="" class="mini-img img-classic-warm" />
           </div>
           <span class="mini-caption">analog '04</span>
         </div>
         <div class="hero-mini-photo photo-left-bottom">
           <div class="mini-frame">
-            <img src="/images/friends-photo-booth.jpg" alt="" class="mini-img img-classic-film" />
+            <img src={friendsPhoto} alt="" class="mini-img img-classic-film" />
           </div>
           <span class="mini-caption">besties</span>
         </div>
         <div class="hero-mini-photo photo-right-top">
           <div class="mini-frame">
-            <img src="/images/friends-photo-booth.jpg" alt="" class="mini-img img-classic-mono" />
+            <img src={friendsPhoto} alt="" class="mini-img img-classic-mono" />
           </div>
           <span class="mini-caption">instant roll</span>
         </div>
@@ -40,7 +43,7 @@ import { brand, faqs } from '../data/brand';
       <div class="hero-copy">
         <h1 class="split-title">Abadikan momen seru,<br /><em>langsung dari browser lo.</em></h1>
         <p class="hero-lede">Nggak perlu antre di mall. Pilih efek lensa kamera mahal, tempel stiker sesuka hati, dan simpan photostrip estetik bareng bestie detik ini juga.</p>
-        <div class="hero-actions"><a class="button-primary" href="/studio">Mulai photobooth sekarang <span>↗</span></a><a class="button-secondary" href="#frames">Lihat koleksi frame <span>↓</span></a></div>
+        <div class="hero-actions"><a class="button-primary" href={assetUrl('/studio')}>Mulai photobooth sekarang <span>↗</span></a><a class="button-secondary" href="#frames">Lihat koleksi frame <span>↓</span></a></div>
       </div>
     </section>
 
@@ -48,7 +51,7 @@ import { brand, faqs } from '../data/brand';
       <div class="lens-copy">
         <h2>Satu webcam.<br /><em>Berasa sewa lensa studio.</em></h2>
         <p class="section-intro">Pilih efek lensa kamera di bawah untuk melihat simulasi pratinjau foto secara langsung.</p>
-        <div class="lens-showcase-list" role="tablist" aria-label="Preview efek lensa">
+        <div class="lens-showcase-list" role="tablist" aria-label="Pilihan efek lensa">
           <button class="lens-showcase-option is-active" type="button" role="tab" aria-selected="true" data-lens="fisheye">
             <span class="lens-num">01</span>
             <div class="lens-info">
@@ -93,7 +96,7 @@ import { brand, faqs } from '../data/brand';
       </div>
       <div class="lens-preview-stage" aria-live="polite">
         <div class="lens-viewfinder" data-preview-lens="fisheye">
-          <div class="lens-preview-art"><img class="lens-photo" src="/images/friends-photo-booth.jpg" alt="Sekelompok teman berpose bersama di photobooth" loading="lazy" decoding="async" /></div>
+          <div class="lens-preview-art"><img class="lens-photo" src={friendsPhoto} alt="Sekelompok teman berpose bersama di photobooth" loading="lazy" decoding="async" /></div>
           <div class="preview-hud"><span>● REC</span><span>00:04:12</span></div>
           <div class="preview-date">2004.08.24</div>
         </div>
@@ -121,7 +124,7 @@ import { brand, faqs } from '../data/brand';
           <button type="button" data-frame-category="cinema">Cinema Ticket</button>
           <button type="button" data-frame-category="editorial">Minimalist Editorial</button>
         </div>
-        <a href="/studio" class="text-link">Pilih frame di studio <span>↗</span></a>
+        <a href={assetUrl('/studio')} class="text-link">Pilih frame di studio <span>↗</span></a>
       </div>
     </section>
 
@@ -129,7 +132,7 @@ import { brand, faqs } from '../data/brand';
       <div class="live-copy">
         <h2>Bukan cuma foto diam.<br /><em>Bikin Live Photo & Boomerang!</em></h2>
         <p>Setiap senyum, kedipan, dan gaya absurd sebelum blitz menyala ikut terekam. Simpan photostrip sebagai foto resolusi tinggi sekaligus video WebM siap kirim ke IG Story & TikTok.</p>
-        <a class="text-link" href="/studio">Coba bikin punya kamu <span>↗</span></a>
+        <a class="text-link" href={assetUrl('/studio')}>Coba bikin punya kamu <span>↗</span></a>
       </div>
       <div class="live-art" aria-label="Contoh photostrip animasi dengan frame Mivora">
         <div class="live-paper"><div class="live-photo"></div><b>BESTIES IN MOTION</b><small>▶ LOOP PREVIEW · 00:02</small></div>
@@ -146,7 +149,7 @@ import { brand, faqs } from '../data/brand';
     <div class="footer-main">
       <div class="footer-brand"><a class="wordmark" href="#top"><span>✦</span> MIVORA <i>PHOTO</i></a><p>Your Pocket Creative Photobooth.</p><div class="footer-social"><a href={brand.instagram} target="_blank" rel="noopener noreferrer">Instagram ↗</a><a href={brand.tiktok} target="_blank" rel="noopener noreferrer">TikTok ↗</a><span>@mivora.photo</span></div></div>
       <div class="footer-contact"><h3>Datang atau sapa kami.</h3><address>{brand.address}</address><a href={`mailto:${brand.email}`}>{brand.email}</a><a href={`mailto:${brand.partnershipEmail}`}>{brand.partnershipEmail}</a><a href="https://wa.me/6281288994021">WhatsApp {brand.phone}</a><small>Senin–Minggu, 09.00–21.00 WIB</small></div>
-      <div class="footer-links"><h3>Jelajahi Mivora.</h3><a href="#lenses">Efek lensa</a><a href="#frames">Koleksi bingkai</a><a href="/panduan">Panduan studio</a><a href="/studio">Buka studio</a><a href="#faq">Bantuan & FAQ</a><a href={`mailto:${brand.partnershipEmail}?subject=Custom%20event%20frame`}>Request custom event frame</a><a href="#privacy" data-privacy-open>Privacy policy</a><a href="/terms">Terms of service</a><a href="/brand">Brand guidelines</a></div>
+      <div class="footer-links"><h3>Jelajahi Mivora.</h3><a href="#lenses">Efek lensa</a><a href="#frames">Koleksi bingkai</a><a href={assetUrl('/panduan')}>Panduan studio</a><a href={assetUrl('/studio')}>Buka studio</a><a href="#faq">Bantuan & FAQ</a><a href={`mailto:${brand.partnershipEmail}?subject=Custom%20event%20frame`}>Request custom event frame</a><a href="#privacy" data-privacy-open>Privacy policy</a><a href={assetUrl('/terms')}>Terms of service</a><a href={assetUrl('/brand')}>Brand guidelines</a></div>
     </div>
     <div class="footer-bottom"><span>© 2026 PT Mivora Kreasi Visual</span><span>FOTO KAMU. ATURAN KAMU. SEMUA TETAP DI PERANGKATMU.</span><a href="#top">Ke atas ↑</a></div>
     <dialog class="privacy-dialog" id="privacy"><button type="button" data-privacy-close aria-label="Tutup">×</button><p class="section-kicker">PRIVACY, PLAIN & SIMPLE</p><h2>Foto kamu tetap milikmu.</h2><p>Kamera dan file gambar diproses secara lokal di browser. Mivora Photo tidak menerima atau menyimpan foto. QR hasil photobooth berisi pratinjau kecil yang dikompresi di dalam kode QR itu sendiri; file resolusi tinggi hanya tersedia di perangkat tempat foto dibuat. Matikan kamera atau tutup tab untuk menghentikan sesi.</p></dialog>
@@ -178,26 +181,36 @@ import { brand, faqs } from '../data/brand';
     const samplePalettes: Record<string, { background: string; foreground: string; picture: string }> = {
       y2k: { background: '#c8effb', foreground: '#121212', picture: '#9fcbd7' },
       receipt: { background: '#f5f0e2', foreground: '#20211d', picture: '#d7c9a8' },
-      museum: { background: '#d9c8a5', foreground: '#35291d', picture: '#a88e64' },
-      gigs: { background: '#f3b94d', foreground: '#241c19', picture: '#bb5140' },
-      coquette: { background: '#f8dde5', foreground: '#7b3047', picture: '#f0b8cb' },
-      yearbook: { background: '#e9e3d5', foreground: '#292929', picture: '#a8b7a1' },
-      cinema: { background: '#f1c879', foreground: '#201a18', picture: '#b96350' },
-      editorial: { background: '#fffdf5', foreground: '#171717', picture: '#c9d8d0' },
+      museum: { background: '#d9c8a5', foreground: '#35291d', picture: '#bfad8a' },
+      gigs: { background: '#f3b94d', foreground: '#241c19', picture: '#c8933b' },
+      coquette: { background: '#f8dde5', foreground: '#7b3047', picture: '#dbbfca' },
+      yearbook: { background: '#e9e3d5', foreground: '#292929', picture: '#cfc8b7' },
+      cinema: { background: '#f1c879', foreground: '#201a18', picture: '#cb9e4d' },
+      editorial: { background: '#f5f1e8', foreground: '#171717', picture: '#dad5cb' },
     };
-    document.querySelectorAll<HTMLButtonElement>('[data-frame-category]').forEach((button) => button.addEventListener('click', () => {
-      document.querySelectorAll('[data-frame-category]').forEach((item) => item.classList.remove('is-active'));
-      button.classList.add('is-active');
-      const palette = samplePalettes[button.dataset.frameCategory ?? 'y2k'] ?? samplePalettes.y2k;
-      document.querySelectorAll<HTMLElement>('.sample-strip').forEach((strip, index) => {
-        strip.dataset.theme = `${button.dataset.frameCategory}-${index + 1}`;
-        strip.style.backgroundColor = palette.background;
-        strip.style.color = palette.foreground;
-        strip.querySelectorAll<HTMLElement>('.sample-picture').forEach((picture) => { picture.style.backgroundColor = palette.picture; });
+    document.querySelectorAll<HTMLButtonElement>('[data-frame-category]').forEach((button) => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('[data-frame-category]').forEach((item) => item.classList.remove('is-active'));
+        button.classList.add('is-active');
+        const key = button.dataset.frameCategory ?? 'y2k';
+        const palette = samplePalettes[key] ?? samplePalettes.y2k;
+        const target = document.querySelector<HTMLElement>('.sample-mid');
+        if (target) {
+          target.style.backgroundColor = palette.background;
+          target.style.color = palette.foreground;
+          target.querySelectorAll<HTMLElement>('.sample-picture i').forEach((picture) => { picture.style.backgroundColor = palette.picture; });
+        }
       });
-    }));
+    });
     const privacyDialog = document.querySelector<HTMLDialogElement>('#privacy');
-    document.querySelector('[data-privacy-open]')?.addEventListener('click', (event) => { event.preventDefault(); privacyDialog?.showModal(); });
-    document.querySelector('[data-privacy-close]')?.addEventListener('click', () => privacyDialog?.close());
+    document.querySelectorAll('[data-privacy-open]').forEach((button) => {
+      button.addEventListener('click', (event) => { event.preventDefault(); privacyDialog?.showModal(); });
+    });
+    document.querySelectorAll('[data-privacy-close]').forEach((button) => {
+      button.addEventListener('click', () => privacyDialog?.close());
+    });
+    privacyDialog?.addEventListener('click', (event) => {
+      if (event.target === privacyDialog) privacyDialog.close();
+    });
   </script>
 </BaseLayout>
