@@ -433,6 +433,7 @@ export default function PhotoboothStudio() {
 
                 <label className="timer-select">Timer
                   <select value={timer} onChange={(event) => setTimer(Number(event.target.value))}>
+                    <option value={1}>1 detik</option>
                     <option value={3}>3 detik</option>
                     <option value={5}>5 detik</option>
                     <option value={10}>10 detik</option>

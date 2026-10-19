@@ -35,6 +35,9 @@ jobs:
       - name: Setup GitHub Pages configuration
         id: pages
         uses: actions/configure-pages@v5
+        continue-on-error: true
+        with:
+          enablement: true
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -42,8 +45,8 @@ jobs:
       - name: Build with Astro
         run: pnpm run build
         env:
-          ASTRO_SITE: ${{ steps.pages.outputs.site }}
-          ASTRO_BASE: ${{ steps.pages.outputs.base_path }}
+          ASTRO_SITE: ${{ steps.pages.outputs.site || 'https://mfajar2123.github.io' }}
+          ASTRO_BASE: ${{ steps.pages.outputs.base_path || '/photobooth-online' }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
