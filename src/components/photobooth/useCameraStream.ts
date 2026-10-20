@@ -20,7 +20,7 @@ export function useCameraStream() {
     setError('');
   }, [stream]);
 
-  const start = useCallback(async (requestedDevice = deviceId, requestedFacing = facingMode) => {
+  const start = useCallback(async (requestedDevice = deviceId, requestedFacing = facingMode, requestedAspect = 9 / 16) => {
     if (!navigator.mediaDevices?.getUserMedia) {
       setError('Browser ini belum mendukung akses kamera. Coba buka lewat Chrome, Safari, atau Firefox terbaru.');
       return false;
@@ -29,11 +29,22 @@ export function useCameraStream() {
     setError('');
     try {
       stream?.getTracks().forEach((track) => track.stop());
+      const isPortrait = requestedAspect < 1;
       const constraints: MediaStreamConstraints = {
         audio: false,
         video: requestedDevice
-          ? { deviceId: { exact: requestedDevice }, width: { ideal: 1080 }, height: { ideal: 1920 } }
-          : { facingMode: { ideal: requestedFacing }, width: { ideal: 1080 }, height: { ideal: 1920 } },
+          ? {
+              deviceId: { exact: requestedDevice },
+              width: { ideal: isPortrait ? 1080 : 1920 },
+              height: { ideal: isPortrait ? 1920 : 1080 },
+              aspectRatio: { ideal: requestedAspect },
+            }
+          : {
+              facingMode: { ideal: requestedFacing },
+              width: { ideal: isPortrait ? 1080 : 1920 },
+              height: { ideal: isPortrait ? 1920 : 1080 },
+              aspectRatio: { ideal: requestedAspect },
+            },
       };
       const next = await navigator.mediaDevices.getUserMedia(constraints);
       setStream(next);

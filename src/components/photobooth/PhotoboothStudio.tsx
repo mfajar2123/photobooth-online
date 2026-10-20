@@ -166,7 +166,7 @@ export default function PhotoboothStudio() {
   const startCapture = useCallback(async () => {
     if (isCapturing) return;
     if (!camera.stream) {
-      await camera.start();
+      await camera.start(camera.deviceId, camera.facingMode, selectedLayout.photoRatio);
       return;
     }
     if (!videoRef.current || videoRef.current.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
@@ -206,6 +206,10 @@ export default function PhotoboothStudio() {
     setSlots([]);
     setTargetSlot(null);
     live.clearMotion();
+    const nextItem = layouts.find((item) => item.id === nextLayout);
+    if (camera.stream && nextItem) {
+      void camera.start(camera.deviceId, camera.facingMode, nextItem.photoRatio);
+    }
     setNotice(hasPhotos ? 'Format foto berubah. Silakan ambil ulang foto sesuai jumlah yang dipilih.' : '');
   };
 
@@ -461,7 +465,7 @@ export default function PhotoboothStudio() {
               {camera.error && (
                 <div className="camera-error" role="alert">
                   <span>{camera.error}</span>
-                  <button type="button" onClick={() => void camera.start()}>Coba lagi</button>
+                  <button type="button" onClick={() => void camera.start(camera.deviceId, camera.facingMode, selectedLayout.photoRatio)}>Coba lagi</button>
                 </div>
               )}
 
@@ -643,6 +647,39 @@ export default function PhotoboothStudio() {
                 <span className="mono-label">{frame.name}</span>
               </div>
 
+              {/* Quick Manual Navigation Bar */}
+              <div className="manual-frame-nav" aria-label="Navigasi bingkai manual">
+                <button
+                  type="button"
+                  className="manual-nav-btn"
+                  onClick={() => {
+                    const pool = visibleFrames.length ? visibleFrames : frames;
+                    const currentIndex = pool.findIndex((item) => item.id === frame.id);
+                    const prevIndex = (currentIndex - 1 + pool.length) % pool.length;
+                    setFrame(pool[prevIndex]);
+                  }}
+                  aria-label="Bingkai sebelumnya"
+                >
+                  ← Sebelumnya
+                </button>
+                <span className="manual-nav-counter">
+                  {Math.max(1, (visibleFrames.length ? visibleFrames : frames).findIndex((item) => item.id === frame.id) + 1)} / {(visibleFrames.length ? visibleFrames : frames).length}
+                </span>
+                <button
+                  type="button"
+                  className="manual-nav-btn"
+                  onClick={() => {
+                    const pool = visibleFrames.length ? visibleFrames : frames;
+                    const currentIndex = pool.findIndex((item) => item.id === frame.id);
+                    const nextIndex = (currentIndex + 1) % pool.length;
+                    setFrame(pool[nextIndex]);
+                  }}
+                  aria-label="Bingkai berikutnya"
+                >
+                  Berikutnya →
+                </button>
+              </div>
+
               <div className="frame-categories" aria-label="Kategori bingkai">
                 {frameCategories.map((item) => (
                   <button
@@ -744,6 +781,37 @@ export default function PhotoboothStudio() {
               <div className="studio-section-title">
                 <span>03 / FILTER WARNA</span>
                 <span className="mono-label">{photoFilters.find((item) => item.id === photoFilter)?.name}</span>
+              </div>
+
+              {/* Quick Manual Navigation Bar for Filters */}
+              <div className="manual-frame-nav" aria-label="Navigasi filter manual">
+                <button
+                  type="button"
+                  className="manual-nav-btn"
+                  onClick={() => {
+                    const currentIndex = photoFilters.findIndex((item) => item.id === photoFilter);
+                    const prevIndex = (currentIndex - 1 + photoFilters.length) % photoFilters.length;
+                    setPhotoFilter(photoFilters[prevIndex].id);
+                  }}
+                  aria-label="Filter sebelumnya"
+                >
+                  ← Sebelumnya
+                </button>
+                <span className="manual-nav-counter">
+                  {photoFilters.findIndex((item) => item.id === photoFilter) + 1} / {photoFilters.length}
+                </span>
+                <button
+                  type="button"
+                  className="manual-nav-btn"
+                  onClick={() => {
+                    const currentIndex = photoFilters.findIndex((item) => item.id === photoFilter);
+                    const nextIndex = (currentIndex + 1) % photoFilters.length;
+                    setPhotoFilter(photoFilters[nextIndex].id);
+                  }}
+                  aria-label="Filter berikutnya"
+                >
+                  Berikutnya →
+                </button>
               </div>
 
               <p className="filter-intro">Pilih nuansa warna untuk semua foto. Kamu bisa ganti kapan saja.</p>

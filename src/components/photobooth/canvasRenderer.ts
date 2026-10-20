@@ -54,8 +54,6 @@ function fisheye(source: HTMLCanvasElement, target: HTMLCanvasElement) {
 
 export function drawLensFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement, lens: LensId, mirror = true, aspectRatio = 9 / 16) {
   if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA || video.videoWidth === 0) return false;
-  // A portrait story canvas keeps the full camera image visible, even when the
-  // device reports a landscape sensor feed.
   const width = aspectRatio >= 1 ? 1280 : 720;
   const height = aspectRatio >= 1 ? 720 : 1280;
   if (canvas.width !== width || canvas.height !== height) {
@@ -69,12 +67,12 @@ export function drawLensFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement
     context.translate(width, 0);
     context.scale(-1, 1);
   }
-  const scale = Math.min(width / video.videoWidth, height / video.videoHeight);
-  const drawWidth = video.videoWidth * scale;
-  const drawHeight = video.videoHeight * scale;
-  context.fillStyle = '#171717';
-  context.fillRect(0, 0, width, height);
-  context.drawImage(video, (width - drawWidth) / 2, (height - drawHeight) / 2, drawWidth, drawHeight);
+  const crop = Math.max(width / video.videoWidth, height / video.videoHeight);
+  const sw = width / crop;
+  const sh = height / crop;
+  const sx = (video.videoWidth - sw) / 2;
+  const sy = (video.videoHeight - sh) / 2;
+  context.drawImage(video, sx, sy, sw, sh, 0, 0, width, height);
   context.restore();
 
   if (lens === 'fisheye') {
@@ -242,7 +240,7 @@ export async function composePhotostrip(options: {
       : 'none';
     context.save();
     context.filter = filter;
-    drawContain(context, image, x, y, cellW, cellH);
+    drawCover(context, image, x, y, cellW, cellH);
     context.restore();
   });
 
@@ -283,12 +281,17 @@ export async function composePhotostrip(options: {
   return canvas;
 }
 
-function drawContain(context: CanvasRenderingContext2D, image: HTMLImageElement, x: number, y: number, w: number, h: number) {
+function drawCover(context: CanvasRenderingContext2D, image: HTMLImageElement, x: number, y: number, w: number, h: number) {
   if (!image.complete || !image.naturalWidth) return;
-  const scale = Math.min(w / image.width, h / image.height);
+  const scale = Math.max(w / image.width, h / image.height);
   const drawWidth = image.width * scale;
   const drawHeight = image.height * scale;
+  context.save();
+  context.beginPath();
+  context.rect(x, y, w, h);
+  context.clip();
   context.drawImage(image, x + (w - drawWidth) / 2, y + (h - drawHeight) / 2, drawWidth, drawHeight);
+  context.restore();
 }
 
 // ---------------------------------------------------------------------------

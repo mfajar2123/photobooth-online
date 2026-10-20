@@ -638,7 +638,8 @@ h1, h2, h3, p { margin-top: 0; }
     border: 2px solid var(--studio-ink);
     box-shadow: 2px 2px 0 var(--studio-ink);
   }
-  .studio-design-layout, .studio-export-layout { grid-template-columns: 1fr; gap: 20px; padding: 15px; }
+  .studio-design-layout, .studio-export-layout { grid-template-columns: 1fr; gap: 16px; padding: 12px; }
+  .photostrip-stage-wrap { position: static !important; min-height: auto !important; margin: 0 auto 10px !important; }
   .studio-stepper {
     order: 3;
     width: 100%;
@@ -665,9 +666,9 @@ h1, h2, h3, p { margin-top: 0; }
   .stepper-word-opt { display: none; }
   .layout-options { grid-template-columns: repeat(5, minmax(52px,1fr)); overflow-x: auto; }
   .layout-option { min-height: 88px; }
-  .frame-grid { grid-template-columns: repeat(4, minmax(0,1fr)); max-height: 300px; }
-  .result-paper { max-height: 360px; }
-  .composite-canvas { max-height: 360px; }
+  .frame-grid { grid-template-columns: repeat(3, minmax(0,1fr)); max-height: none; overflow-y: visible; }
+  .result-paper { width: min(100%, 200px); max-height: 250px; margin-inline: auto; }
+  .composite-canvas { max-height: 250px; width: auto; }
   .export-preview-stage { min-height: auto; }
   .export-actions-panel { max-width: none; }
   .sticker-picker > div { gap: 6px; }
@@ -705,8 +706,13 @@ h1, h2, h3, p { margin-top: 0; }
 /* Photobooth: one portrait shot, with the full camera frame preserved. */
 .studio-grid { grid-template-columns: minmax(0, 1.2fr) minmax(260px, .8fr); align-items: start; }
 .viewfinder { width: min(100%, 430px, 42.75svh); aspect-ratio: 9 / 16; min-height: 0; margin-inline: auto; background: #171717; }
-.camera-preview { object-fit: contain; }
+.camera-preview { width: 100%; height: 100%; display: block; object-fit: cover; }
 .camera-quick-lenses, .auto-toggle { display: none !important; }
+.manual-frame-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 10px; background: #fbf7ee; border: 1.5px solid var(--studio-ink); box-shadow: 2px 2px 0 var(--studio-ink); border-radius: 2px; }
+.manual-nav-btn { padding: 6px 12px; min-height: 36px; border: 1.5px solid var(--studio-ink); background: #ffffff; color: var(--studio-ink); font: 700 11px var(--mono); cursor: pointer; transition: all .15s ease; border-radius: 2px; }
+.manual-nav-btn:hover { background: var(--butter); transform: translateY(-1px); }
+.manual-nav-btn:active { transform: translateY(1px); }
+.manual-nav-counter { font: 700 11px var(--mono); color: #56534b; }
 .capture-summary-card { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 18px; border: 1.5px solid var(--studio-ink); background: #fbf7ec; }
 .capture-summary-card h2 { margin: 0; font: 800 clamp(22px, 3vw, 32px)/1.05 var(--display); letter-spacing: -.035em; }
 .capture-summary-card p { margin: 0; max-width: 38ch; color: #56534b; font-size: 13px; line-height: 1.5; }
@@ -742,8 +748,8 @@ h1, h2, h3, p { margin-top: 0; }
 @media (max-width: 700px) {
   .studio-app { border-width: 1px; box-shadow: 3px 3px 0 var(--studio-ink); }
   .studio-grid { padding: 12px; gap: 12px; }
-  .viewfinder { width: min(100%, 390px, 38.25svh); }
-  .viewfinder-landscape { width: min(100%, 90vw, 85svh); }
+  .viewfinder { width: min(100%, 360px); max-height: min(60svh, 540px); }
+  .viewfinder-landscape { width: min(100%, 92vw); max-height: min(48svh, 340px); }
   .camera-hud { top: 10px; left: 10px; right: 10px; font-size: 8px; }
   .capture-controls { display: grid; grid-template-columns: 1fr 1fr; }
   .capture-controls .shutter-button { grid-column: 1 / -1; }
@@ -752,12 +758,15 @@ h1, h2, h3, p { margin-top: 0; }
   .timer-select select { min-height: 36px; }
   .capture-summary-card { padding: 14px; }
   .capture-summary-card p { font-size: 12px; }
-  .photo-filter-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .photostrip-stage-wrap { position: static !important; min-height: auto !important; margin: 0 auto 10px !important; }
+  .result-paper { width: min(100%, 200px) !important; max-height: 250px !important; margin-inline: auto !important; }
+  .composite-canvas { max-height: 250px !important; width: auto !important; }
+  .frame-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; max-height: none !important; overflow-y: visible !important; gap: 8px !important; padding-right: 0 !important; }
+  .frame-swatch { padding: 6px 4px !important; }
+  .photo-filter-options { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important; }
   .photo-filter-option { display: grid; grid-template-columns: 48px 1fr; align-items: center; }
   .photo-filter-option .filter-swatch { grid-row: span 2; }
   .photo-filter-option small { font-size: 9px; }
-  .result-paper { width: min(100%, 320px); max-height: min(72svh, 620px); }
-  .composite-canvas { max-height: min(72svh, 620px); }
   .layout-options { grid-template-columns: minmax(0, 1fr); }
   .layout-option { min-height: 58px; flex-direction: row; justify-content: flex-start; gap: 10px; padding: 8px 12px; }
   .layout-option strong, .layout-option small { font-size: 10px; }
