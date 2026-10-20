@@ -1,8 +1,24 @@
-import type { CustomPattern, FramePreset, LayoutId, LensId, PhotoSlot } from './types';
+import type { CustomPattern, FramePreset, LayoutId, LensId, PhotoFilterId, PhotoSlot } from './types';
 import { layouts } from './presets';
 
 const clamp = (value: number, min = 0, max = 255) => Math.max(min, Math.min(max, value));
 const fisheyeSources = new WeakMap<HTMLCanvasElement, HTMLCanvasElement>();
+const decodedImages = new Map<string, Promise<HTMLImageElement>>();
+
+function decodeImage(source: string) {
+  const cached = decodedImages.get(source);
+  if (cached) return cached;
+  const decoded = new Promise<HTMLImageElement>((resolve) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => resolve(image);
+    image.src = source;
+    if (image.complete) resolve(image);
+  });
+  decodedImages.set(source, decoded);
+  if (decodedImages.size > 48) decodedImages.delete(decodedImages.keys().next().value!);
+  return decoded;
+}
 
 function fisheye(source: HTMLCanvasElement, target: HTMLCanvasElement) {
   const w = source.width;
@@ -36,10 +52,12 @@ function fisheye(source: HTMLCanvasElement, target: HTMLCanvasElement) {
   dstContext.putImageData(dst, 0, 0);
 }
 
-export function drawLensFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement, lens: LensId, mirror = true) {
+export function drawLensFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement, lens: LensId, mirror = true, aspectRatio = 9 / 16) {
   if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA || video.videoWidth === 0) return false;
-  const width = 640;
-  const height = Math.round((width * video.videoHeight) / video.videoWidth) || 480;
+  // A portrait story canvas keeps the full camera image visible, even when the
+  // device reports a landscape sensor feed.
+  const width = aspectRatio >= 1 ? 1280 : 720;
+  const height = aspectRatio >= 1 ? 720 : 1280;
   if (canvas.width !== width || canvas.height !== height) {
     canvas.width = width;
     canvas.height = height;
@@ -51,10 +69,12 @@ export function drawLensFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement
     context.translate(width, 0);
     context.scale(-1, 1);
   }
-  const crop = Math.max(width / video.videoWidth, height / video.videoHeight);
-  const sw = width / crop;
-  const sh = height / crop;
-  context.drawImage(video, (video.videoWidth - sw) / 2, (video.videoHeight - sh) / 2, sw, sh, 0, 0, width, height);
+  const scale = Math.min(width / video.videoWidth, height / video.videoHeight);
+  const drawWidth = video.videoWidth * scale;
+  const drawHeight = video.videoHeight * scale;
+  context.fillStyle = '#171717';
+  context.fillRect(0, 0, width, height);
+  context.drawImage(video, (width - drawWidth) / 2, (height - drawHeight) / 2, drawWidth, drawHeight);
   context.restore();
 
   if (lens === 'fisheye') {
@@ -168,6 +188,7 @@ export async function composePhotostrip(options: {
   stickerPositions: { x: number; y: number }[];
   customColor?: string;
   customPattern?: CustomPattern;
+  filterId?: PhotoFilterId;
   outputWidth?: number;
 }): Promise<HTMLCanvasElement> {
   const layout = layouts.find((item) => item.id === options.layoutId) ?? layouts[0];
@@ -180,16 +201,7 @@ export async function composePhotostrip(options: {
   if (!context) return canvas;
 
   const images = await Promise.all(
-    options.slots.map(async (slot) => {
-      const image = new Image();
-      image.src = slot.image;
-      try {
-        await image.decode();
-      } catch {
-        /* A failed slot is left blank and can be retaken */
-      }
-      return image;
-    }),
+    options.slots.map((slot) => decodeImage(slot.image)),
   );
 
   const frame = options.frame;
@@ -200,7 +212,7 @@ export async function composePhotostrip(options: {
   // Background motifs
   drawFrameBackground(context, width, height, frame, options.customPattern);
 
-  const footer = layout.id === 'polaroid' ? Math.round(height * 0.19) : Math.round(height * 0.11);
+  const footer = Math.round(height * 0.11);
   const isWideMargin = ['film', 'airmail', 'ticket', 'boarding', 'passport', 'cinema'].includes(frame.motif);
   const inset = Math.round(Math.min(width, height) * (isWideMargin ? 0.095 : 0.065));
   const cols = layout.columns;
@@ -221,7 +233,17 @@ export async function composePhotostrip(options: {
     photoRects.push({ x, y, w: cellW, h: cellH });
     context.fillStyle = '#121212';
     context.fillRect(x - 3, y - 3, cellW + 6, cellH + 6);
-    drawCover(context, image, x, y, cellW, cellH);
+    context.fillStyle = paper;
+    context.fillRect(x, y, cellW, cellH);
+    const filter = options.filterId === 'film' ? 'sepia(.18) contrast(1.08) saturate(.9)'
+      : options.filterId === 'bw' ? 'grayscale(1) contrast(1.08)'
+      : options.filterId === 'warm' ? 'sepia(.22) saturate(1.15)'
+      : options.filterId === 'vivid' ? 'saturate(1.35) contrast(1.04)'
+      : 'none';
+    context.save();
+    context.filter = filter;
+    drawContain(context, image, x, y, cellW, cellH);
+    context.restore();
   });
 
   const geometry: FrameGeometry = { photoTop, photoBottom, inset, cellW, cellH, cols, rows, gap, footer, photoRects };
@@ -261,12 +283,12 @@ export async function composePhotostrip(options: {
   return canvas;
 }
 
-function drawCover(context: CanvasRenderingContext2D, image: HTMLImageElement, x: number, y: number, w: number, h: number) {
+function drawContain(context: CanvasRenderingContext2D, image: HTMLImageElement, x: number, y: number, w: number, h: number) {
   if (!image.complete || !image.naturalWidth) return;
-  const scale = Math.max(w / image.width, h / image.height);
-  const sw = w / scale;
-  const sh = h / scale;
-  context.drawImage(image, (image.width - sw) / 2, (image.height - sh) / 2, sw, sh, x, y, w, h);
+  const scale = Math.min(w / image.width, h / image.height);
+  const drawWidth = image.width * scale;
+  const drawHeight = image.height * scale;
+  context.drawImage(image, x + (w - drawWidth) / 2, y + (h - drawHeight) / 2, drawWidth, drawHeight);
 }
 
 // ---------------------------------------------------------------------------

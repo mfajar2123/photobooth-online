@@ -23,17 +23,22 @@ export function useLiveCapture() {
     setHasMotion(clipsRef.current.some((item) => item.length > 1));
   }, []);
 
-  const exportWebm = useCallback(async (draw: (context: CanvasRenderingContext2D, frameIndex: number) => Promise<void>) => {
+  const exportWebm = useCallback(async (
+    draw: (context: CanvasRenderingContext2D, frameIndex: number) => Promise<void>,
+    durationSeconds = 3,
+    width = 720,
+    height = 1280,
+  ) => {
     if (!('MediaRecorder' in window) || !HTMLCanvasElement.prototype.captureStream) {
-      throw new Error('Browser ini belum mendukung ekspor video. Unduh strip PNG sebagai gantinya.');
+      throw new Error('Browser ini belum mendukung ekspor video. Kamu tetap bisa mengunduh foto JPG.');
     }
     const canvas = document.createElement('canvas');
-    canvas.width = 720;
-    canvas.height = 1440;
+    canvas.width = width;
+    canvas.height = height;
     const context = canvas.getContext('2d');
     if (!context) throw new Error('Canvas video nggak bisa dibuat di browser ini.');
     const stream = canvas.captureStream(24);
-    const mimeType = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'].find((type) => MediaRecorder.isTypeSupported(type));
+    const mimeType = ['video/mp4;codecs=avc1.42E01E', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'].find((type) => MediaRecorder.isTypeSupported(type));
     const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
     const chunks: BlobPart[] = [];
     const finished = new Promise<Blob>((resolve, reject) => {
@@ -42,15 +47,24 @@ export function useLiveCapture() {
       recorder.onstop = () => resolve(new Blob(chunks, { type: recorder.mimeType || 'video/webm' }));
     });
     recorder.start();
-    const count = Math.max(framesRef.current.length, 2);
-    for (let i = 0; i < count * 2; i++) {
-      const index = i < count ? i : count * 2 - i - 1;
-      await draw(context, index);
-      await new Promise((resolve) => window.setTimeout(resolve, 42));
+    try {
+      const sourceCount = Math.max(framesRef.current.length, 2);
+      const frameCount = Math.round(durationSeconds * 24);
+      for (let i = 0; i < frameCount; i++) {
+        const cycleLength = sourceCount * 2 - 2;
+        const position = i % cycleLength;
+        const index = position < sourceCount ? position : cycleLength - position;
+        await draw(context, index);
+        await new Promise((resolve) => window.setTimeout(resolve, 1000 / 24));
+      }
+      recorder.stop();
+      return await finished;
+    } catch (cause) {
+      if (recorder.state !== 'inactive') recorder.stop();
+      throw cause;
+    } finally {
+      stream.getTracks().forEach((track) => track.stop());
     }
-    recorder.stop();
-    stream.getTracks().forEach((track) => track.stop());
-    return finished;
   }, []);
 
   const clearMotion = useCallback(() => {

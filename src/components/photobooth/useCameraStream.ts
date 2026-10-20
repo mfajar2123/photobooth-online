@@ -32,8 +32,8 @@ export function useCameraStream() {
       const constraints: MediaStreamConstraints = {
         audio: false,
         video: requestedDevice
-          ? { deviceId: { exact: requestedDevice }, width: { ideal: 1920 }, height: { ideal: 1080 } }
-          : { facingMode: { ideal: requestedFacing }, width: { ideal: 1920 }, height: { ideal: 1080 } },
+          ? { deviceId: { exact: requestedDevice }, width: { ideal: 1080 }, height: { ideal: 1920 } }
+          : { facingMode: { ideal: requestedFacing }, width: { ideal: 1080 }, height: { ideal: 1920 } },
       };
       const next = await navigator.mediaDevices.getUserMedia(constraints);
       setStream(next);

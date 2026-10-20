@@ -16,59 +16,91 @@ test('landing page keeps its editorial alignment and complete contact details', 
   await expect(page.locator('footer')).toContainText('+62 812-8899-4021');
 });
 
-test('mobile layout has no horizontal overflow and its primary actions work', async ({ page }) => {
+test('all static routes respond successfully', async ({ page }) => {
+  for (const route of ['/', '/brand', '/panduan', '/share', '/studio', '/terms']) {
+    const response = await page.goto(route);
+    expect(response?.status(), `${route} should load`).toBe(200);
+    await expect(page.locator('body')).toBeVisible();
+  }
+});
+
+test('mobile landing and studio layouts have no horizontal overflow', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   await expect(page.getByRole('heading', { name: /Abadikan momen seru/i })).toBeVisible();
-  const dimensions = await page.evaluate(() => ({ body: document.body.scrollWidth, viewport: window.innerWidth }));
+  let dimensions = await page.evaluate(() => ({ body: document.documentElement.scrollWidth, viewport: window.innerWidth }));
   expect(dimensions.body).toBeLessThanOrEqual(dimensions.viewport);
   await page.getByRole('link', { name: /Mulai photobooth sekarang/i }).click();
   await expect(page).toHaveURL(/\/studio\/?$/);
   await expect(page.getByRole('heading', { name: /Senyum dulu/i })).toBeVisible();
+  dimensions = await page.evaluate(() => ({ body: document.documentElement.scrollWidth, viewport: window.innerWidth }));
+  expect(dimensions.body).toBeLessThanOrEqual(dimensions.viewport);
 });
 
-test('camera preview renders canvas and lens controls switch modes', async ({ page, context }) => {
-  await context.grantPermissions(['camera']);
+test('studio layout options enforce portrait and landscape rules', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/studio');
   await expect(page.locator('astro-island')).not.toHaveAttribute('ssr');
-  await expect(page.getByRole('button', { name: /Nyalakan kamera/i })).toBeVisible();
-  await page.getByRole('button', { name: /Nyalakan kamera/i }).click();
-  await expect(page.getByRole('button', { name: /Ambil foto/i })).toBeVisible({ timeout: 15_000 });
-  await page.getByRole('button', { name: /Fisheye 360°/i }).click();
-  const canvas = page.getByLabel('Pratinjau filter kamera');
-  await expect.poll(() => canvas.evaluate((element) => (element as HTMLCanvasElement).width)).toBeGreaterThan(0);
-  await page.getByRole('button', { name: /Digicam 2004/i }).click();
-  await expect(canvas).toBeVisible();
+  await expect(page.locator('.layout-option')).toHaveCount(1);
+  await expect(page.locator('.viewfinder')).toHaveCSS('aspect-ratio', '0.5625 / 1');
+  await page.getByRole('button', { name: 'Landscape', exact: true }).click();
+  await expect(page.locator('.layout-option')).toHaveCount(3);
+  await expect(page.locator('.viewfinder')).toHaveCSS('aspect-ratio', '1.77778 / 1');
+  await page.locator('.layout-option').nth(1).click();
+  await expect(page.locator('.layout-option.is-selected')).toContainText('Dua foto');
+  await page.getByRole('button', { name: 'Potret · Story' }).click();
+  await expect(page.locator('.layout-option')).toHaveCount(1);
 });
 
-test('capture, frame styling, sticker, watermark and QR flow work in the browser', async ({ page, context }) => {
+test('camera capture, portrait output, JPG download, filters and Boomerang sharing work', async ({ page, context }) => {
   await context.grantPermissions(['camera']);
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'canShare', { configurable: true, value: () => true });
+    Object.defineProperty(navigator, 'share', {
+      configurable: true,
+      value: async ({ files }: { files: File[] }) => {
+        (window as unknown as { __sharedFile?: { name: string; type: string } }).__sharedFile = { name: files[0].name, type: files[0].type };
+      },
+    });
+  });
   await page.goto('/studio');
   await expect(page.locator('astro-island')).not.toHaveAttribute('ssr');
   await page.getByRole('button', { name: /Nyalakan kamera/i }).click();
   await expect(page.getByRole('button', { name: /Ambil foto/i })).toBeVisible({ timeout: 15_000 });
   const previewCanvas = page.getByLabel('Pratinjau filter kamera');
   await expect.poll(() => previewCanvas.evaluate((element) => (element as HTMLCanvasElement).width)).toBeGreaterThan(0);
-  await page.getByRole('button', { name: /Big Solo Polaroid/i }).click();
-  await page.getByRole('button', { name: /Ambil foto/i }).click();
-  await expect(page.getByRole('img', { name: 'Hasil foto 1' })).toBeVisible({ timeout: 15_000 });
+  await page.getByRole('button', { name: 'Landscape', exact: true }).click();
+  await page.locator('.layout-option').nth(2).click();
+  await page.getByLabel('Timer').selectOption('1');
+  for (let index = 1; index <= 3; index++) {
+    await page.getByRole('button', { name: /Ambil foto/i }).click();
+    await expect(page.getByRole('img', { name: `Hasil foto ${index}` })).toBeVisible({ timeout: 15_000 });
+  }
   await page.getByRole('button', { name: /Lanjut ke Bingkai/i }).click();
-  await page.getByRole('button', { name: /Y2K Cyber Pop/i }).click();
-  await page.getByRole('button', { name: /Lanjut ke Filter & Stiker/i }).click();
-  await page.getByLabel(/Tulis nama geng atau caption/).fill('Bestie Selamanya');
-  await page.getByRole('button', { name: /Tambah stiker ✦/ }).click();
-  await expect(page.getByRole('button', { name: /Kembali ke Bingkai/i })).toBeVisible();
+  await page.getByRole('button', { name: /Lanjut pilih filter/i }).click();
+  const filmFilter = page.getByRole('button', { name: /Film Nuansa analog/i });
+  await filmFilter.click();
+  await expect(filmFilter).toHaveAttribute('aria-pressed', 'true');
   await page.getByRole('button', { name: /Lanjut ke Simpan & Cetak/i }).click();
-  const motionDownload = page.waitForEvent('download');
-  await page.getByRole('button', { name: /Simpan Boomerang WebM/i }).click();
-  expect((await motionDownload).suggestedFilename()).toBe('mivora-boomerang.webm');
-  await page.getByRole('button', { name: /Tampilkan QR hasil foto/i }).click();
-  await expect(page.getByRole('dialog', { name: /Bawa memorinya/i })).toBeVisible();
-  await expect(page.getByRole('dialog').locator('svg')).toBeVisible();
-  await page.getByRole('button', { name: /Tutup QR/i }).click();
-  await page.getByRole('button', { name: /Unduh photostrip PNG/i }).click();
-  const canvas = page.getByLabel('Pratinjau photostrip akhir');
-  await expect.poll(() => canvas.evaluate((element) => (element as HTMLCanvasElement).width)).toBeGreaterThan(0);
+
+  const outputCanvas = page.getByLabel('Pratinjau photostrip akhir');
+  await expect.poll(() => outputCanvas.evaluate((element) => {
+    const canvas = element as HTMLCanvasElement;
+    return canvas.width && canvas.height ? canvas.width / canvas.height : 0;
+  })).toBeCloseTo(9 / 16, 2);
+  const photoDownload = page.waitForEvent('download');
+  await page.getByRole('button', { name: /Unduh foto JPG/i }).click();
+  expect((await photoDownload).suggestedFilename()).toMatch(/\.jpg$/);
+
+  await page.getByRole('button', { name: 'Boomerang', exact: true }).click();
+  await page.getByLabel(/Durasi Boomerang/i).selectOption('4');
+  const shareButton = page.getByRole('button', { name: /Bagikan Boomerang dari perangkat/i });
+  await expect(shareButton).toBeEnabled({ timeout: 30_000 });
+  await shareButton.click();
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedFile?: { name: string; type: string } }).__sharedFile?.name)).toMatch(/mivora-boomerang\.(mp4|webm)$/);
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedFile?: { name: string; type: string } }).__sharedFile?.type)).toMatch(/^video\/(mp4|webm)(;|$)/);
+  const dimensions = await page.evaluate(() => ({ body: document.documentElement.scrollWidth, viewport: window.innerWidth }));
+  expect(dimensions.body).toBeLessThanOrEqual(dimensions.viewport);
 });
 
 test('panduan tutorial page renders 4 stages, tips, and navigates to studio', async ({ page }) => {

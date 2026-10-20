@@ -205,13 +205,13 @@ h1, h2, h3, p { margin-top: 0; }
 .camera-preview { width: 100%; height: 100%; display: block; object-fit: cover; }
 .camera-video-hidden { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 .viewfinder-fisheye::after { content: ''; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 45px 14px rgba(0,0,0,.42); border-radius: 50%; }
-.camera-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-.camera-icon { width: 45px; height: 34px; border: 2px solid var(--studio-ink); position: relative; margin-bottom: 12px; }
-.camera-icon::before { content: ''; position: absolute; width: 14px; height: 8px; left: 5px; top: -9px; border: 2px solid var(--studio-ink); border-bottom: 0; }
+.camera-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fffdf5; text-align: center; background: linear-gradient(rgba(0,0,0,.16), rgba(0,0,0,.3)); }
+.camera-icon { width: 45px; height: 34px; border: 2px solid #fffdf5; position: relative; margin-bottom: 12px; }
+.camera-icon::before { content: ''; position: absolute; width: 14px; height: 8px; left: 5px; top: -9px; border: 2px solid #fffdf5; border-bottom: 0; }
 .camera-icon span:first-child { position: absolute; width: 17px; height: 17px; top: 6px; left: 12px; border: 2px solid var(--studio-ink); border-radius: 50%; }
 .camera-icon span:nth-child(2) { position: absolute; top: 4px; right: 4px; width: 4px; height: 4px; border-radius: 50%; background: var(--poppy); }
 .camera-empty p { margin: 0 0 4px; font: 800 22px/1.1 var(--display); letter-spacing: -.04em; }
-.camera-empty > span { font-size: 10px; color: #4b473d; }
+.camera-empty > span { font-size: 10px; color: #e9e5da; }
 .countdown-overlay { position: absolute; z-index: 2; inset: 0; display: grid; place-items: center; color: white; background: rgba(18,18,18,.25); font: 800 clamp(80px, 13vw, 170px)/1 var(--display); text-shadow: 4px 4px var(--ink); }
 .camera-hud { position: absolute; z-index: 1; top: 13px; left: 14px; right: 14px; display: flex; justify-content: space-between; color: white; font: 500 9px var(--mono); text-shadow: 1px 1px #111; }
 .camera-hud span:first-child { color: #ffd5ce; }
@@ -700,4 +700,69 @@ h1, h2, h3, p { margin-top: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+/* Photobooth: one portrait shot, with the full camera frame preserved. */
+.studio-grid { grid-template-columns: minmax(0, 1.2fr) minmax(260px, .8fr); align-items: start; }
+.viewfinder { width: min(100%, 430px, 42.75svh); aspect-ratio: 9 / 16; min-height: 0; margin-inline: auto; background: #171717; }
+.camera-preview { object-fit: contain; }
+.camera-quick-lenses, .auto-toggle { display: none !important; }
+.capture-summary-card { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 18px; border: 1.5px solid var(--studio-ink); background: #fbf7ec; }
+.capture-summary-card h2 { margin: 0; font: 800 clamp(22px, 3vw, 32px)/1.05 var(--display); letter-spacing: -.035em; }
+.capture-summary-card p { margin: 0; max-width: 38ch; color: #56534b; font-size: 13px; line-height: 1.5; }
+.capture-thumbnail { display: block; width: min(100%, 190px); aspect-ratio: 9 / 16; object-fit: contain; margin-inline: auto; background: #171717; border: 1px solid var(--studio-ink); }
+.capture-placeholder { width: min(100%, 190px); aspect-ratio: 9 / 16; display: grid; place-items: center; padding: 12px; margin-inline: auto; background: #eee8d7; color: #6b665b; text-align: center; font-size: 11px; }
+.capture-summary-card .step-primary-cta { width: 100%; }
+.layout-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.orientation-options, .photo-count-options, .share-format-options { display: grid; gap: 8px; }
+.orientation-options { grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 8px 0 12px; }
+.photo-count-options { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.orientation-options button, .photo-count-options button, .share-format-options button { min-height: 42px; padding: 8px 10px; border: 1.5px solid #aaa596; background: #fffdf5; color: var(--studio-ink); font: 700 11px var(--body); cursor: pointer; }
+.orientation-options button.is-selected, .photo-count-options button.is-selected, .share-format-options button.is-selected { border-color: var(--studio-ink); background: var(--butter); box-shadow: 2px 2px 0 var(--studio-ink); }
+.photo-filter-options { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.filter-intro { margin: -4px 0 0; color: #56534b; font-size: 12px; line-height: 1.5; }
+.photo-filter-option { min-width: 0; padding: 7px; display: flex; flex-direction: column; align-items: stretch; gap: 5px; border: 1.5px solid #b1ac9e; background: #fffdf5; text-align: left; cursor: pointer; }
+.photo-filter-option.is-selected { border-color: var(--studio-ink); background: #e7f4f9; box-shadow: 2px 2px 0 var(--studio-ink); }
+.photo-filter-option strong { font-size: 10px; }
+.photo-filter-option small { color: #5a574e; font-size: 8px; line-height: 1.2; }
+.filter-swatch { aspect-ratio: 1; display: block; overflow: hidden; background: linear-gradient(145deg, #f0ae8b 0 42%, #765b4e 43% 62%, #90a4a0 63%); }
+.filter-swatch i { width: 38%; height: 38%; display: block; margin: 22% auto; border-radius: 50%; background: #f5d5b3; box-shadow: 0 14px 0 8px #49382f; }
+.share-format-panel { display: grid; gap: 10px; padding: 14px; border: 1.5px solid var(--studio-ink); background: #fbf7ec; }
+.share-format-panel > strong { font: 800 14px var(--display); }
+.share-format-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.boomerang-duration { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #56534b; font-size: 11px; font-weight: 700; }
+.boomerang-duration select { min-height: 38px; padding: 5px 28px 5px 10px; border: 1.5px solid var(--studio-ink); background: white; color: var(--studio-ink); font: 700 12px var(--body); }
+.caption-input, .sticker-picker, .drag-hint, .result-sticker { display: none !important; }
+.viewfinder-landscape { width: min(100%, 860px, 72svh); }
+.result-paper { width: min(100%, 380px); min-height: 0; max-height: min(76svh, 680px); }
+.composite-canvas { display: block; width: auto; max-width: 100%; max-height: min(76svh, 680px); object-fit: contain; }
+@media (max-width: 1000px) {
+  .studio-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 700px) {
+  .studio-app { border-width: 1px; box-shadow: 3px 3px 0 var(--studio-ink); }
+  .studio-grid { padding: 12px; gap: 12px; }
+  .viewfinder { width: min(100%, 390px, 38.25svh); }
+  .viewfinder-landscape { width: min(100%, 90vw, 85svh); }
+  .camera-hud { top: 10px; left: 10px; right: 10px; font-size: 8px; }
+  .capture-controls { display: grid; grid-template-columns: 1fr 1fr; }
+  .capture-controls .shutter-button { grid-column: 1 / -1; }
+  .capture-controls .camera-toolbar-inline { grid-column: 1 / -1; width: 100%; justify-content: center; margin-left: 0; }
+  .timer-select { align-self: center; font-size: 9px; }
+  .timer-select select { min-height: 36px; }
+  .capture-summary-card { padding: 14px; }
+  .capture-summary-card p { font-size: 12px; }
+  .photo-filter-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .photo-filter-option { display: grid; grid-template-columns: 48px 1fr; align-items: center; }
+  .photo-filter-option .filter-swatch { grid-row: span 2; }
+  .photo-filter-option small { font-size: 9px; }
+  .result-paper { width: min(100%, 320px); max-height: min(72svh, 620px); }
+  .composite-canvas { max-height: min(72svh, 620px); }
+  .layout-options { grid-template-columns: minmax(0, 1fr); }
+  .layout-option { min-height: 58px; flex-direction: row; justify-content: flex-start; gap: 10px; padding: 8px 12px; }
+  .layout-option strong, .layout-option small { font-size: 10px; }
+  .layout-option small { margin-left: auto; }
+  .layout-glyph { width: 26px; height: 38px; flex: 0 0 auto; }
+  .studio-stepper { justify-content: center; }
+  .stepper-btn { min-height: 36px; }
 }

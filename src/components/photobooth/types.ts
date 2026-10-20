@@ -1,5 +1,6 @@
 export type LensId = 'studio' | 'fisheye' | 'digicam' | 'leica' | 'bw' | 'vhs' | 'thermal' | 'dreamy';
-export type LayoutId = 'strip4' | 'strip3' | 'grid4' | 'duo2' | 'polaroid';
+export type LayoutId = 'story-1' | 'landscape-1' | 'landscape-2' | 'landscape-3';
+export type PhotoFilterId = 'classic' | 'film' | 'bw' | 'warm' | 'vivid';
 export type CustomPattern = 'solid' | 'dots' | 'lines' | 'grid';
 
 export interface LensPreset {

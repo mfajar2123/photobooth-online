@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
 import { composePhotostrip, drawLensFrame } from './canvasRenderer';
-import { frameCategories, frames, layouts, lenses } from './presets';
+import { frameCategories, frames, layouts, lenses, photoFilters } from './presets';
 import { useCameraStream } from './useCameraStream';
 import { useLiveCapture } from './useLiveCapture';
-import type { CustomPattern, FramePreset, LayoutId, LensId, PhotoSlot } from './types';
+import type { CustomPattern, FramePreset, LayoutId, LensId, PhotoFilterId, PhotoSlot } from './types';
 
 const stickerChoices = ['✦', '♡', '🎀', '☻', '✿', '★', 'CHEESE!'];
 
@@ -19,10 +18,18 @@ export default function PhotoboothStudio() {
   const countdownTimer = useRef<number | null>(null);
   const motionWindowTimer = useRef<number | null>(null);
   const renderVersion = useRef(0);
+  const composedRef = useRef<{ slots: PhotoSlot[]; frame: FramePreset; layout: LayoutId; caption: string; stickers: string[]; stickerPositions: { x: number; y: number }[]; customColor: string; customPattern: CustomPattern; photoFilter: PhotoFilterId; canvas: HTMLCanvasElement } | null>(null);
+  const preparedPhotoRef = useRef<{ key: unknown[]; blob: Blob } | null>(null);
+  const preparedMotionRef = useRef<{ key: unknown[]; blob: Blob } | null>(null);
 
   const [step, setStep] = useState<StudioStep>(1);
   const [lens, setLens] = useState<LensId>('studio');
-  const [layout, setLayout] = useState<LayoutId>('strip4');
+  const [layout, setLayout] = useState<LayoutId>('story-1');
+  const [photoFilter, setPhotoFilter] = useState<PhotoFilterId>('classic');
+  const [shareFormat, setShareFormat] = useState<'photo' | 'boomerang'>('photo');
+  const [boomerangDuration, setBoomerangDuration] = useState<3 | 4>(3);
+  const [isExporting, setIsExporting] = useState(false);
+  const [isShareReady, setIsShareReady] = useState(false);
   const [frame, setFrame] = useState<FramePreset>(frames[0]);
   const [category, setCategory] = useState('Semua');
   const [slots, setSlots] = useState<PhotoSlot[]>([]);
@@ -38,43 +45,18 @@ export default function PhotoboothStudio() {
   const [draggingSticker, setDraggingSticker] = useState<number | null>(null);
   const [customColor, setCustomColor] = useState('#FFF3B0');
   const [customPattern, setCustomPattern] = useState<CustomPattern>('solid');
-  const [showQr, setShowQr] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [notice, setNotice] = useState('');
 
   const selectedLayout = layouts.find((item) => item.id === layout) ?? layouts[0];
+  const orientation = layout.startsWith('story-') ? 'story' : 'landscape';
   const visibleFrames = useMemo(() => category === 'Semua' ? frames : frames.filter((item) => item.category === category), [category]);
   const capturedCount = slots.filter((slot) => Boolean(slot?.image)).length;
   const isLayoutFilled = capturedCount >= selectedLayout.count;
   const hasPhotos = capturedCount > 0;
   const canDownload = Array.from({ length: selectedLayout.count }, (_, index) => Boolean(slots[index]?.image)).every(Boolean);
-
-  const [qrPayload, setQrPayload] = useState('');
-  useEffect(() => {
-    if (!slots[0]?.image) { setQrPayload(''); return; }
-    const thumb = document.createElement('canvas');
-    thumb.width = 48;
-    thumb.height = 67;
-    const context = thumb.getContext('2d');
-    if (!context) return;
-    context.fillStyle = frame.background;
-    context.fillRect(0, 0, thumb.width, thumb.height);
-    const image = new Image();
-    image.src = slots[0].image;
-    image.onload = () => {
-      context.drawImage(image, 4, 4, 40, 49);
-      context.fillStyle = frame.foreground;
-      context.font = 'bold 4px Arial';
-      context.textAlign = 'center';
-      context.fillText('MIVORA PHOTO', 24, 60);
-      const data = { v: 1, title: 'Mivora Photo — Digital Collector Card', name: caption.slice(0, 18), frame: frame.name, preview: thumb.toDataURL('image/jpeg', 0.22) };
-      const bytes = new TextEncoder().encode(JSON.stringify(data));
-      const binary = Array.from(bytes, (byte) => String.fromCharCode(byte)).join('');
-      const encoded = btoa(binary);
-      const basePath = window.location.pathname.replace(/\/studio\/?$/, '').replace(/\/+$/, '');
-      setQrPayload(`${window.location.origin}${basePath}/share#data=${encoded}`);
-    };
-  }, [caption, frame, slots]);
+  const exportKey = [slots, frame, layout, caption, stickers, stickerPositions, customColor, customPattern, photoFilter, boomerangDuration];
+  const isSameExportKey = (key: unknown[]) => key.every((value, index) => value === exportKey[index]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -93,7 +75,7 @@ export default function PhotoboothStudio() {
     const paint = (now: number) => {
       if (!intersects || document.hidden) { frameId = 0; return; }
       if (now - lastPaint > 40) {
-        drawLensFrame(video, canvas, lens, mirror);
+        drawLensFrame(video, canvas, lens, mirror, selectedLayout.photoRatio);
         lastPaint = now;
       }
       frameId = requestAnimationFrame(paint);
@@ -106,23 +88,28 @@ export default function PhotoboothStudio() {
     observer.observe(canvas);
     document.addEventListener('visibilitychange', updateLoop);
     return () => { observer.disconnect(); document.removeEventListener('visibilitychange', updateLoop); if (frameId !== 0) cancelAnimationFrame(frameId); };
-  }, [camera.stream, lens, mirror, step]);
+  }, [camera.stream, lens, mirror, selectedLayout.photoRatio, step]);
 
   const renderOutput = useCallback(async () => {
     const version = ++renderVersion.current;
-    const canvas = await composePhotostrip({ slots, frame, layoutId: layout, caption, stickers, stickerPositions, customColor, customPattern });
+    const cached = composedRef.current;
+    const isCached = cached && cached.slots === slots && cached.frame === frame && cached.layout === layout && cached.caption === caption && cached.stickers === stickers && cached.stickerPositions === stickerPositions && cached.customColor === customColor && cached.customPattern === customPattern && cached.photoFilter === photoFilter;
+    const canvas = isCached ? cached.canvas : await composePhotostrip({ slots, frame, layoutId: layout, caption, stickers, stickerPositions, customColor, customPattern, filterId: photoFilter });
+    if (version !== renderVersion.current) return canvas;
+    if (!isCached) composedRef.current = { slots, frame, layout, caption, stickers, stickerPositions, customColor, customPattern, photoFilter, canvas };
     const target = outputRef.current;
-    if (!target || version !== renderVersion.current) return;
-    target.width = canvas.width;
-    target.height = canvas.height;
-    target.getContext('2d')?.drawImage(canvas, 0, 0);
-  }, [caption, customColor, customPattern, frame, layout, slots, stickerPositions, stickers]);
+    if (target) {
+      if (target.width !== canvas.width || target.height !== canvas.height) { target.width = canvas.width; target.height = canvas.height; }
+      target.getContext('2d')?.drawImage(canvas, 0, 0);
+    }
+    return canvas;
+  }, [caption, customColor, customPattern, frame, layout, photoFilter, slots, stickerPositions, stickers]);
 
   useEffect(() => {
     if (outputRef.current && slots.length) {
       void renderOutput();
     }
-  }, [slots, frame, layout, caption, stickers, stickerPositions, customColor, step, renderOutput]);
+  }, [slots, frame, layout, caption, stickers, stickerPositions, customColor, photoFilter, step, renderOutput]);
 
   useEffect(() => () => {
     if (countdownTimer.current !== null) window.clearInterval(countdownTimer.current);
@@ -209,15 +196,18 @@ export default function PhotoboothStudio() {
       await snap();
     };
     await runOne();
-    if (autoShoot && targetSlot === null) {
-      for (let i = 1; i < selectedLayout.count; i++) {
-        await new Promise((resolve) => window.setTimeout(resolve, 650));
-        await runOne();
-      }
-    }
     setCountdown(null);
     setIsCapturing(false);
-  }, [autoShoot, camera, isCapturing, selectedLayout.count, snap, targetSlot, timer]);
+  }, [camera, isCapturing, snap, timer]);
+
+  const updateLayout = (nextLayout: LayoutId) => {
+    if (nextLayout === layout) return;
+    setLayout(nextLayout);
+    setSlots([]);
+    setTargetSlot(null);
+    live.clearMotion();
+    setNotice(hasPhotos ? 'Format foto berubah. Silakan ambil ulang foto sesuai jumlah yang dipilih.' : '');
+  };
 
   const addSticker = (value: string) => {
     setStickers((current) => [...current, value]);
@@ -233,36 +223,56 @@ export default function PhotoboothStudio() {
   };
 
   const exportImage = async () => {
-    await renderOutput();
-    const canvas = outputRef.current;
-    if (!canvas) return;
-    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
-    if (!blob) return setNotice('File PNG belum bisa dibuat. Coba lagi setelah foto selesai dimuat.');
-    const link = document.createElement('a');
-    link.download = `mivora-photo-${new Date().toISOString().slice(0, 10)}.png`;
-    link.href = URL.createObjectURL(blob);
-    link.click();
-    URL.revokeObjectURL(link.href);
-  };
-
-  const shareResult = async () => {
-    await renderOutput();
-    const canvas = outputRef.current;
-    if (!canvas) return;
-    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
-    if (!blob) return;
-    const file = new File([blob], 'mivora-photo.png', { type: 'image/png' });
-    if (navigator.canShare?.({ files: [file] }) && navigator.share) {
-      await navigator.share({ title: 'Hasil Mivora Photo', files: [file] });
-    } else {
-      await exportImage();
-      setNotice('Browser ini belum mendukung share file. PNG sudah diunduh, tinggal kirim dari galeri.');
+    setIsExporting(true);
+    try {
+      const canvas = await renderOutput();
+      if (!canvas) return;
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.92));
+      if (!blob) { setNotice('File foto belum bisa dibuat. Coba lagi setelah foto selesai dimuat.'); return; }
+      const link = document.createElement('a');
+      link.download = `mivora-photo-${new Date().toISOString().slice(0, 10)}.jpg`;
+      link.href = URL.createObjectURL(blob);
+      link.click();
+      window.setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    } finally {
+      setIsExporting(false);
     }
   };
 
-  const exportMotion = async () => {
+  const shareResult = async () => {
+    const isVideo = shareFormat === 'boomerang';
+    const prepared = isVideo ? preparedMotionRef.current : preparedPhotoRef.current;
+    if (!prepared || !isSameExportKey(prepared.key)) {
+      setNotice(`File ${isVideo ? 'Boomerang' : 'foto'} sedang disiapkan. Tombol bagikan aktif setelah selesai.`);
+      return;
+    }
+    const blob = prepared.blob;
+    const mimeType = blob.type || (isVideo ? 'video/webm' : 'image/jpeg');
+    const extension = isVideo ? (mimeType.includes('mp4') ? 'mp4' : 'webm') : 'jpg';
+    const file = new File([blob], `mivora-${isVideo ? 'boomerang' : 'photo'}.${extension}`, { type: mimeType });
+    if (navigator.share && (isVideo || !navigator.canShare || navigator.canShare({ files: [file] }))) {
+      try {
+        await navigator.share({ title: isVideo ? 'Boomerang Mivora Photo' : 'Foto Mivora Photo', files: [file] });
+        return;
+      } catch (cause) {
+        if (cause instanceof DOMException && cause.name === 'AbortError') return;
+      }
+    }
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = file.name;
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setNotice(`Browser ini belum mendukung berbagi ${isVideo ? 'video' : 'foto'} langsung. File sudah diunduh, lalu bagikan dari galeri.`);
+  };
+
+  const createMotionBlob = async () => {
+    setIsExporting(true);
     try {
-      const frameCount = Math.max(2, live.framesRef.current.length);
+      const frameCount = Math.max(2, ...live.clipsRef.current.slice(0, selectedLayout.count).map((clip) => clip.length));
+      const outputWidth = selectedLayout.ratio >= 1 ? 1280 : 720;
+      const outputHeight = Math.round(outputWidth / selectedLayout.ratio);
       const animatedComposites = await Promise.all(Array.from({ length: frameCount }, (_, frameIndex) => {
         const animatedSlots = slots.slice(0, selectedLayout.count).map((slot, slotIndex) => ({
           ...slot,
@@ -277,27 +287,63 @@ export default function PhotoboothStudio() {
           stickerPositions,
           customColor,
           customPattern,
-          outputWidth: 720,
+          filterId: photoFilter,
+          outputWidth,
         });
       }));
       const blob = await live.exportWebm(async (context, frameIndex) => {
         const composite = animatedComposites[frameIndex % animatedComposites.length];
         context.fillStyle = frame.background;
-        context.fillRect(0, 0, 720, 1440);
-        const scale = Math.min(720 / composite.width, 1380 / composite.height);
-        const width = composite.width * scale;
-        const height = composite.height * scale;
-        context.drawImage(composite, (720 - width) / 2, (1440 - height) / 2, width, height);
-      });
+        context.fillRect(0, 0, outputWidth, outputHeight);
+        context.drawImage(composite, 0, 0, outputWidth, outputHeight);
+      }, boomerangDuration, outputWidth, outputHeight);
+      preparedMotionRef.current = { key: exportKey, blob };
+      return blob;
+    } catch (cause) {
+      setNotice(cause instanceof Error ? cause.message : 'Video belum bisa dibuat.');
+      return null;
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  useEffect(() => {
+    if (step !== 4 || !canDownload) { setIsShareReady(false); return; }
+    let cancelled = false;
+    const existing = shareFormat === 'boomerang' ? preparedMotionRef.current : preparedPhotoRef.current;
+    if (existing && isSameExportKey(existing.key)) { setIsShareReady(true); return; }
+    setIsShareReady(false);
+    setIsExporting(true);
+    const prepare = async () => {
+      try {
+        if (shareFormat === 'boomerang') {
+          await createMotionBlob();
+        } else {
+          const canvas = await renderOutput();
+          if (!canvas) return;
+          const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.92));
+          if (blob) preparedPhotoRef.current = { key: exportKey, blob };
+        }
+        const preparedResult = shareFormat === 'boomerang' ? preparedMotionRef.current : preparedPhotoRef.current;
+        if (!cancelled) setIsShareReady(Boolean(preparedResult && isSameExportKey(preparedResult.key)));
+      } finally {
+        if (!cancelled) setIsExporting(false);
+      }
+    };
+    void prepare();
+    return () => { cancelled = true; };
+  }, [step, canDownload, shareFormat, slots, frame, layout, caption, stickers, stickerPositions, customColor, customPattern, photoFilter, boomerangDuration, renderOutput]);
+
+  const exportMotion = async () => {
+    const cached = preparedMotionRef.current;
+    const blob = cached && isSameExportKey(cached.key) ? cached.blob : await createMotionBlob();
+    if (!blob) return;
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'mivora-boomerang.webm';
+      link.download = `mivora-boomerang.${blob.type.includes('mp4') ? 'mp4' : 'webm'}`;
       link.click();
-      URL.revokeObjectURL(url);
-    } catch (cause) {
-      setNotice(cause instanceof Error ? cause.message : 'Video belum bisa dibuat.');
-    }
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   const fullscreen = async () => {
@@ -314,6 +360,11 @@ export default function PhotoboothStudio() {
   const resetSession = () => {
     setSlots([]);
     setTargetSlot(null);
+    setLayout('story-1');
+    setPhotoFilter('classic');
+    setShareFormat('photo');
+    setBoomerangDuration(3);
+    live.clearMotion();
     setStickers([]);
     setStickerPositions([]);
     setCaption('');
@@ -344,31 +395,31 @@ export default function PhotoboothStudio() {
           <button
             type="button"
             className={`stepper-btn ${step === 2 ? 'is-active' : ''}`}
-            onClick={() => hasPhotos && setStep(2)}
-            disabled={!hasPhotos}
+            onClick={() => canDownload && setStep(2)}
+            disabled={!canDownload}
             aria-label="Tahap 02: Pilih bingkai"
           >
             <span className="step-num">02</span>
-            <span className="step-name"><span className="stepper-word-opt">Pilih </span>Bingkai</span>
+            <span className="step-name">Bingkai</span>
           </button>
           <span className="stepper-arrow" aria-hidden="true">→</span>
           <button
             type="button"
             className={`stepper-btn ${step === 3 ? 'is-active' : ''}`}
-            onClick={() => hasPhotos && setStep(3)}
-            disabled={!hasPhotos}
-            aria-label="Tahap 03: Filter dan stiker"
+            onClick={() => canDownload && setStep(3)}
+            disabled={!canDownload}
+            aria-label="Tahap 03: Pilih filter"
           >
             <span className="step-num">03</span>
-            <span className="step-name"><span className="stepper-word-opt">Filter & </span>Stiker</span>
+            <span className="step-name">Filter</span>
           </button>
           <span className="stepper-arrow" aria-hidden="true">→</span>
           <button
             type="button"
             className={`stepper-btn ${step === 4 ? 'is-active' : ''}`}
-            onClick={() => hasPhotos && setStep(4)}
-            disabled={!hasPhotos}
-            aria-label="Tahap 04: Simpan dan cetak"
+            onClick={() => canDownload && setStep(4)}
+            disabled={!canDownload}
+            aria-label="Tahap 04: Simpan atau bagikan"
           >
             <span className="step-num">04</span>
             <span className="step-name">Simpan</span>
@@ -388,18 +439,18 @@ export default function PhotoboothStudio() {
           <div className="studio-grid">
             <section className="camera-column" aria-label="Kamera dan kontrol jepretan">
               <div className="studio-section-title">
-                <span>01 / KAMERA & VIEW FINDER</span>
+                <span>AMBIL FOTO</span>
                 <span className="mono-label">{camera.stream ? 'LIVE · AKTIF' : 'STANDBY'}</span>
               </div>
 
-              <div className={`viewfinder ${lens === 'fisheye' ? 'viewfinder-fisheye' : ''}`}>
+              <div className={`viewfinder ${selectedLayout.photoRatio > 1 ? 'viewfinder-landscape' : ''} ${lens === 'fisheye' ? 'viewfinder-fisheye' : ''}`} style={{ aspectRatio: String(selectedLayout.photoRatio) }}>
                 <video ref={videoRef} className="camera-video-hidden" playsInline muted aria-label="Kamera langsung" />
                 <canvas ref={previewRef} className="camera-preview" aria-label="Pratinjau filter kamera" />
                 {!camera.stream && (
                   <div className="camera-empty">
                     <div className="camera-icon" aria-hidden="true"><span /><span /><span /></div>
-                    <p>Tempat seru kalian<br />dimulai di sini.</p>
-                    <span>Izinkan kamera untuk mulai.</span>
+                    <p>Siap abadikan momen?</p>
+                    <span>Izinkan kamera, lalu tekan tombol foto.</span>
                   </div>
                 )}
                 {countdown !== null && <div className="countdown-overlay" aria-live="assertive">{countdown}</div>}
@@ -489,27 +540,27 @@ export default function PhotoboothStudio() {
 
             <aside className="edit-column" aria-label="Format photostrip dan hasil foto">
               <div className="studio-section-title">
-                <span>PILIH FORMAT & HASIL JEPRET</span>
-                <span className="mono-label">{capturedCount}/{selectedLayout.count} TERCATAT</span>
+                <span>ATUR FOTO</span>
+                <span className="mono-label">{capturedCount}/{selectedLayout.count} FOTO</span>
               </div>
 
               {/* Layout Picker */}
               <div className="editor-block layout-block">
                 <div className="block-heading">
-                  <h3>Format Photostrip</h3>
-                  <span>{selectedLayout.name}</span>
+                  <h3>Ukuran foto</h3>
+                  <span>{orientation === 'story' ? 'Story · 9:16' : 'Foto 16:9 · hasil tetap potret'}</span>
+                </div>
+                <div className="orientation-options" aria-label="Pilih orientasi foto">
+                  <button type="button" className={orientation === 'story' ? 'is-selected' : ''} onClick={() => updateLayout('story-1')} aria-pressed={orientation === 'story'}>Potret · Story</button>
+                  <button type="button" className={orientation === 'landscape' ? 'is-selected' : ''} onClick={() => updateLayout(`landscape-${selectedLayout.count}` as LayoutId)} aria-pressed={orientation === 'landscape'}>Landscape</button>
                 </div>
                 <div className="layout-options">
-                  {layouts.map((item) => (
+                  {layouts.filter((item) => item.id.startsWith(orientation)).map((item) => (
                     <button
                       type="button"
                       key={item.id}
                       className={`layout-option ${layout === item.id ? 'is-selected' : ''}`}
-                      onClick={() => {
-                        setLayout(item.id);
-                        setSlots((current) => current.slice(0, item.count));
-                        setTargetSlot(null);
-                      }}
+                      onClick={() => updateLayout(item.id)}
                       aria-pressed={layout === item.id}
                     >
                       <span className={`layout-glyph layout-${item.id}`} aria-hidden="true">
@@ -556,16 +607,16 @@ export default function PhotoboothStudio() {
               {/* Step 1 Completion / Next Callout */}
               <div className="step-callout-box">
                 {isLayoutFilled ? (
-                  <p className="callout-success">✦ Semua slot foto sudah lengkap! Siap untuk memilih bingkai.</p>
+                  <p className="callout-success">Semua foto sudah lengkap. Lanjut pilih bingkai.</p>
                 ) : hasPhotos ? (
-                  <p className="callout-info">Lengkapi {selectedLayout.count - capturedCount} foto lagi, atau langsung lanjut ke desain.</p>
+                  <p className="callout-info">Ambil {selectedLayout.count - capturedCount} foto lagi.</p>
                 ) : (
                   <p className="callout-idle">Nyalakan kamera dan ambil foto pertamamu.</p>
                 )}
                 <button
                   type="button"
                   className="step-primary-cta"
-                  disabled={!hasPhotos}
+                  disabled={!canDownload || isExporting}
                   onClick={() => setStep(2)}
                 >
                   Lanjut ke Bingkai <span className="nav-arrow">→</span>
@@ -649,7 +700,7 @@ export default function PhotoboothStudio() {
                   <span className="nav-arrow">←</span> Kembali ke Kamera
                 </button>
                 <button type="button" className="nav-btn-next" onClick={() => setStep(3)}>
-                  Lanjut ke Filter & Stiker <span className="nav-arrow">→</span>
+                  Lanjut pilih filter <span className="nav-arrow">→</span>
                 </button>
               </div>
             </div>
@@ -691,8 +742,19 @@ export default function PhotoboothStudio() {
 
             <div className="design-panel">
               <div className="studio-section-title">
-                <span>03 / PERSONALISASI</span>
-                <span className="mono-label">TEKS & STIKER</span>
+                <span>03 / FILTER WARNA</span>
+                <span className="mono-label">{photoFilters.find((item) => item.id === photoFilter)?.name}</span>
+              </div>
+
+              <p className="filter-intro">Pilih nuansa warna untuk semua foto. Kamu bisa ganti kapan saja.</p>
+              <div className="photo-filter-options" aria-label="Pilih filter warna">
+                {photoFilters.map((item) => (
+                  <button key={item.id} type="button" className={`photo-filter-option ${photoFilter === item.id ? 'is-selected' : ''}`} onClick={() => setPhotoFilter(item.id)} aria-pressed={photoFilter === item.id}>
+                    <span className="filter-swatch" style={{ filter: item.css }} aria-hidden="true"><i /></span>
+                    <strong>{item.name}</strong>
+                    <small>{item.detail}</small>
+                  </button>
+                ))}
               </div>
 
               {/* Caption Input */}
@@ -758,54 +820,58 @@ export default function PhotoboothStudio() {
 
               <h2>Kenanganmu <em>sudah jadi!</em></h2>
               <p className="export-desc">
-                Photostrip beresolusi tinggi siap disimpan langsung ke galerimu, dibuat animasi Boomerang, atau dikirim lewat QR ke HP.
+                {orientation === 'story' ? 'Foto potret 9:16 siap disimpan atau dibagikan.' : 'Hasil akhir potret 9:16; foto landscape disusun dari atas ke bawah.'}
               </p>
+
+              <div className="share-format-panel">
+                <strong>Pilih yang akan dibagikan</strong>
+                <div className="share-format-options">
+                  <button type="button" className={shareFormat === 'photo' ? 'is-selected' : ''} onClick={() => setShareFormat('photo')} aria-pressed={shareFormat === 'photo'}>Foto</button>
+                  <button type="button" className={shareFormat === 'boomerang' ? 'is-selected' : ''} onClick={() => setShareFormat('boomerang')} aria-pressed={shareFormat === 'boomerang'}>Boomerang</button>
+                </div>
+                <label className="boomerang-duration">Durasi Boomerang
+                  <select value={boomerangDuration} onChange={(event) => setBoomerangDuration(Number(event.target.value) as 3 | 4)}>
+                    <option value={3}>3 detik</option>
+                    <option value={4}>4 detik</option>
+                  </select>
+                </label>
+              </div>
 
               <div className="export-buttons-group">
                 <button
                   type="button"
                   className="download-button primary-download"
-                  disabled={!canDownload}
+                  disabled={!canDownload || isExporting}
                   onClick={() => void exportImage()}
                 >
-                  <span>Unduh photostrip PNG</span>
+                  <span>{isExporting ? 'Menyiapkan foto…' : 'Unduh foto JPG'}</span>
                   <span aria-hidden="true">↓</span>
                 </button>
 
                 <button
                   type="button"
                   className="secondary-action"
-                  disabled={!canDownload || !live.hasMotion}
+                  disabled={!canDownload || isExporting}
                   onClick={() => void exportMotion()}
                 >
-                  <span>Simpan Boomerang WebM</span>
+                  <span>{isExporting ? 'Menyiapkan video…' : `Unduh Boomerang ${boomerangDuration} detik`}</span>
                   <span aria-hidden="true">↻</span>
                 </button>
 
                 <button
                   type="button"
                   className="secondary-action"
-                  disabled={!canDownload}
-                  onClick={() => setShowQr(true)}
-                >
-                  <span>Tampilkan QR hasil foto</span>
-                  <span aria-hidden="true">▦</span>
-                </button>
-
-                <button
-                  type="button"
-                  className="secondary-action"
-                  disabled={!canDownload}
+                  disabled={!canDownload || isExporting || !isShareReady}
                   onClick={() => void shareResult()}
                 >
-                  <span>Bagikan dari perangkat</span>
+                  <span>{!isShareReady || isExporting ? `Menyiapkan ${shareFormat === 'photo' ? 'foto' : 'Boomerang'}…` : `Bagikan ${shareFormat === 'photo' ? 'foto' : 'Boomerang'} dari perangkat`}</span>
                   <span aria-hidden="true">↗</span>
                 </button>
               </div>
 
               <div className="step-nav-row export-nav-row">
                 <button type="button" className="nav-btn-prev" onClick={() => setStep(3)}>
-                  <span className="nav-arrow">←</span> Edit Bingkai & Stiker
+                  <span className="nav-arrow">←</span> Kembali ke filter
                 </button>
                 <button type="button" className="nav-btn-reset" onClick={resetSession}>
                   Mulai Sesi Baru <span className="nav-arrow">↺</span>
@@ -816,34 +882,6 @@ export default function PhotoboothStudio() {
         </div>
       )}
 
-      {/* QR Code Dialog Modal */}
-      {showQr && (
-        <div className="qr-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowQr(false); }}>
-          <section className="qr-dialog" role="dialog" aria-modal="true" aria-labelledby="qr-title">
-            <button type="button" className="qr-close" onClick={() => setShowQr(false)} aria-label="Tutup QR">×</button>
-            <span className="mono-label">MIVORA DIGITAL COLLECTOR CARD</span>
-            <h2 id="qr-title">Bawa memorinya.</h2>
-            <p>Scan untuk membuka kartu digital dengan pratinjau ringkas. QR ini menyimpan preview kecil di dalam kode; file resolusi tinggi tetap ada di perangkat ini.</p>
-            <div className="qr-code">
-              <QRCodeSVG
-                value={
-                  qrPayload ||
-                  (typeof window !== 'undefined'
-                    ? `${window.location.origin}${window.location.pathname.replace(/\/studio\/?$/, '').replace(/\/+$/, '')}/share`
-                    : '/share')
-                }
-                size={210}
-                level="M"
-                marginSize={4}
-              />
-            </div>
-            <button type="button" className="download-button" onClick={() => void exportImage()}>
-              Unduh file penuh di perangkat ini ↓
-            </button>
-            <small>QR memuat data ringkas photostrip, bukan tautan upload atau storage online.</small>
-          </section>
-        </div>
-      )}
     </div>
   );
 }

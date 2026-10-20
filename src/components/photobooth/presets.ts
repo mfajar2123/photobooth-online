@@ -1,4 +1,4 @@
-import type { FramePreset, LayoutId, LensPreset } from './types';
+import type { FramePreset, LayoutId, LensPreset, PhotoFilterId } from './types';
 
 export const lenses: LensPreset[] = [
   { id: 'studio', name: 'Standard Studio HD', shortName: 'Studio HD', description: 'Terang, tajam, warna kulit tetap natural.' },
@@ -11,12 +11,19 @@ export const lenses: LensPreset[] = [
   { id: 'dreamy', name: 'Soft Dreamy Glow', shortName: 'Dreamy Glow', description: 'Kilau lembut dengan highlight glow.' },
 ];
 
-export const layouts: { id: LayoutId; name: string; detail: string; count: number; columns: number; ratio: number }[] = [
-  { id: 'strip4', name: 'Classic Strip', detail: '2 × 6 · 4 foto', count: 4, columns: 1, ratio: 0.5 },
-  { id: 'strip3', name: 'Mini Duo Strip', detail: '1 × 3 · 3 foto', count: 3, columns: 1, ratio: 0.58 },
-  { id: 'grid4', name: 'Editorial Quad', detail: '4 × 6 · 2 × 2', count: 4, columns: 2, ratio: 1 },
-  { id: 'duo2', name: 'Cinema Postcard', detail: 'Landscape · 2 foto', count: 2, columns: 2, ratio: 1.5 },
-  { id: 'polaroid', name: 'Big Solo Polaroid', detail: '4 × 5 · 1 foto', count: 1, columns: 1, ratio: 0.8 },
+export const layouts: { id: LayoutId; name: string; detail: string; count: number; columns: number; ratio: number; photoRatio: number }[] = [
+  { id: 'story-1', name: '1 foto', detail: 'Satu foto', count: 1, columns: 1, ratio: 9 / 16, photoRatio: 9 / 16 },
+  { id: 'landscape-1', name: '1 foto', detail: 'Satu foto', count: 1, columns: 1, ratio: 9 / 16, photoRatio: 16 / 9 },
+  { id: 'landscape-2', name: '2 foto', detail: 'Dua foto', count: 2, columns: 1, ratio: 9 / 16, photoRatio: 16 / 9 },
+  { id: 'landscape-3', name: '3 foto', detail: 'Tiga foto', count: 3, columns: 1, ratio: 9 / 16, photoRatio: 16 / 9 },
+];
+
+export const photoFilters: { id: PhotoFilterId; name: string; detail: string; css: string }[] = [
+  { id: 'classic', name: 'Classic', detail: 'Warna natural', css: 'none' },
+  { id: 'film', name: 'Film', detail: 'Nuansa analog', css: 'sepia(.18) contrast(1.08) saturate(.9)' },
+  { id: 'bw', name: 'B&W', detail: 'Hitam putih', css: 'grayscale(1) contrast(1.08)' },
+  { id: 'warm', name: 'Warm', detail: 'Hangat lembut', css: 'sepia(.22) saturate(1.15)' },
+  { id: 'vivid', name: 'Vivid', detail: 'Warna lebih hidup', css: 'saturate(1.35) contrast(1.04)' },
 ];
 
 export const frames: FramePreset[] = [
