@@ -45,8 +45,8 @@ jobs:
       - name: Build with Astro
         run: pnpm run build
         env:
-          ASTRO_SITE: ${{ steps.pages.outputs.site || 'https://mfajar2123.github.io' }}
-          ASTRO_BASE: ${{ steps.pages.outputs.base_path || '/photobooth-online' }}
+          ASTRO_SITE: ${{ steps.pages.outputs.site || 'https://ruangkilas.my.id' }}
+          ASTRO_BASE: ${{ steps.pages.outputs.base_path || '/' }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export function useCameraStream() {
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -7,6 +7,7 @@ export function useCameraStream() {
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const currentAspectRef = useRef(9 / 16);
 
   const refreshDevices = useCallback(async () => {
     if (!navigator.mediaDevices?.enumerateDevices) return;
@@ -20,11 +21,12 @@ export function useCameraStream() {
     setError('');
   }, [stream]);
 
-  const start = useCallback(async (requestedDevice = deviceId, requestedFacing = facingMode, requestedAspect = 9 / 16) => {
+  const start = useCallback(async (requestedDevice = deviceId, requestedFacing = facingMode, requestedAspect = currentAspectRef.current) => {
     if (!navigator.mediaDevices?.getUserMedia) {
       setError('Browser ini belum mendukung akses kamera. Coba buka lewat Chrome, Safari, atau Firefox terbaru.');
       return false;
     }
+    currentAspectRef.current = requestedAspect;
     setBusy(true);
     setError('');
     try {
@@ -71,13 +73,13 @@ export function useCameraStream() {
 
   const changeDevice = useCallback(async (id: string) => {
     setDeviceId(id);
-    if (stream) await start(id, facingMode);
+    if (stream) await start(id, facingMode, currentAspectRef.current);
   }, [facingMode, start, stream]);
 
   const flip = useCallback(async () => {
     const next = facingMode === 'user' ? 'environment' : 'user';
     setFacingMode(next);
-    if (stream) await start('', next);
+    if (stream) await start('', next, currentAspectRef.current);
   }, [facingMode, start, stream]);
 
   useEffect(() => {

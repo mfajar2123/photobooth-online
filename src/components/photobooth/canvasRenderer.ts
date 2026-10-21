@@ -272,7 +272,7 @@ export async function composePhotostrip(options: {
   context.font = `600 ${Math.max(12, Math.round(width * 0.013))}px monospace`;
   context.fillStyle = frame.foreground;
   context.fillText(
-    `✦ MIVORA PHOTO STUDIO  ·  mivoraphoto.id  ·  ${new Date().toLocaleDateString('id-ID')}`,
+    `✦ RUANG KILAS STUDIO  ·  ruangkilas.my.id  ·  ${new Date().toLocaleDateString('id-ID')}`,
     width / 2,
     height - Math.max(14, footer * 0.2),
     width - 32,
@@ -563,7 +563,7 @@ export function drawFrameOverlay(
   context.save();
   const s = width / 1000;
 
-  // 1. STAR (Mivora Signature Butter)
+  // 1. STAR (Ruang Kilas Signature Butter)
   if (frame.motif === 'star') {
     context.strokeStyle = frame.accent;
     context.lineWidth = Math.round(2.5 * s);
@@ -1114,7 +1114,7 @@ export function drawFrameOverlay(
     context.font = `800 ${Math.round(12 * s)}px monospace`;
     context.fillStyle = '#000000';
     context.textAlign = 'left';
-    context.fillText('EXHIBIT [01/01] — MIVORA ARCHIVE', Math.round(geo.inset), Math.round(32 * s));
+    context.fillText('EXHIBIT [01/01] - RUANG KILAS ARCHIVE', Math.round(geo.inset), Math.round(32 * s));
   }
 
   context.restore();

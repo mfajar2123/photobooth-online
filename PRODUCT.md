@@ -16,11 +16,11 @@ Friends and small groups in Indonesia who want to make playful photobooth photos
 
 ## Product Purpose
 
-Mivora Photo lets people capture, style, compose, and save photobooth images and short looping captures directly in their browser. Success means a visitor can complete a photo session and export a polished result from the same device.
+Ruang Kilas lets people capture, style, compose, and save photobooth images and short looping captures directly in their browser at `ruangkilas.my.id`. Success means a visitor can complete a photo session and export a polished result from the same device.
 
 ## Positioning
 
-Camera capture, lens effects, frame composition, and exports run locally in the browser; Mivora Photo has no photo storage backend or database.
+Camera capture, lens effects, frame composition, and exports run locally in the browser; Ruang Kilas has no photo storage backend or database.
 
 ## Operating Context
 
@@ -36,8 +36,9 @@ Users open the site on a phone or laptop, grant camera access, take one or more 
 
 ## Brand Commitments
 
-- Product name: Mivora Photo.
-- Voice: friendly, concise Indonesian with polite Gen-Z phrasing.
+- Product name: Ruang Kilas.
+- Official domain: `ruangkilas.my.id`.
+- Voice: professional, friendly, concise Indonesian with engaging marketing clarity.
 - The plan specifies Butter Yellow `#FFF3B0`, Warm Cream `#FFFDF5`, Sky Blue `#8ECAE6`, Poppy Red `#E63946`, and Obsidian Ink `#121212`.
 - The plan specifies a tactile editorial style with expressive typography, clear borders, generous whitespace, and authored visual assets.
 

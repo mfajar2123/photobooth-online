@@ -1,29 +1,29 @@
 export const brand = {
-  name: 'Mivora Photo',
-  domain: 'mivoraphoto.id',
-  email: 'hello@mivoraphoto.id',
-  partnershipEmail: 'partnership@mivoraphoto.id',
+  name: 'Ruang Kilas',
+  domain: 'ruangkilas.my.id',
+  email: 'halo@ruangkilas.my.id',
+  partnershipEmail: 'partnership@ruangkilas.my.id',
   phone: '+62 812-8899-4021',
-  instagram: 'https://instagram.com/mivora.photo',
-  tiktok: 'https://tiktok.com/@mivora.photo',
+  instagram: 'https://instagram.com/ruangkilas.id',
+  tiktok: 'https://tiktok.com/@ruangkilas.id',
   address: 'Gedung Kemang Point Lt. 3, Jl. Kemang Raya No. 3, Bangka, Kec. Mampang Prapatan, Jakarta Selatan, DKI Jakarta 12730',
 } as const;
 
 export const faqs = [
   {
     question: 'Apakah foto saya disimpan di server?',
-    answer: 'Nggak. Mivora Photo nggak punya database foto. Kamera, filter, dan hasil jepretan diproses langsung di memori browser kamu. Tutup tab untuk mengakhiri sesi.',
+    answer: 'Tidak. Ruang Kilas memproses seluruh foto, efek filter, dan video langsung di memori browser perangkat Anda secara lokal. Tidak ada file gambar yang diunggah atau disimpan ke server kami, sehingga privasi Anda terjamin 100%.',
   },
   {
-    question: 'Bisa dipakai dari HP?',
-    answer: 'Bisa, buka dari browser terbaru dan izinkan akses kamera. HTTPS diperlukan supaya browser bisa menyalakan kamera. Pakai kamera belakang untuk hasil yang lebih leluasa.',
+    question: 'Apakah bisa digunakan di smartphone (HP)?',
+    answer: 'Bisa. Buka ruangkilas.my.id melalui browser modern (seperti Chrome, Safari, atau Firefox) dan berikan izin akses kamera. Layanan berjalan sepenuhnya di browser tanpa perlu mengunduh aplikasi tambahan.',
   },
   {
-    question: 'Gimana cara kirim hasil ke HP lain?',
-    answer: 'Unduh langsung, gunakan tombol bagikan kalau browser mendukungnya, atau tampilkan QR hasil sesi. QR menyimpan pratinjau di perangkat ini; ia bukan tautan unggah atau penyimpanan cloud.',
+    question: 'Bagaimana cara menyimpan dan membagikan hasil foto?',
+    answer: 'Setelah sesi foto selesai, Anda dapat langsung mengunduh file foto berkualitas tinggi (JPG) atau rekaman Boomerang (WebM/MP4), serta menggunakan menu bagikan untuk mengirimkannya ke media sosial.',
   },
   {
-    question: 'Kenapa kamera belum bisa dinyalakan?',
-    answer: 'Cek izin kamera di pengaturan browser, pastikan nggak ada aplikasi lain yang sedang memakainya, lalu coba lagi lewat halaman HTTPS.',
+    question: 'Mengapa kamera tidak dapat dinyalakan?',
+    answer: 'Pastikan izin kamera sudah diaktifkan di pengaturan browser Anda, halaman diakses melalui koneksi aman HTTPS, dan kamera tidak sedang digunakan oleh aplikasi lain.',
   },
 ] as const;

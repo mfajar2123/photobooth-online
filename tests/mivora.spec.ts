@@ -12,7 +12,7 @@ test('landing page keeps its editorial alignment and complete contact details', 
   expect(['left', 'start']).toContain(left);
   expect(right).toBe('right');
   await expect(page.locator('footer')).toContainText('Gedung Kemang Point');
-  await expect(page.locator('footer')).toContainText('hello@mivoraphoto.id');
+  await expect(page.locator('footer')).toContainText('halo@ruangkilas.my.id');
   await expect(page.locator('footer')).toContainText('+62 812-8899-4021');
 });
 
@@ -52,6 +52,35 @@ test('studio layout options enforce portrait and landscape rules', async ({ page
   await expect(page.locator('.layout-option')).toHaveCount(1);
 });
 
+test('camera preview on mobile maintains device camera aspect ratio without zooming or cropping', async ({ page, context }) => {
+  await context.grantPermissions(['camera']);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/studio');
+  await expect(page.locator('astro-island')).not.toHaveAttribute('ssr');
+  await page.getByRole('button', { name: /Nyalakan kamera/i }).click();
+  await expect(page.getByRole('button', { name: /Ambil foto/i })).toBeVisible({ timeout: 15_000 });
+  const previewCanvas = page.getByLabel('Pratinjau filter kamera');
+  await expect.poll(() => previewCanvas.evaluate((element) => (element as HTMLCanvasElement).width)).toBeGreaterThan(0);
+
+  const metrics = await page.evaluate(() => {
+    const vf = document.querySelector('.viewfinder')!;
+    const cv = document.querySelector('.camera-preview')!;
+    const vfr = vf.getBoundingClientRect();
+    const cvr = cv.getBoundingClientRect();
+    return {
+      vfWidth: vfr.width,
+      vfHeight: vfr.height,
+      cvWidth: cvr.width,
+      cvHeight: cvr.height,
+      ratio: vfr.width / vfr.height,
+      isCutOff: cvr.width > vfr.width + 1 || cvr.height > vfr.height + 1,
+    };
+  });
+
+  expect(metrics.isCutOff).toBe(false);
+  expect(metrics.ratio).toBeCloseTo(9 / 16, 2);
+});
+
 test('camera capture, portrait output, JPG download, filters and Boomerang sharing work', async ({ page, context }) => {
   await context.grantPermissions(['camera']);
   await page.addInitScript(() => {
@@ -72,6 +101,10 @@ test('camera capture, portrait output, JPG download, filters and Boomerang shari
   await page.getByRole('button', { name: 'Landscape', exact: true }).click();
   await page.locator('.layout-option').nth(2).click();
   await page.getByLabel('Timer').selectOption('1');
+  await expect.poll(() => page.evaluate(() => {
+    const vid = document.querySelector('video');
+    return vid ? vid.readyState >= 2 && vid.videoWidth > 0 : false;
+  })).toBe(true);
   for (let index = 1; index <= 3; index++) {
     await page.getByRole('button', { name: /Ambil foto/i }).click();
     await expect(page.getByRole('img', { name: `Hasil foto ${index}` })).toBeVisible({ timeout: 15_000 });
@@ -97,7 +130,7 @@ test('camera capture, portrait output, JPG download, filters and Boomerang shari
   const shareButton = page.getByRole('button', { name: /Bagikan Boomerang dari perangkat/i });
   await expect(shareButton).toBeEnabled({ timeout: 30_000 });
   await shareButton.click();
-  await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedFile?: { name: string; type: string } }).__sharedFile?.name)).toMatch(/mivora-boomerang\.(mp4|webm)$/);
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedFile?: { name: string; type: string } }).__sharedFile?.name)).toMatch(/ruangkilas-boomerang\.(mp4|webm)$/);
   await expect.poll(() => page.evaluate(() => (window as unknown as { __sharedFile?: { name: string; type: string } }).__sharedFile?.type)).toMatch(/^video\/(mp4|webm)(;|$)/);
   const dimensions = await page.evaluate(() => ({ body: document.documentElement.scrollWidth, viewport: window.innerWidth }));
   expect(dimensions.body).toBeLessThanOrEqual(dimensions.viewport);

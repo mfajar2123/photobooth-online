@@ -3,16 +3,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { assetUrl } from '../lib/paths';
 ---
 
-<BaseLayout title="Kartu Kenangan — Mivora Photo" description="Pratinjau kartu digital hasil photobooth Mivora Photo.">
+<BaseLayout title="Kartu Kenangan - Ruang Kilas" description="Pratinjau kartu digital hasil photobooth Ruang Kilas.">
   <main class="share-page">
-    <a class="wordmark" href={assetUrl('/')}><span>✦</span> MIVORA <i>PHOTO</i></a>
+    <a class="wordmark" href={assetUrl('/')}><span>✦</span> RUANG <i>KILAS</i></a>
     <div class="share-card">
       <p class="section-kicker">DIGITAL COLLECTOR CARD</p>
-      <h1 id="share-title">Satu momen kecil,<br /><em>disimpan bareng.</em></h1>
-      <div class="share-art"><img id="share-preview" alt="Pratinjau kecil photostrip Mivora Photo" hidden /><span id="share-empty">✦</span></div>
-      <p id="share-caption">Kartu ini dibuat di browser dengan Mivora Photo.</p>
-      <p class="share-privacy">Preview ini tersimpan di QR yang kamu scan. Mivora Photo tidak mengunggah atau menyimpan foto. File kualitas penuh ada di perangkat pembuat.</p>
-      <a class="button-primary" href={assetUrl('/')}>Bikin photostrip kamu sendiri ↗</a>
+      <h1 id="share-title">Satu momen kecil,<br /><em>disimpan bersama.</em></h1>
+      <div class="share-art"><img id="share-preview" alt="Pratinjau kecil photostrip Ruang Kilas" hidden /><span id="share-empty">✦</span></div>
+      <p id="share-caption">Kartu ini dibuat di browser dengan Ruang Kilas.</p>
+      <p class="share-privacy">Pratinjau ini tersimpan di QR yang Anda pindai. Ruang Kilas tidak mengunggah atau menyimpan foto ke server. Berkas resolusi penuh tersimpan di perangkat pembuat.</p>
+      <a class="button-primary" href={assetUrl('/')}>Buat photostrip Anda sendiri ↗</a>
     </div>
   </main>
   <script>
@@ -22,11 +22,11 @@ import { assetUrl } from '../lib/paths';
       try {
         const bytes = Uint8Array.from(atob(encoded), (character) => character.charCodeAt(0));
         const card = JSON.parse(new TextDecoder().decode(bytes)) as { title?: string; name?: string; frame?: string; preview?: string };
-        document.querySelector('#share-title')!.innerHTML = card.name ? `Kenangan <em>${card.name.replace(/[<>]/g, '')}</em>` : 'Satu momen kecil,<br /><em>disimpan bareng.</em>';
-        document.querySelector('#share-caption')!.textContent = card.frame ? `Frame pilihan: ${card.frame}. Dibuat dengan Mivora Photo.` : 'Kartu digital Mivora Photo.';
+        document.querySelector('#share-title')!.innerHTML = card.name ? `Kenangan <em>${card.name.replace(/[<>]/g, '')}</em>` : 'Satu momen kecil,<br /><em>disimpan bersama.</em>';
+        document.querySelector('#share-caption')!.textContent = card.frame ? `Frame pilihan: ${card.frame}. Dibuat dengan Ruang Kilas.` : 'Kartu digital Ruang Kilas.';
         const image = document.querySelector<HTMLImageElement>('#share-preview')!;
         if (card.preview?.startsWith('data:image/jpeg;base64,')) { image.src = card.preview; image.hidden = false; document.querySelector('#share-empty')?.setAttribute('hidden', ''); }
-      } catch { document.querySelector('#share-caption')!.textContent = 'Pratinjau QR belum bisa dibaca. Buat QR baru dari studio Mivora Photo.'; }
+      } catch { document.querySelector('#share-caption')!.textContent = 'Pratinjau QR belum bisa dibaca. Buat QR baru dari studio Ruang Kilas.'; }
     }
   </script>
 </BaseLayout>

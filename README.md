@@ -1,6 +1,6 @@
-# Mivora Photo
+# Ruang Kilas
 
-Aplikasi photobooth online modern berbasis browser dengan simulasi filter lensa kamera, koleksi variasi bingkai foto, stiker interaktif, dan ekspor photostrip maupun animasi Boomerang. Seluruh proses pengambilan foto dan pengolahan gambar berlangsung langsung di sisi klien (browser) tanpa mengunggah data ke server luar.
+Aplikasi photobooth online modern berbasis browser dengan domain resmi [ruangkilas.my.id](https://ruangkilas.my.id). Menghadirkan simulasi filter lensa kamera, koleksi variasi bingkai foto, stiker interaktif, dan ekspor photostrip maupun animasi Boomerang. Seluruh proses pengambilan foto dan pengolahan gambar berlangsung langsung di sisi klien (browser) tanpa mengunggah data ke server luar.
 
 ## Fitur Utama
 

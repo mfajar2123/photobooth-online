@@ -28,7 +28,7 @@ export const photoFilters: { id: PhotoFilterId; name: string; detail: string; cs
 
 export const frames: FramePreset[] = [
   // --- SIGNATURE ---
-  { id: 'signature', name: 'Mivora Butter', category: 'Signature', background: '#FFF3B0', foreground: '#121212', accent: '#E63946', motif: 'star', caption: 'CORE MEMORY' },
+  { id: 'signature', name: 'Kilas Butter', category: 'Signature', background: '#FFF3B0', foreground: '#121212', accent: '#E63946', motif: 'star', caption: 'CORE MEMORY' },
   { id: 'atelier', name: 'Atelier Noir', category: 'Signature', background: '#121212', foreground: '#F5EBE1', accent: '#D4AF37', motif: 'atelier', caption: 'HAUTE PHOTOGRAPHIE' },
   { id: 'swiss', name: 'Swiss Modernist', category: 'Signature', background: '#FAFAFA', foreground: '#0D0D0D', accent: '#E63946', motif: 'swiss', caption: 'ARCHIVE · 1968' },
 

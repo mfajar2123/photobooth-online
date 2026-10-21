@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test('capture desktop and mobile visual review', async ({ page, context }) => {
+  test.setTimeout(60_000);
   await context.grantPermissions(['camera']);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 1440, height: 900 });

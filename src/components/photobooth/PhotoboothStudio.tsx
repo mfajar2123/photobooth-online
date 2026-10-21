@@ -170,6 +170,25 @@ export default function PhotoboothStudio() {
       return;
     }
     if (!videoRef.current || videoRef.current.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+      if (videoRef.current) {
+        await new Promise<void>((resolve) => {
+          const video = videoRef.current;
+          if (!video || (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && video.videoWidth > 0)) {
+            resolve();
+            return;
+          }
+          const onLoaded = () => {
+            video.removeEventListener('loadeddata', onLoaded);
+            video.removeEventListener('canplay', onLoaded);
+            resolve();
+          };
+          video.addEventListener('loadeddata', onLoaded, { once: true });
+          video.addEventListener('canplay', onLoaded, { once: true });
+          window.setTimeout(resolve, 1200);
+        });
+      }
+    }
+    if (!videoRef.current || videoRef.current.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
       setNotice('Preview kamera masih disiapkan. Tunggu sebentar ya.');
       return;
     }
@@ -234,7 +253,7 @@ export default function PhotoboothStudio() {
       const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.92));
       if (!blob) { setNotice('File foto belum bisa dibuat. Coba lagi setelah foto selesai dimuat.'); return; }
       const link = document.createElement('a');
-      link.download = `mivora-photo-${new Date().toISOString().slice(0, 10)}.jpg`;
+      link.download = `ruangkilas-photo-${new Date().toISOString().slice(0, 10)}.jpg`;
       link.href = URL.createObjectURL(blob);
       link.click();
       window.setTimeout(() => URL.revokeObjectURL(link.href), 1000);
@@ -253,10 +272,10 @@ export default function PhotoboothStudio() {
     const blob = prepared.blob;
     const mimeType = blob.type || (isVideo ? 'video/webm' : 'image/jpeg');
     const extension = isVideo ? (mimeType.includes('mp4') ? 'mp4' : 'webm') : 'jpg';
-    const file = new File([blob], `mivora-${isVideo ? 'boomerang' : 'photo'}.${extension}`, { type: mimeType });
+    const file = new File([blob], `ruangkilas-${isVideo ? 'boomerang' : 'photo'}.${extension}`, { type: mimeType });
     if (navigator.share && (isVideo || !navigator.canShare || navigator.canShare({ files: [file] }))) {
       try {
-        await navigator.share({ title: isVideo ? 'Boomerang Mivora Photo' : 'Foto Mivora Photo', files: [file] });
+        await navigator.share({ title: isVideo ? 'Boomerang Ruang Kilas' : 'Foto Ruang Kilas', files: [file] });
         return;
       } catch (cause) {
         if (cause instanceof DOMException && cause.name === 'AbortError') return;
@@ -345,7 +364,7 @@ export default function PhotoboothStudio() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `mivora-boomerang.${blob.type.includes('mp4') ? 'mp4' : 'webm'}`;
+      link.download = `ruangkilas-boomerang.${blob.type.includes('mp4') ? 'mp4' : 'webm'}`;
       link.click();
       window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
@@ -382,7 +401,7 @@ export default function PhotoboothStudio() {
       <div className="studio-topbar">
         <div className="studio-brand">
           <span className="brand-spark" aria-hidden="true">✦</span>
-          <span>MIVORA <i>PHOTO</i></span>
+          <span>RUANG <i>KILAS</i></span>
         </div>
 
         <nav className="studio-stepper" aria-label="Tahapan photobooth">
@@ -883,7 +902,7 @@ export default function PhotoboothStudio() {
             <div className="export-actions-panel">
               <div className="studio-section-title">
                 <span>04 / SIAP DISIMPAN</span>
-                <span className="mono-label">MIVORA PHOTO KEEPSAKE</span>
+                <span className="mono-label">RUANG KILAS KEEPSAKE</span>
               </div>
 
               <h2>Kenanganmu <em>sudah jadi!</em></h2>

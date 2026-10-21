@@ -9,12 +9,12 @@ interface Props {
 }
 
 const {
-  title = 'Mivora Photo — Photobooth Online Estetik & Efek Lensa Pro di Browser',
-  description = 'Bikin photostrip bareng bestie langsung dari browser. Mainkan efek lensa, pilih frame, tambah stiker, lalu simpan — semua diproses di perangkatmu.',
+  title = 'Ruang Kilas - Photobooth Online Estetik & Efek Lensa Studio di Browser',
+  description = 'Studio photobooth online praktis langsung dari browser. Nikmati efek lensa vintage, pilihan bingkai tematik estetik, dan simpan photostrip berkualitas tinggi tanpa instalasi aplikasi.',
 } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://mivoraphoto.id').toString();
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://ruangkilas.my.id').toString();
 const faviconUrl = assetUrl('/favicon.svg');
-const ogImageUrl = new URL(assetUrl('/images/og-share.svg'), Astro.site ?? 'https://mivoraphoto.id').toString();
+const ogImageUrl = new URL(assetUrl('/images/og-share.svg'), Astro.site ?? 'https://ruangkilas.my.id').toString();
 const livePhotoBg = `url('${assetUrl('/images/friends-photo-booth.jpg')}')`;
 const schema = {
   '@context': 'https://schema.org',
@@ -22,7 +22,7 @@ const schema = {
     {
       '@type': 'WebApplication',
       name: brand.name,
-      url: 'https://mivoraphoto.id',
+      url: 'https://ruangkilas.my.id',
       applicationCategory: 'PhotographyApplication',
       operatingSystem: 'Any modern web browser',
       description,
@@ -30,8 +30,8 @@ const schema = {
     },
     {
       '@type': 'Organization',
-      name: 'PT Mivora Kreasi Visual',
-      url: 'https://mivoraphoto.id',
+      name: 'Ruang Kilas',
+      url: 'https://ruangkilas.my.id',
       email: brand.email,
       telephone: brand.phone,
       address: {

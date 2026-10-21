@@ -1,7 +1,7 @@
 {
-  "name": "pb",
+  "name": "ruangkilas",
   "version": "1.0.0",
-  "description": "Photobooth browser-first Mivora Photo",
+  "description": "Photobooth online browser-first Ruang Kilas",
   "main": "index.js",
   "scripts": {
     "dev": "astro dev",

@@ -4,7 +4,7 @@ import tailwind from '@astrojs/tailwind';
 
 export default defineConfig({
   integrations: [react(), tailwind()],
-  site: process.env.ASTRO_SITE || 'https://mivoraphoto.id',
+  site: process.env.ASTRO_SITE || 'https://ruangkilas.my.id',
   base: process.env.ASTRO_BASE || '/',
   output: 'static',
 });
