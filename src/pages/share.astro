@@ -3,7 +3,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { assetUrl } from '../lib/paths';
 ---
 
-<BaseLayout title="Kartu Kenangan - Ruang Kilas" description="Pratinjau kartu digital hasil photobooth Ruang Kilas.">
+<BaseLayout
+  title="Kartu Kenangan - Ruang Kilas"
+  description="Pratinjau kartu digital hasil photobooth Ruang Kilas."
+  noindex={true}
+>
   <main class="share-page">
     <a class="wordmark" href={assetUrl('/')}><span>✦</span> RUANG <i>KILAS</i></a>
     <div class="share-card">

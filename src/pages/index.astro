@@ -4,9 +4,26 @@ import { brand, faqs } from '../data/brand';
 import { assetUrl } from '../lib/paths';
 
 const friendsPhoto = assetUrl('/images/friends-photo-booth.jpg');
+
+const faqSchema = {
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+};
 ---
 
-<BaseLayout>
+<BaseLayout
+  title="Ruang Kilas - Photobooth Online Gratis, Efek Kamera Vintage & Frame Estetik"
+  description="Studio photobooth online gratis langsung dari browser tanpa instalasi. Nikmati efek kamera vintage (Fisheye, Leica, Digicam), frame estetik, dan unduh photostrip cetak 300 DPI."
+  keywords="photobooth online, photobooth online gratis, photo booth online indonesia, photo strip online, photobooth browser, vintage photo booth, cetak photostrip, photobooth webcam, efek lensa vintage, fisheye camera online, frame photobooth estetik, ruang kilas, aplikasi photobooth gratis"
+  extraSchema={faqSchema}
+>
   <header class="site-header">
     <a class="wordmark" href="#top" aria-label="Ruang Kilas, ke atas"><span>✦</span> RUANG <i>KILAS</i></a>
     <nav aria-label="Navigasi utama">

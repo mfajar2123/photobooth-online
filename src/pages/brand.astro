@@ -1,9 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { assetUrl } from '../lib/paths';
+
+const breadcrumbs = [
+  { name: 'Beranda', item: '/' },
+  { name: 'Panduan Brand', item: '/brand' },
+];
 ---
 
-<BaseLayout title="Panduan Brand - Ruang Kilas">
+<BaseLayout
+  title="Panduan Brand & Aset Identitas - Ruang Kilas"
+  description="Standar identitas brand resmi Ruang Kilas untuk kolaborasi, kemitraan event, dan kustomisasi bingkai photobooth."
+  breadcrumbs={breadcrumbs}
+>
   <main class="legal-page">
     <a class="wordmark" href={assetUrl('/')}><span>✦</span> RUANG <i>KILAS</i></a>
     <article>

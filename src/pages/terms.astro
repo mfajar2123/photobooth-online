@@ -1,9 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { assetUrl } from '../lib/paths';
+
+const breadcrumbs = [
+  { name: 'Beranda', item: '/' },
+  { name: 'Ketentuan Layanan & Privasi', item: '/terms' },
+];
 ---
 
-<BaseLayout title="Ketentuan Penggunaan - Ruang Kilas">
+<BaseLayout
+  title="Ketentuan Layanan & Kebijakan Privasi - Ruang Kilas"
+  description="Ketentuan layanan dan kebijakan privasi Ruang Kilas. Seluruh pemrosesan foto 100% lokal di browser tanpa penyimpanan server."
+  breadcrumbs={breadcrumbs}
+>
   <main class="legal-page">
     <a class="wordmark" href={assetUrl('/')}><span>✦</span> RUANG <i>KILAS</i></a>
     <article>

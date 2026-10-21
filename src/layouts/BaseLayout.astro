@@ -3,47 +3,125 @@ import '../styles/global.css';
 import { brand } from '../data/brand';
 import { assetUrl } from '../lib/paths';
 
+export interface BreadcrumbItem {
+  name: string;
+  item: string;
+}
+
 interface Props {
   title?: string;
   description?: string;
+  keywords?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  canonicalUrl?: string;
+  noindex?: boolean;
+  breadcrumbs?: BreadcrumbItem[];
+  extraSchema?: Record<string, any> | Array<Record<string, any>>;
 }
 
 const {
-  title = 'Ruang Kilas - Photobooth Online Estetik & Efek Lensa Studio di Browser',
-  description = 'Studio photobooth online praktis langsung dari browser. Nikmati efek lensa vintage, pilihan bingkai tematik estetik, dan simpan photostrip berkualitas tinggi tanpa instalasi aplikasi.',
+  title = 'Ruang Kilas - Photobooth Online Gratis, Efek Kamera Vintage & Frame Estetik',
+  description = 'Studio photobooth online gratis langsung dari browser tanpa instalasi. Nikmati efek kamera vintage (Fisheye, Leica, Digicam), frame estetik, dan unduh photostrip cetak 300 DPI.',
+  keywords = 'photobooth online, photobooth online gratis, photo booth online indonesia, photo strip online, photobooth browser, vintage photo booth, cetak photostrip, photobooth webcam, efek lensa vintage, fisheye camera online, frame photobooth estetik, ruang kilas, aplikasi photobooth gratis',
+  ogImage = '/images/og-share.png',
+  ogType = 'website',
+  canonicalUrl,
+  noindex = false,
+  breadcrumbs,
+  extraSchema,
 } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://ruangkilas.my.id').toString();
+
+const siteUrl = Astro.site ? Astro.site.toString().replace(/\/$/, '') : 'https://ruangkilas.my.id';
+const canonical = canonicalUrl ?? new URL(Astro.url.pathname, siteUrl).toString();
 const faviconUrl = assetUrl('/favicon.svg');
-const ogImageUrl = new URL(assetUrl('/images/og-share.svg'), Astro.site ?? 'https://ruangkilas.my.id').toString();
+const ogImageUrl = ogImage.startsWith('http') ? ogImage : new URL(assetUrl(ogImage), siteUrl).toString();
+const sitemapUrl = new URL(assetUrl('/sitemap.xml'), siteUrl).toString();
+const manifestUrl = assetUrl('/site.webmanifest');
 const livePhotoBg = `url('${assetUrl('/images/friends-photo-booth.jpg')}')`;
-const schema = {
+
+// Structured Data (JSON-LD)
+const schemaGraph: any[] = [
+  {
+    '@type': 'WebSite',
+    '@id': `${siteUrl}/#website`,
+    url: siteUrl,
+    name: brand.name,
+    description: 'Studio photobooth online praktis langsung dari browser dengan efek lensa vintage dan koleksi bingkai tematik estetik.',
+    inLanguage: 'id-ID',
+    publisher: {
+      '@id': `${siteUrl}/#organization`,
+    },
+  },
+  {
+    '@type': 'Organization',
+    '@id': `${siteUrl}/#organization`,
+    name: brand.name,
+    url: siteUrl,
+    logo: {
+      '@type': 'ImageObject',
+      url: new URL(faviconUrl, siteUrl).toString(),
+    },
+    email: brand.email,
+    telephone: brand.phone,
+    sameAs: [brand.instagram, brand.tiktok],
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Gedung Kemang Point Lt. 3, Jl. Kemang Raya No. 3, Bangka',
+      addressLocality: 'Jakarta Selatan',
+      addressRegion: 'DKI Jakarta',
+      postalCode: '12730',
+      addressCountry: 'ID',
+    },
+  },
+  {
+    '@type': 'WebApplication',
+    '@id': `${siteUrl}/#webapp`,
+    name: `${brand.name} Photobooth Online`,
+    url: `${siteUrl}/studio`,
+    applicationCategory: 'PhotographyApplication',
+    operatingSystem: 'Any modern web browser (Chrome, Safari, Firefox, Edge)',
+    browserRequirements: 'Requires JavaScript, HTML5 Canvas, WebRTC camera access',
+    description,
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'IDR',
+      availability: 'https://schema.org/InStock',
+    },
+    featureList: [
+      'Webcam photobooth online instan di browser tanpa aplikasi',
+      'Efek kamera vintage: Fisheye 360, Leica 35mm, Digicam 2004, VHS Camcorder, Dreamy Soft Prism',
+      'Pilihan bingkai estetik: Y2K Cyber, Retro Receipt, Cinema Ticket, 90s Yearbook, Museum Art',
+      'Unduh photostrip cetak resolusi tinggi 300 DPI dan rekaman Boomerang WebM',
+      '100% privasi aman diproses lokal di browser perangkat Anda',
+    ],
+  },
+];
+
+if (breadcrumbs && breadcrumbs.length > 0) {
+  schemaGraph.push({
+    '@type': 'BreadcrumbList',
+    itemListElement: breadcrumbs.map((crumb, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: crumb.name,
+      item: crumb.item.startsWith('http') ? crumb.item : `${siteUrl}${crumb.item}`,
+    })),
+  });
+}
+
+if (extraSchema) {
+  if (Array.isArray(extraSchema)) {
+    schemaGraph.push(...extraSchema);
+  } else {
+    schemaGraph.push(extraSchema);
+  }
+}
+
+const fullSchema = {
   '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'WebApplication',
-      name: brand.name,
-      url: 'https://ruangkilas.my.id',
-      applicationCategory: 'PhotographyApplication',
-      operatingSystem: 'Any modern web browser',
-      description,
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'IDR' },
-    },
-    {
-      '@type': 'Organization',
-      name: 'Ruang Kilas',
-      url: 'https://ruangkilas.my.id',
-      email: brand.email,
-      telephone: brand.phone,
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: 'Gedung Kemang Point Lt. 3, Jl. Kemang Raya No. 3, Bangka',
-        addressLocality: 'Jakarta Selatan',
-        addressRegion: 'DKI Jakarta',
-        postalCode: '12730',
-        addressCountry: 'ID',
-      },
-    },
-  ],
+  '@graph': schemaGraph,
 };
 ---
 
@@ -51,28 +129,65 @@ const schema = {
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="author" content="Ruang Kilas" />
+    <meta name="publisher" content="Ruang Kilas" />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
+    <meta name="googlebot" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="id" href={canonical} />
+    <link rel="alternate" hreflang="x-default" href={canonical} />
+    <link rel="sitemap" type="application/xml" href={sitemapUrl} />
+    <link rel="manifest" href={manifestUrl} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={brand.name} />
+    <meta property="og:locale" content="id_ID" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:secure_url" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:alt" content="Ruang Kilas - Photobooth Online di Browser" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@ruangkilas" />
+    <meta name="twitter:creator" content="@ruangkilas" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content="Ruang Kilas - Photobooth Online di Browser" />
+
+    <!-- Theme & App Metadata -->
     <meta name="theme-color" content="#FFF3B0" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Ruang Kilas" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- Security & Permissions -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; frame-ancestors 'none'; form-action 'self'; base-uri 'self'; upgrade-insecure-requests;" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta http-equiv="X-Frame-Options" content="DENY" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta http-equiv="Permissions-Policy" content="camera=(self), microphone=(), geolocation=(), interest-cohort=()" />
-    <meta name="description" content={description} />
-    <meta name="robots" content="index,follow" />
-    <meta property="og:type" content="website" />
-    <meta property="og:locale" content="id_ID" />
-    <meta property="og:site_name" content={brand.name} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={ogImageUrl} />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <link rel="canonical" href={canonical} />
+
+    <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href={faviconUrl} />
-    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    <link rel="apple-touch-icon" href={faviconUrl} />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify(fullSchema)} />
+
     <style is:global define:vars={{ livePhotoBg }}>
       .live-photo,
       .sample-picture {

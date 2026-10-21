@@ -2,11 +2,18 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PhotoboothStudio from '../components/photobooth/PhotoboothStudio';
 import { assetUrl } from '../lib/paths';
+
+const breadcrumbs = [
+  { name: 'Beranda', item: '/' },
+  { name: 'Studio Photobooth', item: '/studio' },
+];
 ---
 
 <BaseLayout
-  title="Studio Photobooth - Ruang Kilas"
-  description="Ambil foto potret atau landscape berkualitas tinggi, pilih bingkai tematik dan filter warna, lalu simpan hasil foto atau Boomerang langsung dari perangkat Anda."
+  title="Studio Photobooth Online Gratis - Ambil Foto & Cetak Photostrip | Ruang Kilas"
+  description="Mulai sesi photobooth online gratis langsung dari browser Anda. Efek kamera Fisheye, Leica, Digicam, koleksi frame estetik, video Boomerang, dan ekspor photostrip 300 DPI."
+  keywords="studio photobooth online, photobooth online gratis, bikin photostrip online, foto strip gratis, photobooth webcam browser"
+  breadcrumbs={breadcrumbs}
 >
   <header class="site-header studio-page-header">
     <a class="wordmark" href={assetUrl('/')} aria-label="Ruang Kilas, kembali ke beranda"><span>✦</span> RUANG <i>KILAS</i></a>
