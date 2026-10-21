@@ -20,14 +20,14 @@ function decodeImage(source: string) {
   return decoded;
 }
 
-function fisheye(source: HTMLCanvasElement, target: HTMLCanvasElement) {
-  const w = source.width;
-  const h = source.height;
-  const srcContext = source.getContext('2d', { willReadFrequently: true });
-  const dstContext = target.getContext('2d', { willReadFrequently: true });
-  if (!srcContext || !dstContext) return;
-  const src = srcContext.getImageData(0, 0, w, h);
-  const dst = dstContext.createImageData(w, h);
+const fisheyeLUTs = new Map<string, { lut: Int32Array; w: number; h: number }>();
+
+function getFisheyeLUT(w: number, h: number) {
+  const key = `${w}x${h}`;
+  const cached = fisheyeLUTs.get(key);
+  if (cached) return cached;
+  const total = w * h;
+  const lut = new Int32Array(total);
   const cx = (w - 1) / 2;
   const cy = (h - 1) / 2;
   const radius = Math.min(cx, cy);
@@ -36,23 +36,46 @@ function fisheye(source: HTMLCanvasElement, target: HTMLCanvasElement) {
       const nx = (x - cx) / radius;
       const ny = (y - cy) / radius;
       const r2 = nx * nx + ny * ny;
-      const index = (y * w + x) * 4;
-      if (r2 <= 1) {
-        const factor = 1 + r2 * 0.28;
-        const sx = Math.round(cx + (nx / factor) * radius);
-        const sy = Math.round(cy + (ny / factor) * radius);
-        const sample = (sy * w + sx) * 4;
-        dst.data[index] = src.data[sample];
-        dst.data[index + 1] = src.data[sample + 1];
-        dst.data[index + 2] = src.data[sample + 2];
-        dst.data[index + 3] = 255;
+      const index = y * w + x;
+      if (r2 <= 1.0) {
+        const factor = 1 + r2 * 0.38;
+        const sx = Math.max(0, Math.min(w - 1, Math.round(cx + (nx / factor) * radius)));
+        const sy = Math.max(0, Math.min(h - 1, Math.round(cy + (ny / factor) * radius)));
+        lut[index] = sy * w + sx;
+      } else {
+        lut[index] = -1;
       }
+    }
+  }
+  const entry = { lut, w, h };
+  fisheyeLUTs.set(key, entry);
+  return entry;
+}
+
+function fisheye(source: HTMLCanvasElement, target: HTMLCanvasElement) {
+  const w = source.width;
+  const h = source.height;
+  const srcContext = source.getContext('2d', { willReadFrequently: true });
+  const dstContext = target.getContext('2d', { willReadFrequently: true });
+  if (!srcContext || !dstContext) return;
+  const src = srcContext.getImageData(0, 0, w, h);
+  const dst = dstContext.createImageData(w, h);
+  const { lut } = getFisheyeLUT(w, h);
+  const src32 = new Uint32Array(src.data.buffer);
+  const dst32 = new Uint32Array(dst.data.buffer);
+  const total = w * h;
+  for (let i = 0; i < total; i++) {
+    const s = lut[i];
+    if (s >= 0) {
+      dst32[i] = src32[s];
+    } else {
+      dst32[i] = 0xFF000000;
     }
   }
   dstContext.putImageData(dst, 0, 0);
 }
 
-export function drawLensFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement, lens: LensId, mirror = true, aspectRatio = 9 / 16) {
+export function drawLensFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement, lens: LensId, mirror = false, aspectRatio = 9 / 16) {
   if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA || video.videoWidth === 0) return false;
   const width = aspectRatio >= 1 ? 1280 : 720;
   const height = aspectRatio >= 1 ? 720 : 1280;
@@ -60,7 +83,8 @@ export function drawLensFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement
     canvas.width = width;
     canvas.height = height;
   }
-  const context = canvas.getContext('2d', { willReadFrequently: lens !== 'studio' });
+  const isOriginal = lens === 'original' || lens === 'studio';
+  const context = canvas.getContext('2d', { willReadFrequently: !isOriginal });
   if (!context) return false;
   context.save();
   if (mirror) {
@@ -75,6 +99,10 @@ export function drawLensFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement
   context.drawImage(video, sx, sy, sw, sh, 0, 0, width, height);
   context.restore();
 
+  if (isOriginal) {
+    return true;
+  }
+
   if (lens === 'fisheye') {
     let source = fisheyeSources.get(canvas);
     if (!source) {
@@ -85,81 +113,142 @@ export function drawLensFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement
     }
     source.getContext('2d')?.drawImage(canvas, 0, 0);
     fisheye(source, canvas);
+    context.save();
     context.beginPath();
-    context.ellipse(width / 2, height / 2, width * 0.49, height * 0.49, 0, 0, Math.PI * 2);
-    const vignette = context.createRadialGradient(width / 2, height / 2, width * 0.32, width / 2, height / 2, width * 0.72);
+    const radius = Math.min(width, height) * 0.495;
+    context.ellipse(width / 2, height / 2, radius, radius, 0, 0, Math.PI * 2);
+    const vignette = context.createRadialGradient(
+      width / 2, height / 2, radius * 0.55,
+      width / 2, height / 2, radius * 1.02
+    );
     vignette.addColorStop(0, 'rgba(0,0,0,0)');
-    vignette.addColorStop(1, 'rgba(0,0,0,.8)');
+    vignette.addColorStop(0.75, 'rgba(0,0,0,0.3)');
+    vignette.addColorStop(1, 'rgba(0,0,0,0.95)');
     context.fillStyle = vignette;
     context.fill();
-  } else if (lens !== 'studio' && lens !== 'dreamy') {
-    const image = context.getImageData(0, 0, width, height);
-    const data = image.data;
-    for (let i = 0; i < data.length; i += 4) {
-      let [r, g, b] = [data[i], data[i + 1], data[i + 2]];
-      if (lens === 'bw') {
-        const gray = clamp((r * 0.2126 + g * 0.7152 + b * 0.0722 - 128) * 1.45 + 128);
-        r = g = b = gray;
-      } else if (lens === 'thermal') {
-        const v = (r + g + b) / 3;
-        r = clamp((v - 70) * 1.9 + 34);
-        g = clamp(220 - Math.abs(v - 140) * 2);
-        b = clamp(250 - v * 1.35);
-      } else if (lens === 'leica') {
-        r = clamp(r * 1.12 + 14);
-        g = clamp(g * 1.02 + 5);
-        b = clamp(b * 0.86 - 4);
-      } else if (lens === 'digicam') {
-        r = clamp(Math.round(r / 28) * 28 * 1.12 + 6);
-        g = clamp(Math.round(g / 28) * 28 * 1.04 + 4);
-        b = clamp(Math.round(b / 32) * 32 * 0.94);
-      } else if (lens === 'vhs') {
-        r = clamp(r * 1.16 + 8);
-        b = clamp(b * 1.22 + 12);
+    context.strokeStyle = 'rgba(0,0,0,0.9)';
+    context.lineWidth = 3;
+    context.stroke();
+    context.restore();
+    return true;
+  }
+
+  if (lens === 'dreamy') {
+    context.save();
+    context.globalCompositeOperation = 'screen';
+    context.globalAlpha = 0.38;
+    context.filter = 'blur(14px) brightness(1.35) contrast(1.08)';
+    context.drawImage(canvas, 0, 0);
+    context.filter = 'none';
+    context.globalCompositeOperation = 'soft-light';
+    context.globalAlpha = 0.22;
+    context.fillStyle = '#ffeedd';
+    context.fillRect(0, 0, width, height);
+    context.restore();
+    return true;
+  }
+
+  const image = context.getImageData(0, 0, width, height);
+  const data = image.data;
+
+  if (lens === 'vhs') {
+    const shift = Math.max(3, Math.round(width * 0.005));
+    const raw = new Uint8ClampedArray(data);
+    for (let y = 0; y < height; y++) {
+      const row = y * width;
+      for (let x = 0; x < width; x++) {
+        const i = (row + x) * 4;
+        const rx = Math.min(width - 1, x + shift);
+        const bx = Math.max(0, x - shift);
+        const ri = (row + rx) * 4;
+        const bi = (row + bx) * 4;
+        data[i] = clamp(raw[ri] * 1.15 + 8);
+        data[i + 1] = clamp(raw[i + 1] * 0.98);
+        data[i + 2] = clamp(raw[bi + 2] * 1.20 + 10);
       }
-      const grain = lens === 'leica' ? (Math.random() - 0.5) * 15 : 0;
+    }
+    context.putImageData(image, 0, 0);
+
+    context.save();
+    context.fillStyle = 'rgba(12, 12, 12, 0.16)';
+    for (let y = 0; y < height; y += 4) {
+      context.fillRect(0, y, width, 1.5);
+    }
+    context.font = `600 ${Math.max(12, Math.round(width * 0.026))}px "JetBrains Mono", monospace`;
+    context.fillStyle = 'rgba(255, 255, 255, 0.92)';
+    context.shadowColor = '#000000';
+    context.shadowBlur = 3;
+    context.fillText('PLAY ▶  SP  00:04:12', Math.round(width * 0.04), Math.round(height * 0.05));
+    context.restore();
+    return true;
+  }
+
+  for (let i = 0; i < data.length; i += 4) {
+    let [r, g, b] = [data[i], data[i + 1], data[i + 2]];
+    if (lens === 'leica') {
+      r = clamp(r * 1.14 + 14);
+      g = clamp(g * 1.03 + 5);
+      b = clamp(b * 0.88 - 4);
+      const grain = (Math.random() - 0.5) * 16;
       data[i] = clamp(r + grain);
       data[i + 1] = clamp(g + grain);
       data[i + 2] = clamp(b + grain);
+    } else if (lens === 'digicam') {
+      r = clamp((r - 128) * 1.18 + 138);
+      g = clamp((g - 128) * 1.14 + 134);
+      b = clamp((b - 128) * 1.08 + 124);
+      data[i] = r;
+      data[i + 1] = g;
+      data[i + 2] = b;
+    } else if (lens === 'bw') {
+      const gray = clamp((r * 0.2126 + g * 0.7152 + b * 0.0722 - 128) * 1.45 + 128);
+      data[i] = data[i + 1] = data[i + 2] = gray;
+    } else if (lens === 'thermal') {
+      const v = (r + g + b) / 3;
+      data[i] = clamp((v - 70) * 1.9 + 34);
+      data[i + 1] = clamp(220 - Math.abs(v - 140) * 2);
+      data[i + 2] = clamp(250 - v * 1.35);
     }
-    context.putImageData(image, 0, 0);
-    if (lens === 'vhs') {
-      context.globalAlpha = 0.2;
-      context.fillStyle = '#ff1744';
-      context.fillRect(3, 0, width, height);
-      context.globalAlpha = 0.16;
-      context.fillStyle = '#168fff';
-      context.fillRect(-3, 0, width, height);
-      context.globalAlpha = 0.15;
-      context.fillStyle = '#121212';
-      for (let y = 4; y < height; y += 5) context.fillRect(0, y, width, 1);
-      context.globalAlpha = 1;
-      context.font = '500 13px monospace';
-      context.fillStyle = '#fff';
-      context.fillText('PLAY ▷  SP 00:04:12', 18, 28);
-    }
-    if (lens === 'digicam') {
-      context.font = '500 16px monospace';
-      context.fillStyle = '#FF7700';
-      context.fillText(new Date().toLocaleDateString('en-CA'), width - 124, height - 20);
-    }
-    if (lens === 'leica') {
-      const leak = context.createLinearGradient(0, 0, width, height);
-      leak.addColorStop(0, 'rgba(233,85,36,.24)');
-      leak.addColorStop(0.18, 'rgba(233,85,36,0)');
-      leak.addColorStop(0.82, 'rgba(255,189,68,0)');
-      leak.addColorStop(1, 'rgba(255,133,53,.24)');
-      context.fillStyle = leak;
-      context.fillRect(0, 0, width, height);
-    }
-  } else if (lens === 'dreamy') {
-    context.globalCompositeOperation = 'screen';
-    context.globalAlpha = 0.28;
-    context.filter = 'blur(12px) brightness(1.4)';
-    context.drawImage(canvas, 0, 0);
-    context.filter = 'none';
-    context.globalAlpha = 1;
-    context.globalCompositeOperation = 'source-over';
+  }
+  context.putImageData(image, 0, 0);
+
+  if (lens === 'leica') {
+    const leak = context.createLinearGradient(0, 0, width, height);
+    leak.addColorStop(0, 'rgba(240, 95, 38, 0.22)');
+    leak.addColorStop(0.22, 'rgba(245, 140, 48, 0.08)');
+    leak.addColorStop(0.45, 'rgba(255, 189, 68, 0)');
+    leak.addColorStop(0.78, 'rgba(255, 140, 50, 0)');
+    leak.addColorStop(1, 'rgba(255, 115, 35, 0.20)');
+    context.fillStyle = leak;
+    context.fillRect(0, 0, width, height);
+  }
+
+  if (lens === 'digicam') {
+    const flash = context.createRadialGradient(
+      width / 2, height * 0.44, 20,
+      width / 2, height * 0.44, Math.max(width, height) * 0.65
+    );
+    flash.addColorStop(0, 'rgba(255, 255, 255, 0.14)');
+    flash.addColorStop(0.4, 'rgba(255, 255, 255, 0.03)');
+    flash.addColorStop(1, 'rgba(0, 0, 0, 0.20)');
+    context.fillStyle = flash;
+    context.fillRect(0, 0, width, height);
+
+    const now = new Date();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    const dateText = `'04  ${m}  ${d}`;
+    const fontSize = Math.max(16, Math.round(width * 0.038));
+    context.save();
+    context.font = `700 ${fontSize}px "JetBrains Mono", monospace`;
+    context.fillStyle = '#ff7a00';
+    context.shadowColor = 'rgba(0, 0, 0, 0.9)';
+    context.shadowBlur = 4;
+    context.shadowOffsetX = 1;
+    context.shadowOffsetY = 1;
+    context.textAlign = 'right';
+    context.fillText(dateText, width - Math.round(width * 0.05), height - Math.round(height * 0.04));
+    context.restore();
   }
   return true;
 }
@@ -237,6 +326,7 @@ export async function composePhotostrip(options: {
       : options.filterId === 'bw' ? 'grayscale(1) contrast(1.08)'
       : options.filterId === 'warm' ? 'sepia(.22) saturate(1.15)'
       : options.filterId === 'vivid' ? 'saturate(1.35) contrast(1.04)'
+      : options.filterId === 'classic' ? 'contrast(1.05) brightness(1.02)'
       : 'none';
     context.save();
     context.filter = filter;

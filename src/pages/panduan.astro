@@ -14,7 +14,7 @@ import { assetUrl } from '../lib/paths';
     <nav aria-label="Navigasi panduan">
       <a href={assetUrl('/#lenses')}>Efek lensa</a>
       <a href={assetUrl('/#frames')}>Koleksi frame</a>
-      <a href={assetUrl('/panduan')} style="color: var(--poppy);">Panduan</a>
+      <a href={assetUrl('/panduan')} class="nav-link-panduan" style="color: var(--poppy);">Panduan</a>
       <a href={assetUrl('/studio')}>Studio</a>
     </nav>
     <a class="header-cta" href={assetUrl('/studio')}>Buka photobooth <span>↗</span></a>
@@ -39,23 +39,23 @@ import { assetUrl } from '../lib/paths';
       <article class="guide-step-card" id="step-1">
         <div class="guide-step-info">
           <span class="guide-step-tag">01 / KAMERA</span>
-          <h2 class="guide-step-title">Pilih format & jepret foto</h2>
+          <h2 class="guide-step-title">Pilih format kamera & efek lensa</h2>
           <ul class="guide-features-list">
             <li>
               <span class="guide-check-icon">✓</span>
-              <div><strong>Format layout:</strong> Pilih Strip 4 klasik, Grid 2x2, Solo Polaroid, Mini 3, atau Wide 1.</div>
+              <div><strong>Format ukuran foto:</strong> Pilihan orientasi Potret · Story (1 foto) atau Landscape (1, 2, atau 3 foto) sesuai konsep posenya.</div>
             </li>
             <li>
               <span class="guide-check-icon">✓</span>
-              <div><strong>Timer & Burst:</strong> Atur jeda 1s, 3s, 5s, atau 10s. Aktifkan <em>Burst</em> untuk jepret otomatis beruntun.</div>
+              <div><strong>Efek lensa real-time:</strong> Pilih tampilan <em>Original</em> (tanpa efek) atau 5 lensa vintage: Fisheye 360°, Leica 35mm, Digicam 2004, VHS Camcorder, dan Dreamy Soft Prism langsung di preview kamera.</div>
             </li>
             <li>
               <span class="guide-check-icon">✓</span>
-              <div><strong>Lensa vintage:</strong> Ganti filter Fisheye 360°, Leica 35mm, Digicam 2004, VHS, atau Dreamy secara real-time.</div>
+              <div><strong>Timer & kontrol kamera:</strong> Atur hitung mundur 1s, 3s, 5s, atau 10s. Fitur Mirror kamera diatur default OFF serta tombol Balik kamera depan/belakang.</div>
             </li>
             <li>
               <span class="guide-check-icon">✓</span>
-              <div><strong>Re-take per slot:</strong> Klik salah satu kotak pose di bawah untuk foto ulang pose tersebut tanpa mengulang semuanya.</div>
+              <div><strong>Retake per slot:</strong> Klik salah satu kotak thumbnail slot foto untuk mengambil ulang pose tersebut tanpa mengulang foto lainnya.</div>
             </li>
           </ul>
         </div>
@@ -67,7 +67,7 @@ import { assetUrl } from '../lib/paths';
           </div>
           <div class="visual-mock-stage">
             <div style="font: 800 13px var(--mono);">📷 KAMERA AKTIF</div>
-            <div style="color: #6d675b; font-size: 11px; margin-top: 4px;">Timer: 3s · Fisheye 360°</div>
+            <div style="color: #6d675b; font-size: 11px; margin-top: 4px;">Timer: 3s · Lensa: Original</div>
           </div>
           <div class="mock-slots-grid">
             <div class="mock-slot active">1 ✓</div>
@@ -85,23 +85,23 @@ import { assetUrl } from '../lib/paths';
       <article class="guide-step-card reverse" id="step-2">
         <div class="guide-step-info">
           <span class="guide-step-tag">02 / BINGKAI</span>
-          <h2 class="guide-step-title">Pilih tema & warna bingkai</h2>
+          <h2 class="guide-step-title">Pilih tema bingkai & motif latar</h2>
           <ul class="guide-features-list">
             <li>
               <span class="guide-check-icon">✓</span>
-              <div><strong>Koleksi tema:</strong> Pilihan desain Retro Analog, Y2K Cyber Pop, Minimalist Editorial, dan Cinema Ticket.</div>
+              <div><strong>Koleksi bingkai estetik:</strong> Ragam desain tematik mulai dari Signature (Kilas Butter, Atelier Noir, Swiss), Retro (Struk Belanja, 35mm Film Roll, Festival Pass), hingga Cute & Pop (Tokyo Purikura, Y2K Cyber, Coquette Ribbon).</div>
             </li>
             <li>
               <span class="guide-check-icon">✓</span>
-              <div><strong>Kustom warna:</strong> Klik palet warna siap pakai atau gunakan kode warna hex favoritmu.</div>
+              <div><strong>Kustom warna & motif:</strong> Bebas atur warna bingkai dengan palet warna atau kode hex, serta pilihan pola motif (Polos, Dots, Lines, Grid).</div>
             </li>
             <li>
               <span class="guide-check-icon">✓</span>
-              <div><strong>Pola latar:</strong> Tambahkan tekstur Polos, Bintik Halus, Garis Tipis, atau Serat Kertas.</div>
+              <div><strong>Navigasi bingkai cepat:</strong> Gunakan tombol navigasi <em>Sebelumnya</em> dan <em>Berikutnya</em> untuk menjelajahi pilihan bingkai dengan mudah.</div>
             </li>
             <li>
               <span class="guide-check-icon">✓</span>
-              <div><strong>Kembali kapan saja:</strong> Klik tombol <em><span class="nav-arrow">←</span> Kembali ke Kamera</em> jika ingin memperbaiki pose.</div>
+              <div><strong>Fleksibel kembali:</strong> Klik tombol <em><span class="nav-arrow">←</span> Kembali ke Kamera</em> kapan saja jika ingin memperbaiki atau mengulang foto.</div>
             </li>
           </ul>
         </div>
@@ -118,7 +118,7 @@ import { assetUrl } from '../lib/paths';
               <div style="width: 28px; height: 28px; background: #8ecae6; border: 1.5px solid #000;"></div>
               <div style="width: 28px; height: 28px; background: #161412; border: 1.5px solid #000;"></div>
             </div>
-            <div style="font: 700 9px var(--mono); color: #555;">Kategori: Retro Analog</div>
+            <div style="font: 700 9px var(--mono); color: #555;">Kategori: Signature / Retro</div>
           </div>
           <div class="mock-btn-row">
             <span class="mock-pill"><span class="nav-arrow">←</span> Kembali</span>
@@ -130,39 +130,39 @@ import { assetUrl } from '../lib/paths';
       <!-- STEP 3 -->
       <article class="guide-step-card" id="step-3">
         <div class="guide-step-info">
-          <span class="guide-step-tag">03 / STIKER</span>
-          <h2 class="guide-step-title">Tulis caption & tempel stiker</h2>
+          <span class="guide-step-tag">03 / STIKER & FILTER</span>
+          <h2 class="guide-step-title">Pilih filter warna, caption & stiker</h2>
           <ul class="guide-features-list">
             <li>
               <span class="guide-check-icon">✓</span>
-              <div><strong>Caption nama geng:</strong> Tuliskan nama geng, lokasi, atau tanggal (maks. 40 karakter) tercetak di frame.</div>
+              <div><strong>Filter warna (No Filter default):</strong> Tersedia opsi <em>No Filter</em> sebagai pilihan bawaan agar tone lensa tetap murni, serta pilihan Classic, Film, B&W, Warm, dan Vivid.</div>
             </li>
             <li>
               <span class="guide-check-icon">✓</span>
-              <div><strong>Stiker retro:</strong> Tempel stiker ikonik bintang ✦, hati ♡, pita 🎀, senyum ☻, bunga ✿, atau CHEESE!.</div>
+              <div><strong>Caption nama geng:</strong> Tuliskan nama geng, lokasi, atau tanggal kenangan (maks. 40 karakter) yang langsung tercetak di bagian bawah frame.</div>
             </li>
             <li>
               <span class="guide-check-icon">✓</span>
-              <div><strong>Drag & drop:</strong> Geser stiker bebas ke posisi mana pun di atas photostrip.</div>
+              <div><strong>Stiker retro estetik:</strong> Tempel pilihan stiker ikonik bintang ✦, hati ♡, pita 🎀, senyum ☻, bunga ✿, atau CHEESE!.</div>
             </li>
             <li>
               <span class="guide-check-icon">✓</span>
-              <div><strong>Hapus mudah:</strong> Dobel klik stiker untuk langsung menghapusnya.</div>
+              <div><strong>Drag & drop leluasa:</strong> Geser stiker bebas ke posisi mana pun di atas photostrip dan dobel klik stiker untuk langsung menghapusnya.</div>
             </li>
           </ul>
         </div>
 
         <div class="guide-step-visual" aria-hidden="true">
           <div class="visual-header-bar">
-            <span>● STIKER & CAPTION</span>
-            <span>03 STIKER</span>
+            <span>● FILTER & STIKER</span>
+            <span>03 FILTER</span>
           </div>
           <div class="visual-mock-stage">
             <div style="font: 800 12px var(--display);">BESTIE SELAMANYA</div>
             <div style="display: flex; gap: 8px; margin: 10px 0; font-size: 18px;">
               <span>✦</span><span>♡</span><span>🎀</span><span style="font: 800 10px var(--mono); border: 1px solid #000; padding: 2px 4px;">CHEESE!</span>
             </div>
-            <div style="font: 700 9px var(--mono); color: #888;">✦ Geser stiker ke atas foto</div>
+            <div style="font: 700 9px var(--mono); color: #888;">Filter: No Filter · Geser stiker</div>
           </div>
           <div class="mock-btn-row">
             <span class="mock-pill"><span class="nav-arrow">←</span> Kembali</span>
@@ -175,23 +175,23 @@ import { assetUrl } from '../lib/paths';
       <article class="guide-step-card reverse" id="step-4">
         <div class="guide-step-info">
           <span class="guide-step-tag">04 / SIMPAN</span>
-          <h2 class="guide-step-title">Unduh PNG, Boomerang, atau scan QR</h2>
+          <h2 class="guide-step-title">Unduh foto, Boomerang & scan QR</h2>
           <ul class="guide-features-list">
             <li>
               <span class="guide-check-icon">✓</span>
-              <div><strong>Unduh PNG (300 DPI):</strong> File gambar tajam resolusi tinggi siap dicetak di kertas foto.</div>
+              <div><strong>Unduh foto cetak (300 DPI):</strong> Simpan berkas photostrip resolusi tinggi siap dicetak atau disimpan ke galeri perangkat.</div>
             </li>
             <li>
               <span class="guide-check-icon">✓</span>
-              <div><strong>Boomerang WebM:</strong> Simpan rekaman video gerak singkat sebelum blitz untuk IG Story & TikTok.</div>
+              <div><strong>Rekaman Boomerang WebM:</strong> Simpan klip video gerak singkat spontan sebelum blitz (durasi 3s atau 4s) untuk dibagikan ke Instagram Story & TikTok.</div>
             </li>
             <li>
               <span class="guide-check-icon">✓</span>
-              <div><strong>Scan QR ke HP:</strong> Tampilkan kode QR dan pindai langsung lewat kamera ponselmu tanpa kabel.</div>
+              <div><strong>Scan QR langsung ke HP:</strong> Tampilkan kode QR dan pindai langsung lewat kamera ponsel untuk mentransfer berkas foto secara instan tanpa kabel.</div>
             </li>
             <li>
               <span class="guide-check-icon">✓</span>
-              <div><strong>Edit ulang:</strong> Klik <em><span class="nav-arrow">←</span> Edit Bingkai & Stiker</em> kapan saja tanpa perlu foto ulang dari awal.</div>
+              <div><strong>Edit ulang fleksibel:</strong> Klik tombol kembali kapan saja untuk mengubah bingkai, filter, atau stiker tanpa perlu mengulang sesi foto dari awal.</div>
             </li>
           </ul>
         </div>
@@ -203,11 +203,11 @@ import { assetUrl } from '../lib/paths';
           </div>
           <div class="visual-mock-stage" style="background: #fffdf5;">
             <div style="font: 800 13px var(--display); color: var(--poppy); margin-bottom: 6px;">Kenanganmu Siap!</div>
-            <div style="font: 700 9px var(--mono); color: #333; margin-bottom: 8px;">Format: PNG 300 DPI & WebM</div>
+            <div style="font: 700 9px var(--mono); color: #333; margin-bottom: 8px;">Format: Foto Cetak & Video Boomerang</div>
             <div style="width: 44px; height: 44px; border: 1.5px solid var(--ink); background: var(--butter); display: grid; place-items: center; font-size: 18px;">■</div>
           </div>
           <div class="mock-btn-row">
-            <span class="mock-pill poppy">Unduh PNG <span class="nav-arrow">↓</span></span>
+            <span class="mock-pill poppy">Unduh Foto <span class="nav-arrow">↓</span></span>
             <span class="mock-pill sky">Scan QR ■</span>
           </div>
         </div>
@@ -260,31 +260,37 @@ import { assetUrl } from '../lib/paths';
     <div class="footer-main">
       <div class="footer-brand">
         <a class="wordmark" href={assetUrl('/')}><span>✦</span> RUANG <i>KILAS</i></a>
-        <p>Photobooth Online Kreatif untuk Setiap Momen.</p>
+        <p>Photobooth online instan langsung dari browser. Tanpa aplikasi, 100% diproses lokal di perangkat.</p>
         <div class="footer-social">
           <a href={brand.instagram} target="_blank" rel="noopener noreferrer">Instagram ↗</a>
           <a href={brand.tiktok} target="_blank" rel="noopener noreferrer">TikTok ↗</a>
           <span>@ruangkilas.id</span>
         </div>
       </div>
-      <div class="footer-contact">
-        <h3>Hubungi atau kunjungi kami.</h3>
+
+      <div class="footer-col">
+        <h3>Navigasi</h3>
+        <a href={assetUrl('/studio')}>Buka Studio</a>
+        <a href={assetUrl('/panduan')}>Panduan Studio</a>
+        <a href={assetUrl('/#lenses')}>Efek Lensa</a>
+        <a href={assetUrl('/#frames')}>Koleksi Bingkai</a>
+        <a href={assetUrl('/#faq')}>Bantuan & FAQ</a>
+      </div>
+
+      <div class="footer-contact footer-col">
+        <h3>Studio & Kontak</h3>
         <address>{brand.address}</address>
         <a href={`mailto:${brand.email}`}>{brand.email}</a>
-        <a href={`mailto:${brand.partnershipEmail}`}>{brand.partnershipEmail}</a>
         <a href="https://wa.me/6281288994021">WhatsApp {brand.phone}</a>
         <small>Senin–Minggu, 09.00–21.00 WIB</small>
       </div>
-      <div class="footer-links">
-        <h3>Jelajahi Ruang Kilas.</h3>
-        <a href={assetUrl('/#lenses')}>Efek lensa</a>
-        <a href={assetUrl('/#frames')}>Koleksi bingkai</a>
-        <a href={assetUrl('/panduan')}>Panduan studio</a>
-        <a href={assetUrl('/studio')}>Buka studio</a>
-        <a href={assetUrl('/#faq')}>Bantuan & FAQ</a>
-        <a href={`mailto:${brand.partnershipEmail}?subject=Custom%20event%20frame`}>Request custom event frame</a>
-        <a href={assetUrl('/terms')}>Ketentuan layanan</a>
-        <a href={assetUrl('/brand')}>Panduan brand</a>
+
+      <div class="footer-links footer-col">
+        <h3>Informasi</h3>
+        <a href={assetUrl('/#privacy')}>Kebijakan Privasi</a>
+        <a href={assetUrl('/terms')}>Ketentuan Layanan</a>
+        <a href={assetUrl('/brand')}>Panduan Brand</a>
+        <a href={`mailto:${brand.partnershipEmail}?subject=Custom%20event%20frame`}>Request Custom Frame</a>
       </div>
     </div>
     <div class="footer-bottom">

@@ -23,9 +23,9 @@ export default function PhotoboothStudio() {
   const preparedMotionRef = useRef<{ key: unknown[]; blob: Blob } | null>(null);
 
   const [step, setStep] = useState<StudioStep>(1);
-  const [lens, setLens] = useState<LensId>('studio');
+  const [lens, setLens] = useState<LensId>('original');
   const [layout, setLayout] = useState<LayoutId>('story-1');
-  const [photoFilter, setPhotoFilter] = useState<PhotoFilterId>('classic');
+  const [photoFilter, setPhotoFilter] = useState<PhotoFilterId>('none');
   const [shareFormat, setShareFormat] = useState<'photo' | 'boomerang'>('photo');
   const [boomerangDuration, setBoomerangDuration] = useState<3 | 4>(3);
   const [isExporting, setIsExporting] = useState(false);
@@ -38,7 +38,7 @@ export default function PhotoboothStudio() {
   const [countdown, setCountdown] = useState<number | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
   const [autoShoot, setAutoShoot] = useState(false);
-  const [mirror, setMirror] = useState(true);
+  const [mirror, setMirror] = useState(false);
   const [caption, setCaption] = useState('');
   const [stickers, setStickers] = useState<string[]>([]);
   const [stickerPositions, setStickerPositions] = useState<{ x: number; y: number }[]>([]);
@@ -478,7 +478,6 @@ export default function PhotoboothStudio() {
                 )}
                 {countdown !== null && <div className="countdown-overlay" aria-live="assertive">{countdown}</div>}
                 {camera.stream && <div className="camera-hud"><span>● REC READY</span><span>HD · {new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</span></div>}
-                {lens === 'digicam' && camera.stream && <span className="digicam-date">{new Date().toLocaleDateString('en-CA')}</span>}
               </div>
 
               {camera.error && (
@@ -545,14 +544,20 @@ export default function PhotoboothStudio() {
 
               {/* Quick Lens Switcher */}
               <div className="camera-quick-lenses">
-                <span className="quick-lens-label">Efek Kamera:</span>
-                <div className="quick-lens-scroll">
+                <div className="quick-lens-header">
+                  <span className="quick-lens-label">Efek Lensa:</span>
+                  <span className="quick-lens-active-desc">
+                    {lenses.find((item) => item.id === lens)?.description}
+                  </span>
+                </div>
+                <div className="quick-lens-scroll" role="tablist" aria-label="Pilihan efek lensa">
                   {lenses.map((item) => (
                     <button
                       key={item.id}
                       type="button"
                       className={`quick-lens-pill ${lens === item.id ? 'is-active' : ''}`}
                       onClick={() => setLens(item.id)}
+                      aria-pressed={lens === item.id}
                     >
                       {item.shortName}
                     </button>

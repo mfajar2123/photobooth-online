@@ -1,14 +1,12 @@
 import type { FramePreset, LayoutId, LensPreset, PhotoFilterId } from './types';
 
 export const lenses: LensPreset[] = [
-  { id: 'studio', name: 'Standard Studio HD', shortName: 'Studio HD', description: 'Terang, tajam, warna kulit tetap natural.' },
-  { id: 'fisheye', name: '360° Fisheye Pro', shortName: 'Fisheye 360°', description: 'Distorsi cembung ala kamera aksi 8mm.' },
-  { id: 'digicam', name: 'Vintage 90s Digicam', shortName: 'Digicam 2004', description: 'Flash digital, warna Y2K, tanggal oranye.' },
-  { id: 'leica', name: 'Analog 35mm Leica', shortName: 'Leica 35mm', description: 'Warna hangat dengan tekstur film.' },
-  { id: 'bw', name: 'B&W Ilford High-Contrast', shortName: 'Ilford B&W', description: 'Monokrom dramatis, kontras tegas.' },
-  { id: 'vhs', name: 'VHS Camcorder Glitch', shortName: 'VHS Camcorder', description: 'Garis scan dan pergeseran warna.' },
-  { id: 'thermal', name: 'Thermal / Cyber Pop', shortName: 'Thermal Pop', description: 'Peta warna poppy, butter, dan biru.' },
-  { id: 'dreamy', name: 'Soft Dreamy Glow', shortName: 'Dreamy Glow', description: 'Kilau lembut dengan highlight glow.' },
+  { id: 'original', name: 'Original', shortName: 'Original', description: 'Tanpa efek, tampilan natural webcam asli.' },
+  { id: 'fisheye', name: '01 FISHEYE 360 ULTRA-WIDE', shortName: '01 Fisheye 360°', description: 'Efek distorsi cembung ekstrem ala kamera aksi 90an.' },
+  { id: 'leica', name: '02 LEICA 35MM FILM GRAIN', shortName: '02 Leica 35mm', description: 'Tone warna hangat, tekstur film grain, dan aksen light leak tipis.' },
+  { id: 'digicam', name: '03 DIGICAM CYBERSHOT 2004', shortName: '03 Digicam 2004', description: 'Efek kontras digital flash dan timestamp tanggal warna oranye di sudut foto.' },
+  { id: 'vhs', name: '04 VHS CAMCORDER GLITCH', shortName: '04 VHS Camcorder', description: 'Efek garis scanline kaset pita dan RGB shift (chromatic aberration).' },
+  { id: 'dreamy', name: '05 DREAMY SOFT PRISM', shortName: '05 Dreamy Soft Prism', description: 'Efek soft blur/glow pada highlight yang lembut ala editorial Korea.' },
 ];
 
 export const layouts: { id: LayoutId; name: string; detail: string; count: number; columns: number; ratio: number; photoRatio: number }[] = [
@@ -19,7 +17,8 @@ export const layouts: { id: LayoutId; name: string; detail: string; count: numbe
 ];
 
 export const photoFilters: { id: PhotoFilterId; name: string; detail: string; css: string }[] = [
-  { id: 'classic', name: 'Classic', detail: 'Warna natural', css: 'none' },
+  { id: 'none', name: 'No Filter', detail: 'Tanpa filter tambahan', css: 'none' },
+  { id: 'classic', name: 'Classic', detail: 'Kontras natural', css: 'contrast(1.05) brightness(1.02)' },
   { id: 'film', name: 'Film', detail: 'Nuansa analog', css: 'sepia(.18) contrast(1.08) saturate(.9)' },
   { id: 'bw', name: 'B&W', detail: 'Hitam putih', css: 'grayscale(1) contrast(1.08)' },
   { id: 'warm', name: 'Warm', detail: 'Hangat lembut', css: 'sepia(.22) saturate(1.15)' },
