@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import WeddingBooth from '../components/wedding/WeddingBooth';
+import { assetUrl } from '../lib/paths';
+import '../styles/wedding.css';
+
+const heroSrc = assetUrl('/images/wedding-ripki-hero.jpg');
+const homeHref = assetUrl('/');
+---
+
+<BaseLayout
+  title="Ripki & Siti — Virtual Photobooth, Goalpara"
+  description="Foto langsung dari browser di wedding Ripki & Siti, Goalpara, 28 November 2026. Bingkai otomatis, unduh JPG atau boomerang, lalu bagikan."
+  keywords="wedding ripki siti, wedding photobooth, photobooth goalpara, wedding photobooth online, foto wedding online"
+  ogImage="/images/wedding-ripki-og.jpg"
+  noindex={true}
+>
+  <WeddingBooth client:load heroSrc={heroSrc} homeHref={homeHref} />
+</BaseLayout>
