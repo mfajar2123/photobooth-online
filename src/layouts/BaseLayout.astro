@@ -13,6 +13,8 @@ interface Props {
   description?: string;
   keywords?: string;
   ogImage?: string;
+  ogImageType?: string;
+  ogImageAlt?: string;
   ogType?: 'website' | 'article';
   canonicalUrl?: string;
   noindex?: boolean;
@@ -25,6 +27,8 @@ const {
   description = 'Studio photobooth online gratis langsung dari browser tanpa instalasi. Nikmati efek kamera vintage (Fisheye, Leica, Digicam), frame estetik, dan unduh photostrip cetak 300 DPI.',
   keywords = 'photobooth online, photobooth online gratis, photo booth online indonesia, photo strip online, photobooth browser, vintage photo booth, cetak photostrip, photobooth webcam, efek lensa vintage, fisheye camera online, frame photobooth estetik, ruang kilas, aplikasi photobooth gratis',
   ogImage = '/images/og-share.png',
+  ogImageType = 'image/png',
+  ogImageAlt = 'Ruang Kilas - Photobooth Online di Browser',
   ogType = 'website',
   canonicalUrl,
   noindex = false,
@@ -154,8 +158,8 @@ const fullSchema = {
     <meta property="og:image:secure_url" content={ogImageUrl} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:type" content="image/png" />
-    <meta property="og:image:alt" content="Ruang Kilas - Photobooth Online di Browser" />
+    <meta property="og:image:type" content={ogImageType} />
+    <meta property="og:image:alt" content={ogImageAlt} />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -164,7 +168,7 @@ const fullSchema = {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
-    <meta name="twitter:image:alt" content="Ruang Kilas - Photobooth Online di Browser" />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
 
     <!-- Theme & App Metadata -->
     <meta name="theme-color" content="#FFF3B0" />

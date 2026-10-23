@@ -1,18 +1,62 @@
-const INK = '#171512';
-const INK_SOFT = 'rgba(23, 21, 18, 0.66)';
-const INK_FAINT = 'rgba(23, 21, 18, 0.38)';
-const CREAM = '#FFFDF5';
-const POPPY = '#E63946';
+const INK = '#2A1712';
+const CREAM = '#FFF9F0';
+const GOLD = '#E8C78F';
 const MONO = '"JetBrains Mono", "Courier New", monospace';
-const SCRIPT = '"Great Vibes", "Brush Script MT", cursive';
 
 export const WEDDING = {
-  couple: 'Ripki & Siti',
-  venue: 'GOALPARA',
+  couple: 'Ripki & Aura',
+  venue: 'SUKABUMI',
   date: '28 NOVEMBER 2026',
 } as const;
 
 export const WEDDING_FRAME_SIZE = { width: 1080, height: 1920 } as const;
+
+/* Coordinate space of the supplied frame artwork (public/images/frame-ripki.jpeg). */
+const FRAME_ART = { width: 402, height: 717 } as const;
+const CARD = { left: 29, top: 60, right: 378, bottom: 600, photoBottom: 560, radius: 12, inset: 2 } as const;
+const MENU_DOTS = { x: 357, ys: [79, 85, 92] as const };
+const WATERMARK = { baseline: 43, left: 18 } as const;
+
+const frameCache = new Map<string, HTMLImageElement>();
+const frameRequests = new Map<string, Promise<HTMLImageElement>>();
+
+/** Browsers may already have the frame decoded by the time the camera opens. */
+export function getWeddingFrame(src: string) {
+  return frameCache.get(src) ?? null;
+}
+
+export function loadWeddingFrame(src: string): Promise<HTMLImageElement> {
+  if (typeof window === 'undefined') {
+    return Promise.reject(new Error('Bingkai belum bisa dimuat.'));
+  }
+
+  const cached = frameCache.get(src);
+  if (cached) return Promise.resolve(cached);
+
+  const pending = frameRequests.get(src);
+  if (pending) return pending;
+
+  const request = new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image();
+    image.decoding = 'async';
+    image.onload = () => {
+      if (image.naturalWidth > 0) {
+        frameCache.set(src, image);
+        resolve(image);
+        return;
+      }
+      reject(new Error('Bingkai belum bisa dimuat.'));
+    };
+    image.onerror = () => reject(new Error('Bingkai belum bisa dimuat.'));
+    image.src = src;
+  });
+
+  frameRequests.set(src, request);
+  void request.catch(() => {
+    frameRequests.delete(src);
+  });
+  return request;
+}
 
 function drawStar4(
   context: CanvasRenderingContext2D,
@@ -68,6 +112,48 @@ function drawTrackedText(
   context.restore();
 }
 
+function roundedTopPath(
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number,
+) {
+  const r = Math.max(0, Math.min(radius, width / 2, height / 2));
+  context.beginPath();
+  context.moveTo(x + r, y);
+  context.lineTo(x + width - r, y);
+  context.quadraticCurveTo(x + width, y, x + width, y + r);
+  context.lineTo(x + width, y + height);
+  context.lineTo(x, y + height);
+  context.lineTo(x, y + r);
+  context.quadraticCurveTo(x, y, x + r, y);
+  context.closePath();
+}
+
+function roundedRectPath(
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number,
+) {
+  const r = Math.max(0, Math.min(radius, width / 2, height / 2));
+  context.beginPath();
+  context.moveTo(x + r, y);
+  context.lineTo(x + width - r, y);
+  context.quadraticCurveTo(x + width, y, x + width, y + r);
+  context.lineTo(x + width, y + height - r);
+  context.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+  context.lineTo(x + r, y + height);
+  context.quadraticCurveTo(x, y + height, x, y + height - r);
+  context.lineTo(x, y + r);
+  context.quadraticCurveTo(x, y, x + r, y);
+  context.closePath();
+}
+
 function drawPhotoCover(
   context: CanvasRenderingContext2D,
   source: CanvasImageSource & { videoWidth?: number; videoHeight?: number },
@@ -76,6 +162,7 @@ function drawPhotoCover(
   width: number,
   height: number,
   mirror: boolean,
+  clipPath: (context: CanvasRenderingContext2D) => void,
 ) {
   const sourceWidth = source.videoWidth ?? 0;
   const sourceHeight = source.videoHeight ?? 0;
@@ -88,8 +175,7 @@ function drawPhotoCover(
   const drawY = y + (height - drawHeight) / 2;
 
   context.save();
-  context.beginPath();
-  context.rect(x, y, width, height);
+  clipPath(context);
   context.clip();
   // Mirror inside the aperture only, so the saved photo matches the preview.
   if (mirror) {
@@ -101,9 +187,73 @@ function drawPhotoCover(
   return true;
 }
 
+function drawMenuDots(context: CanvasRenderingContext2D, sx: number, sy: number) {
+  const x = MENU_DOTS.x * sx;
+  const dotRadius = 1.5 * sx;
+  const haloRadius = 3 * sx;
+
+  context.save();
+  MENU_DOTS.ys.forEach((referenceY) => {
+    const y = referenceY * sy;
+    context.beginPath();
+    context.fillStyle = 'rgba(255, 249, 240, 0.35)';
+    context.arc(x, y, haloRadius, 0, Math.PI * 2);
+    context.fill();
+
+    context.beginPath();
+    context.fillStyle = INK;
+    context.arc(x, y, dotRadius, 0, Math.PI * 2);
+    context.fill();
+  });
+  context.restore();
+}
+
+function drawFrameWatermark(context: CanvasRenderingContext2D, width: number, height: number) {
+  const sx = width / FRAME_ART.width;
+  const sy = height / FRAME_ART.height;
+  const size = 5.4 * sx;
+  const tracking = 1.4 * sx;
+  const font = `500 ${size}px ${MONO}`;
+  const baseline = WATERMARK.baseline * sy;
+  const left = WATERMARK.left * sx;
+  const starOuter = 3.2 * sx;
+  const starInner = 1.2 * sx;
+  const starGap = 2.4 * sx;
+
+  context.save();
+  context.font = font;
+  const domainWidth = measureTracked(context, 'ruangkilas.my.id', tracking).width;
+  const domainCenter = left + starOuter * 2 + starGap + domainWidth / 2;
+
+  context.shadowColor = 'rgba(44, 20, 12, 0.55)';
+  context.shadowBlur = 2.5 * sx;
+  context.shadowOffsetY = 0.8 * sx;
+
+  drawStar4(
+    context,
+    left + starOuter,
+    baseline - size * 0.34,
+    starOuter,
+    starInner,
+    GOLD,
+  );
+
+  drawTrackedText(
+    context,
+    'ruangkilas.my.id',
+    domainCenter,
+    baseline,
+    tracking,
+    font,
+    'rgba(255, 249, 240, 0.88)',
+  );
+  context.restore();
+}
+
 /**
- * Draws the complete 9:16 wedding keepsake. Used for both the live preview and
- * the final JPG, so the result is exactly what the guest sees before shooting.
+ * Draws the complete 9:16 wedding keepsake around the supplied frame artwork.
+ * The live preview and the final JPG use the same function so the result is
+ * exactly what the guest sees before shooting.
  */
 export function drawWeddingComposition(
   context: CanvasRenderingContext2D,
@@ -111,180 +261,68 @@ export function drawWeddingComposition(
   width: number,
   height: number,
   mirror: boolean,
+  frameImage: HTMLImageElement | null,
 ) {
-  const unit = width / WEDDING_FRAME_SIZE.width;
+  const sx = width / FRAME_ART.width;
+  const sy = height / FRAME_ART.height;
 
   context.save();
   context.clearRect(0, 0, width, height);
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = 'high';
 
-  // Warm paper mat
-  context.fillStyle = CREAM;
-  context.fillRect(0, 0, width, height);
+  const cardX = CARD.left * sx;
+  const cardY = CARD.top * sy;
+  const cardWidth = (CARD.right - CARD.left + 1) * sx;
+  const cardHeight = (CARD.bottom - CARD.top + 1) * sy;
+  const cardRadius = CARD.radius * sx;
 
-  const butterGlow = context.createRadialGradient(
-    width * 0.5,
-    height * 0.02,
-    0,
-    width * 0.5,
-    height * 0.16,
-    height * 0.62,
-  );
-  butterGlow.addColorStop(0, 'rgba(255, 243, 176, 0.72)');
-  butterGlow.addColorStop(0.46, 'rgba(255, 243, 176, 0.24)');
-  butterGlow.addColorStop(1, 'rgba(255, 253, 245, 0)');
-  context.fillStyle = butterGlow;
-  context.fillRect(0, 0, width, height);
-
-  // Top label
-  drawStar4(context, width / 2, 70 * unit, 9 * unit, 3.2 * unit, POPPY);
-  drawTrackedText(
-    context,
-    WEDDING.venue,
-    width / 2,
-    120 * unit,
-    8 * unit,
-    `500 ${21 * unit}px ${MONO}`,
-    INK_SOFT,
-  );
-
-  // Photo aperture
-  const photoX = 90 * unit;
-  const photoY = 150 * unit;
-  const photoWidth = 900 * unit;
-  const photoHeight = 1200 * unit;
-  context.fillStyle = '#1A1916';
-  context.fillRect(photoX, photoY, photoWidth, photoHeight);
-  if (video) drawPhotoCover(context, video, photoX, photoY, photoWidth, photoHeight, mirror);
-
-  context.strokeStyle = INK;
-  context.lineWidth = 2.5 * unit;
-  context.strokeRect(
-    photoX - 1.25 * unit,
-    photoY - 1.25 * unit,
-    photoWidth + 2.5 * unit,
-    photoHeight + 2.5 * unit,
-  );
-
-  // Gentle inset highlight over the photo edge
-  context.strokeStyle = 'rgba(255, 253, 245, 0.52)';
-  context.lineWidth = 1.5 * unit;
-  context.strokeRect(
-    photoX + 11 * unit,
-    photoY + 11 * unit,
-    photoWidth - 22 * unit,
-    photoHeight - 22 * unit,
-  );
-
-  // Double mat rule
-  context.strokeStyle = 'rgba(23, 21, 18, 0.56)';
-  context.lineWidth = 1.5 * unit;
-  context.strokeRect(34 * unit, 34 * unit, 1012 * unit, 1852 * unit);
-  context.strokeStyle = 'rgba(23, 21, 18, 0.2)';
-  context.lineWidth = 1 * unit;
-  context.strokeRect(46 * unit, 46 * unit, 988 * unit, 1828 * unit);
-
-  // Caption block
-  drawTrackedText(
-    context,
-    'WEDDING OF',
-    width / 2,
-    1489 * unit,
-    10 * unit,
-    `500 ${23 * unit}px ${MONO}`,
-    INK_SOFT,
-  );
-
-  const nameParts: { text: string; color: string }[] = [
-    { text: 'Ripki ', color: INK },
-    { text: '&', color: POPPY },
-    { text: ' Siti', color: INK },
-  ];
-  let nameSize = 134 * unit;
-  const measureNameParts = (size: number) => {
-    context.font = `400 ${size}px ${SCRIPT}`;
-    return nameParts.reduce((sum, part) => sum + context.measureText(part.text).width, 0);
-  };
-  while (measureNameParts(nameSize) > 828 * unit && nameSize > 64 * unit) {
-    nameSize -= 4 * unit;
+  if (frameImage) {
+    context.drawImage(frameImage, 0, 0, width, height);
+  } else {
+    // Warm fallback while the small frame JPEG is decoding.
+    context.fillStyle = '#8B4424';
+    context.fillRect(0, 0, width, height);
+    roundedRectPath(context, cardX, cardY, cardWidth, cardHeight, cardRadius);
+    context.fillStyle = CREAM;
+    context.fill();
   }
-  context.font = `400 ${nameSize}px ${SCRIPT}`;
-  context.textAlign = 'left';
-  context.textBaseline = 'alphabetic';
-  let nameX = width / 2 - measureNameParts(nameSize) / 2;
-  nameParts.forEach((part) => {
-    context.fillStyle = part.color;
-    context.fillText(part.text, nameX, 1614 * unit);
-    nameX += context.measureText(part.text).width;
-  });
 
-  // Divider with a small poppy star
-  const dividerY = 1686 * unit;
-  context.strokeStyle = 'rgba(23, 21, 18, 0.38)';
-  context.lineWidth = 1 * unit;
-  context.beginPath();
-  context.moveTo(392 * unit, dividerY);
-  context.lineTo(508 * unit, dividerY);
-  context.moveTo(572 * unit, dividerY);
-  context.lineTo(688 * unit, dividerY);
-  context.stroke();
-  drawStar4(context, width / 2, dividerY, 9.5 * unit, 3.1 * unit, POPPY);
+  const inset = CARD.inset * sx;
+  const photoX = cardX + inset;
+  const photoY = cardY + inset;
+  const photoWidth = cardWidth - inset * 2;
+  const photoBottom = CARD.photoBottom * sy;
+  const photoHeight = photoBottom - photoY;
 
-  drawTrackedText(
-    context,
-    WEDDING.date,
-    width / 2,
-    1762 * unit,
-    7 * unit,
-    `500 ${22 * unit}px ${MONO}`,
-    INK_SOFT,
-  );
+  if (video) {
+    drawPhotoCover(
+      context,
+      video,
+      photoX,
+      photoY,
+      photoWidth,
+      photoHeight,
+      mirror,
+      (ctx) => roundedTopPath(ctx, photoX, photoY, photoWidth, photoHeight, 10 * sx),
+    );
+  }
 
-  // Footer: Ruang Kilas mark + domain on the left, booth label on the right.
-  const footerBaseline = 1842 * unit;
-  const footerFont = `500 ${12 * unit}px ${MONO}`;
-  const domainTracking = 2.2 * unit;
-  const boothTracking = 2.6 * unit;
-  const domainX = 114 * unit;
-  const boothRight = 990 * unit;
+  // The frame JPEG has its own menu dots, but the photo now covers them.
+  drawMenuDots(context, sx, sy);
 
-  drawStar4(context, 100 * unit, footerBaseline - 4 * unit, 8 * unit, 2.8 * unit, POPPY);
-
-  context.save();
-  context.font = footerFont;
-  const domainWidth = measureTracked(context, 'ruangkilas.my.id', domainTracking).width;
-  const boothWidth = measureTracked(context, 'VIRTUAL PHOTOBOOTH', boothTracking).width;
-  context.restore();
-
-  drawTrackedText(
-    context,
-    'ruangkilas.my.id',
-    domainX + domainWidth / 2,
-    footerBaseline,
-    domainTracking,
-    footerFont,
-    INK_FAINT,
-  );
-
-  drawTrackedText(
-    context,
-    'VIRTUAL PHOTOBOOTH',
-    boothRight - boothWidth / 2,
-    footerBaseline,
-    boothTracking,
-    footerFont,
-    INK_FAINT,
-  );
+  // The reference already carries the hashtag, names, and date. Keep only a
+  // small Ruang Kilas mark in the clear top-left corner of the artwork.
+  drawFrameWatermark(context, width, height);
 
   context.restore();
 }
 
-export async function composeWeddingPhoto(video: HTMLVideoElement, mirror: boolean) {
+export async function composeWeddingPhoto(video: HTMLVideoElement, mirror: boolean, frameSrc: string) {
   if (typeof document !== 'undefined' && document.fonts) {
     try {
       await Promise.all([
-        document.fonts.load('400 134px "Great Vibes"'),
-        document.fonts.load('500 23px "JetBrains Mono"'),
-        document.fonts.load('500 13px "JetBrains Mono"'),
+        document.fonts.load('500 20px "JetBrains Mono"'),
         document.fonts.ready,
       ]);
     } catch {
@@ -292,12 +330,13 @@ export async function composeWeddingPhoto(video: HTMLVideoElement, mirror: boole
     }
   }
 
+  const frameImage = await loadWeddingFrame(frameSrc);
   const canvas = document.createElement('canvas');
   canvas.width = WEDDING_FRAME_SIZE.width;
   canvas.height = WEDDING_FRAME_SIZE.height;
   const context = canvas.getContext('2d');
   if (!context) throw new Error('Perangkat ini belum mendukung pengolahan foto.');
-  drawWeddingComposition(context, video, canvas.width, canvas.height, mirror);
+  drawWeddingComposition(context, video, canvas.width, canvas.height, mirror, frameImage);
   return canvas;
 }
 

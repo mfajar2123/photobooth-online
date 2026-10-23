@@ -2,12 +2,18 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { createBoomerangBlob, supportsBoomerangRecording } from './boomerang';
 import type { BoomerangFile } from './boomerang';
 import { useWeddingCamera } from './useWeddingCamera';
-import { canvasToJpegBlob, composeWeddingPhoto, drawWeddingComposition } from './weddingFrame';
+import {
+  canvasToJpegBlob,
+  composeWeddingPhoto,
+  drawWeddingComposition,
+  loadWeddingFrame,
+} from './weddingFrame';
 
 type BoothView = 'landing' | 'camera' | 'result';
 
 interface WeddingBoothProps {
   heroSrc: string;
+  frameSrc: string;
   homeHref: string;
 }
 
@@ -103,7 +109,7 @@ function sleep(duration: number) {
   });
 }
 
-export default function WeddingBooth({ heroSrc, homeHref }: WeddingBoothProps) {
+export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoothProps) {
   const camera = useWeddingCamera();
   const videoRef = useRef<HTMLVideoElement>(null);
   const previewRef = useRef<HTMLCanvasElement>(null);
@@ -117,6 +123,7 @@ export default function WeddingBooth({ heroSrc, homeHref }: WeddingBoothProps) {
   const boomerangBusyRef = useRef(false);
 
   const [view, setView] = useState<BoothView>('landing');
+  const [frameImage, setFrameImage] = useState<HTMLImageElement | null>(null);
   const [ready, setReady] = useState(false);
   const [capturing, setCapturing] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null);
@@ -206,12 +213,12 @@ export default function WeddingBooth({ heroSrc, homeHref }: WeddingBoothProps) {
       animationFrame = requestAnimationFrame(paint);
       if (document.hidden || now - lastPaint < 34) return;
       lastPaint = now;
-      drawWeddingComposition(context, videoRef.current, canvas.width, canvas.height, mirror);
+      drawWeddingComposition(context, videoRef.current, canvas.width, canvas.height, mirror, frameImage);
     };
-    drawWeddingComposition(context, videoRef.current, canvas.width, canvas.height, mirror);
+    drawWeddingComposition(context, videoRef.current, canvas.width, canvas.height, mirror, frameImage);
     animationFrame = requestAnimationFrame(paint);
     return () => cancelAnimationFrame(animationFrame);
-  }, [mirror, ready, view]);
+  }, [frameImage, mirror, ready, view]);
 
   useEffect(() => {
     if (view === 'landing') return;
@@ -272,6 +279,22 @@ export default function WeddingBooth({ heroSrc, homeHref }: WeddingBoothProps) {
     setBoomerangSupported(supportsBoomerangRecording());
   }, []);
 
+  // Load the frame before the viewfinder starts so the live preview, JPG, and
+  // boomerang frames all share the same artwork.
+  useEffect(() => {
+    let active = true;
+    loadWeddingFrame(frameSrc)
+      .then((image) => {
+        if (active) setFrameImage(image);
+      })
+      .catch(() => {
+        // Capture will surface the error if the frame still cannot be loaded.
+      });
+    return () => {
+      active = false;
+    };
+  }, [frameSrc]);
+
   useEffect(() => () => {
     runIdRef.current += 1;
     if (boomerangTimerRef.current !== null) {
@@ -305,6 +328,10 @@ export default function WeddingBooth({ heroSrc, homeHref }: WeddingBoothProps) {
 
   const capture = async () => {
     if (busyRef.current) return;
+    if (!frameImage) {
+      setNotice('Bingkai sedang dimuat. Coba lagi sebentar.');
+      return;
+    }
     const video = videoRef.current;
     if (!video || !ready || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA || !video.videoWidth) {
       setNotice('Kamera belum siap. Coba lagi sebentar.');
@@ -354,7 +381,7 @@ export default function WeddingBooth({ heroSrc, homeHref }: WeddingBoothProps) {
       setCountdown(null);
       setFlash(true);
 
-      const canvas = await composeWeddingPhoto(video, mirror);
+      const canvas = await composeWeddingPhoto(video, mirror, frameSrc);
       if (runIdRef.current !== runId) return;
       const blob = await canvasToJpegBlob(canvas);
       if (runIdRef.current !== runId) return;
@@ -409,7 +436,7 @@ export default function WeddingBooth({ heroSrc, homeHref }: WeddingBoothProps) {
     setDownloading(true);
     const link = document.createElement('a');
     link.href = photo.url;
-    link.download = 'wedding-ripki-siti.jpg';
+    link.download = 'wedding-ripki-aura.jpg';
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -453,7 +480,7 @@ export default function WeddingBooth({ heroSrc, homeHref }: WeddingBoothProps) {
     const url = URL.createObjectURL(file.blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `wedding-ripki-siti-boomerang.${file.extension}`;
+    link.download = `wedding-ripki-aura-boomerang.${file.extension}`;
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -467,7 +494,7 @@ export default function WeddingBooth({ heroSrc, homeHref }: WeddingBoothProps) {
     setNotice('');
 
     try {
-      const file = new File([photo.blob], 'wedding-ripki-siti.jpg', { type: 'image/jpeg' });
+      const file = new File([photo.blob], 'wedding-ripki-aura.jpg', { type: 'image/jpeg' });
       let supportsFiles = false;
       try {
         supportsFiles = !navigator.canShare || navigator.canShare({ files: [file] });
@@ -478,8 +505,8 @@ export default function WeddingBooth({ heroSrc, homeHref }: WeddingBoothProps) {
       if (navigator.share && supportsFiles) {
         try {
           await navigator.share({
-            title: 'Ripki & Siti — Wedding Photo',
-            text: 'Ripki & Siti — Goalpara, 28 November 2026.',
+            title: 'Ripki & Aura — Wedding Photo',
+            text: 'Ripki & Aura — Sukabumi, 28 November 2026.',
             files: [file],
           });
           return;
@@ -496,7 +523,7 @@ export default function WeddingBooth({ heroSrc, homeHref }: WeddingBoothProps) {
   };
 
   const gateVisible = view === 'camera' && (!ready || camera.status !== 'live');
-  const shutterDisabled = !ready || capturing || camera.status !== 'live';
+  const shutterDisabled = !ready || !frameImage || capturing || camera.status !== 'live';
 
   return (
     <div className="wd-page">
@@ -517,8 +544,8 @@ export default function WeddingBooth({ heroSrc, homeHref }: WeddingBoothProps) {
           <article className="wd-card">
             <span className="wd-card-ribbon">Virtual Photobooth</span>
             <p className="wd-kicker"><span aria-hidden="true" />The Wedding Of<span aria-hidden="true" /></p>
-            <h1 className="wd-names" id="wd-wedding-title">Ripki <em>&amp;</em> Siti</h1>
-            <p className="wd-venue"><PinIcon /> Goalpara</p>
+            <h1 className="wd-names" id="wd-wedding-title">Ripki <em>&amp;</em> Aura</h1>
+            <p className="wd-venue"><PinIcon /> Sukabumi</p>
             <p className="wd-date">28 November 2026</p>
             <div className="wd-status" role="status">
               <span className="wd-status-dot" aria-hidden="true" />
@@ -534,7 +561,7 @@ export default function WeddingBooth({ heroSrc, homeHref }: WeddingBoothProps) {
         </div>
 
         <footer className="wd-credit">
-          <span>Foto: <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer">Unsplash</a></span>
+          <span>Foto: Ripki &amp; Aura</span>
           <span>Virtual Photobooth · <a href={homeHref}>ruangkilas.my.id</a></span>
         </footer>
       </section>
@@ -572,7 +599,7 @@ export default function WeddingBooth({ heroSrc, homeHref }: WeddingBoothProps) {
                     width={PREVIEW_WIDTH}
                     height={PREVIEW_HEIGHT}
                     role="img"
-                    aria-label="Pratinjau kamera dengan bingkai wedding Ripki dan Siti"
+                    aria-label="Pratinjau kamera dengan bingkai wedding Ripki dan Aura"
                   />
 
                   {camera.status === 'live' && ready && !capturing && (
@@ -628,7 +655,9 @@ export default function WeddingBooth({ heroSrc, homeHref }: WeddingBoothProps) {
                         ? 'Kamera menyala…'
                         : !ready
                           ? 'Menyambungkan gambar…'
-                          : 'Siap. Senyum, ya.')}
+                          : !frameImage
+                            ? 'Menyiapkan bingkai…'
+                            : 'Siap. Senyum, ya.')}
                 </p>
 
                 <div className="wd-shutter-row">
@@ -673,16 +702,16 @@ export default function WeddingBooth({ heroSrc, homeHref }: WeddingBoothProps) {
                 </button>
                 <div className="wd-cam-title">
                   <strong>Foto Kamu</strong>
-                  <span>Goalpara</span>
+                  <span>Sukabumi</span>
                 </div>
                 <span className="wd-topbar-spacer" aria-hidden="true" />
               </header>
 
               <div className="wd-result-body">
-                <p className="wd-result-kicker">Goalpara · 28 November 2026</p>
+                <p className="wd-result-kicker">Sukabumi · 28 November 2026</p>
                 <h2 className="wd-result-title">Fotomu <em>siap.</em></h2>
 
-                <img className="wd-result-img" src={result.url} alt="Foto wedding berbingkai Ripki dan Siti" />
+                <img className="wd-result-img" src={result.url} alt="Foto wedding berbingkai Ripki dan Aura" />
 
                 <div className="wd-result-actions">
                   <button className="wd-btn wd-btn-primary" type="button" onClick={() => void sharePhoto()} disabled={sharing} aria-busy={sharing}>
