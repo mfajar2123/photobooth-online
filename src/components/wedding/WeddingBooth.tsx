@@ -561,7 +561,6 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
           <a className="wd-wordmark" href={homeHref} aria-label="Ruang Kilas, kembali ke beranda">
             <span aria-hidden="true">✦</span> RUANG <i>KILAS</i>
           </a>
-          <span className="wd-topbar-tag">Virtual Photobooth · 2026</span>
         </header>
 
         <div className="wd-hero-center">
@@ -598,7 +597,7 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
         </div>
 
         <footer className="wd-credit">
-          <span>Foto: Ripki &amp; Aura</span>
+          <span aria-hidden="true" />
           <span>Virtual Photobooth · <a href={homeHref}>ruangkilas.my.id</a></span>
         </footer>
       </section>

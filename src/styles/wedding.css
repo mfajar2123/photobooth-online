@@ -108,17 +108,6 @@
   font-style: normal;
 }
 
-.wd-topbar-tag {
-  padding: 7px 9px;
-  border: 1px solid rgba(255, 249, 240, 0.28);
-  color: rgba(255, 249, 240, 0.72);
-  font: 500 8px/1 var(--mono);
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  backdrop-filter: blur(6px);
-}
-
 .wd-hero-center {
   position: relative;
   z-index: 1;
@@ -1000,12 +989,6 @@
     padding-inline: 14px;
   }
 
-  .wd-topbar-tag {
-    padding: 6px 7px;
-    font-size: 7px;
-    letter-spacing: 0.1em;
-  }
-
   .wd-wordmark {
     font-size: 13px;
   }
@@ -1034,10 +1017,6 @@
 }
 
 @media (max-width: 370px) {
-  .wd-topbar-tag {
-    display: none;
-  }
-
   .wd-card {
     padding-inline: 16px;
   }
