@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { createBoomerangBlob, supportsBoomerangRecording } from './boomerang';
 import type { BoomerangFile } from './boomerang';
 import { useWeddingCamera } from './useWeddingCamera';
@@ -100,6 +101,29 @@ function PinIcon() {
       <path d="M12 21s6-5.1 6-11a6 6 0 1 0-12 0c0 5.9 6 11 6 11Z" />
       <circle cx="12" cy="10" r="2.3" />
     </svg>
+  );
+}
+
+function TypedText({ text, start = 0.34 }: { text: string; start?: number }) {
+  return (
+    <>
+      <span
+        className="wd-typed"
+        aria-hidden="true"
+        style={{ '--type-start': `${start}s` } as CSSProperties}
+      >
+        {Array.from(text).map((character, index) => (
+          <span
+            className="wd-typed-char"
+            key={`${text}-${index}`}
+            style={{ '--char-index': index } as CSSProperties}
+          >
+            {character === ' ' ? '\u00A0' : character}
+          </span>
+        ))}
+      </span>
+      <span className="wd-sr-only">{text}</span>
+    </>
   );
 }
 
@@ -543,10 +567,23 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
         <div className="wd-hero-center">
           <article className="wd-card">
             <span className="wd-card-ribbon">Virtual Photobooth</span>
-            <p className="wd-kicker"><span aria-hidden="true" />The Wedding Of<span aria-hidden="true" /></p>
-            <h1 className="wd-names" id="wd-wedding-title">Ripki <em>&amp;</em> Aura</h1>
-            <p className="wd-venue"><PinIcon /> Sukabumi</p>
-            <p className="wd-date">28 November 2026</p>
+            <p className="wd-kicker">
+              <span className="wd-kicker-line" aria-hidden="true" />
+              <TypedText text="The Wedding Of" start={0.36} />
+              <span className="wd-kicker-line" aria-hidden="true" />
+            </p>
+            <h1 className="wd-names" id="wd-wedding-title" aria-label="Ripki & Aura">
+              <span className="wd-names-line" aria-hidden="true">
+                Ripki <em>&amp;</em> Aura
+              </span>
+            </h1>
+            <p className="wd-venue">
+              <PinIcon />
+              <TypedText text="Sukabumi" start={0.92} />
+            </p>
+            <p className="wd-date">
+              <TypedText text="28 November 2026" start={1.08} />
+            </p>
             <div className="wd-status" role="status">
               <span className="wd-status-dot" aria-hidden="true" />
               <span>Happening now</span>
