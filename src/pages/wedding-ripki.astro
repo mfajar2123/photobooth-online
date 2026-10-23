@@ -1,22 +1,24 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import WeddingBooth from '../components/wedding/WeddingBooth';
 import { assetUrl } from '../lib/paths';
-import '../styles/wedding.css';
 
-const heroSrc = assetUrl('/images/bg-hero-ripkii.jpeg');
-const frameSrc = assetUrl('/images/frame-ripki2.png');
-const homeHref = assetUrl('/');
+const destination = assetUrl('/wedding-ripki-aura');
+const site = Astro.site?.toString().replace(/\/$/, '') ?? Astro.url.origin;
+const canonical = new URL(destination, site).toString();
 ---
-
-<BaseLayout
-  title="Ripki & Aura — Virtual Photobooth, Sukabumi"
-  description="Foto langsung dari browser di wedding Ripki & Aura, Sukabumi, 28 November 2026. Bingkai otomatis, unduh JPG atau boomerang, lalu bagikan."
-  keywords="wedding ripki aura, wedding photobooth, photobooth sukabumi, wedding photobooth online, foto wedding online"
-  ogImage="/images/wedding-ripki-og.jpg"
-  ogImageType="image/jpeg"
-  ogImageAlt="Ripki & Aura — Sukabumi, 28 November 2026"
-  noindex={true}
->
-  <WeddingBooth client:load heroSrc={heroSrc} frameSrc={frameSrc} homeHref={homeHref} />
-</BaseLayout>
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,follow" />
+    <meta http-equiv="refresh" content={`0;url=${destination}`} />
+    <link rel="canonical" href={canonical} />
+    <title>Dialihkan ke Ripki &amp; Aura</title>
+    <script is:inline define:vars={{ destination }}>
+      window.location.replace(destination);
+    </script>
+  </head>
+  <body>
+    <p>Halaman ini telah pindah ke <a href={destination}>wedding-ripki-aura</a>.</p>
+  </body>
+</html>
