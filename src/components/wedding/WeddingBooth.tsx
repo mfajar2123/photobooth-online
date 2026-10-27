@@ -529,8 +529,6 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
       if (navigator.share && supportsFiles) {
         try {
           await navigator.share({
-            title: 'Ripki & Aura — Wedding Photo',
-            text: 'Ripki & Aura — Sukabumi, 28 November 2026.',
             files: [file],
           });
           return;
