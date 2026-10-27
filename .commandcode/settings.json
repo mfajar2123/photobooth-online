@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Shell(curl -sI https://ruangkilas.my.id/sitemap.xml)",
+      "Shell(curl -s -o NUL -w \"%{http_code} %{content_type}\\n\" https://ruangkilas.my.id/studio https://ruangkilas.my.id/panduan https://ruangkilas.my.id/brand https://ruangkilas.my.id/terms https://ruangkilas.my.id/nonexistent-xyz)",
+      "Shell(curl -sI https://ruangkilas.my.id/studio)",
+      "Shell(findstr:*)",
+      "Shell(curl -sI https://ruangkilas.my.id/panduan)",
+      "Shell(curl -s -o NUL -w \"%{http_code} -> %{redirect_url}\\n\" https://ruangkilas.my.id/studio https://ruangkilas.my.id/panduan https://ruangkilas.my.id/studio/)",
+      "Shell(curl -s https://ruangkilas.my.id/ -o \"%TEMP%\\\\rk-home.html\" -w \"%{http_code}\\n\")",
+      "powershell",
+      "Shell(node -e \"try{const s=require('sharp');console.log('sharp',s.versions?.sharp||'ok')}catch(e){console.log('no sharp')}\")",
+      "Shell(node \"C:\\Users\\Fajar\\AppData\\Local\\Temp\\commandcode\\E--dev-fajar-pb\\c18c6714-7825-44cb-842d-be6d0cf4ac34\\scratchpad\\make-logo.mjs\" \"E:\\dev-fajar\\pb\\public\\images\\logo-512.png\")",
+      "Shell(curl -s -o NUL -w \"%{http_code} %{content_type}\\n\" https://ruangkilas.my.id/_astro/BaseLayout.DqGaHXCl.css)",
+      "Shell(pnpm:*)",
+      "Shell(if:*)",
+      "Shell(else:*)",
+      "Shell(dir /b node_modules\\astro 2>nul & echo --- & dir /b node_modules\\.bin\\astro* 2>nul)",
+      "Shell(node node_modules\\astro\\bin\\astro.mjs check)",
+      "Shell(node node_modules\\astro\\bin\\astro.mjs build)",
+      "Shell(type:*)",
+      "Shell(git:*)"
+    ],
+    "deny": [],
+    "defaultMode": "default"
+  }
+}

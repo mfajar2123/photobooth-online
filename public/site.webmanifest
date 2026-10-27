@@ -1,17 +1,34 @@
 {
+  "id": "/",
   "name": "Ruang Kilas - Photobooth Online",
   "short_name": "Ruang Kilas",
   "description": "Studio photobooth online praktis langsung dari browser dengan efek lensa vintage dan frame estetik.",
+  "lang": "id",
+  "dir": "ltr",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#FFFDF5",
   "theme_color": "#FFF3B0",
+  "categories": ["photo", "entertainment", "utilities"],
   "icons": [
     {
       "src": "/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/images/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

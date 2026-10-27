@@ -37,38 +37,91 @@ const {
 } = Astro.props;
 
 const siteUrl = Astro.site ? Astro.site.toString().replace(/\/$/, '') : 'https://ruangkilas.my.id';
-const canonical = canonicalUrl ?? new URL(Astro.url.pathname, siteUrl).toString();
+
+// GitHub Pages serves directory builds from `/path/` and 301-redirects `/path`,
+// so every canonical, breadcrumb and schema URL must use the trailing-slash form.
+function withTrailingSlash(value: string): string {
+  const url = new URL(value, siteUrl);
+  if (/\.[a-z0-9]+$/i.test(url.pathname)) return url.toString();
+  if (!url.pathname.endsWith('/')) url.pathname = `${url.pathname}/`;
+  return url.toString();
+}
+
+const canonical = withTrailingSlash(canonicalUrl ?? new URL(Astro.url.pathname, siteUrl).toString());
 const faviconUrl = assetUrl('/favicon.svg');
+const logoUrl = new URL(assetUrl('/images/logo-512.png'), siteUrl).toString();
 const ogImageUrl = ogImage.startsWith('http') ? ogImage : new URL(assetUrl(ogImage), siteUrl).toString();
 const sitemapUrl = new URL(assetUrl('/sitemap.xml'), siteUrl).toString();
 const manifestUrl = assetUrl('/site.webmanifest');
+const studioUrl = withTrailingSlash(`${siteUrl}/studio`);
 const livePhotoBg = `url('${assetUrl('/images/friends-photo-booth.jpg')}')`;
 
 // Structured Data (JSON-LD)
+const websiteId = `${siteUrl}/#website`;
+const organizationId = `${siteUrl}/#organization`;
+const webApplicationId = `${siteUrl}/#webapp`;
+const logoId = `${siteUrl}/#logo`;
+
 const schemaGraph: any[] = [
   {
+    '@type': 'WebPage',
+    '@id': `${canonical}#webpage`,
+    url: canonical,
+    name: title,
+    description,
+    inLanguage: 'id-ID',
+    isPartOf: {
+      '@id': websiteId,
+    },
+    primaryImageOfPage: {
+      '@type': 'ImageObject',
+      url: ogImageUrl,
+      width: 1200,
+      height: 630,
+      caption: ogImageAlt,
+    },
+  },
+  {
     '@type': 'WebSite',
-    '@id': `${siteUrl}/#website`,
-    url: siteUrl,
+    '@id': websiteId,
+    url: `${siteUrl}/`,
     name: brand.name,
+    alternateName: [`${brand.name} Photobooth Online`, 'RuangKilas'],
     description: 'Studio photobooth online praktis langsung dari browser dengan efek lensa vintage dan koleksi bingkai tematik estetik.',
     inLanguage: 'id-ID',
     publisher: {
-      '@id': `${siteUrl}/#organization`,
+      '@id': organizationId,
     },
   },
   {
     '@type': 'Organization',
-    '@id': `${siteUrl}/#organization`,
+    '@id': organizationId,
     name: brand.name,
-    url: siteUrl,
+    alternateName: `${brand.name} Photobooth`,
+    url: `${siteUrl}/`,
     logo: {
       '@type': 'ImageObject',
-      url: new URL(faviconUrl, siteUrl).toString(),
+      '@id': logoId,
+      url: logoUrl,
+      contentUrl: logoUrl,
+      width: 512,
+      height: 512,
+      caption: `Logo ${brand.name}`,
+    },
+    image: {
+      '@id': logoId,
     },
     email: brand.email,
     telephone: brand.phone,
     sameAs: [brand.instagram, brand.tiktok],
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'customer support',
+      email: brand.email,
+      telephone: brand.phone,
+      availableLanguage: ['id', 'en'],
+      areaServed: 'ID',
+    },
     address: {
       '@type': 'PostalAddress',
       streetAddress: 'Gedung Kemang Point Lt. 3, Jl. Kemang Raya No. 3, Bangka',
@@ -80,12 +133,20 @@ const schemaGraph: any[] = [
   },
   {
     '@type': 'WebApplication',
-    '@id': `${siteUrl}/#webapp`,
+    '@id': webApplicationId,
     name: `${brand.name} Photobooth Online`,
-    url: `${siteUrl}/studio`,
+    url: studioUrl,
+    image: ogImageUrl,
     applicationCategory: 'PhotographyApplication',
     operatingSystem: 'Any modern web browser (Chrome, Safari, Firefox, Edge)',
     browserRequirements: 'Requires JavaScript, HTML5 Canvas, WebRTC camera access',
+    inLanguage: 'id-ID',
+    isPartOf: {
+      '@id': websiteId,
+    },
+    publisher: {
+      '@id': organizationId,
+    },
     description,
     offers: {
       '@type': 'Offer',
@@ -104,15 +165,18 @@ const schemaGraph: any[] = [
 ];
 
 if (breadcrumbs && breadcrumbs.length > 0) {
+  const breadcrumbId = `${canonical}#breadcrumb`;
   schemaGraph.push({
     '@type': 'BreadcrumbList',
+    '@id': breadcrumbId,
     itemListElement: breadcrumbs.map((crumb, index) => ({
       '@type': 'ListItem',
       position: index + 1,
       name: crumb.name,
-      item: crumb.item.startsWith('http') ? crumb.item : `${siteUrl}${crumb.item}`,
+      item: withTrailingSlash(crumb.item.startsWith('http') ? crumb.item : `${siteUrl}${crumb.item}`),
     })),
   });
+  schemaGraph[0].breadcrumb = { '@id': breadcrumbId };
 }
 
 if (extraSchema) {
@@ -141,8 +205,10 @@ const fullSchema = {
     <meta name="publisher" content="Ruang Kilas" />
     <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
     <meta name="googlebot" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
+    <meta name="google-site-verification" content="yggRLc15vxLIfPo3bKb_PtreiOBBsKbiZtu1IPmwWmE" />
     <link rel="canonical" href={canonical} />
     <link rel="alternate" hreflang="id" href={canonical} />
+    <link rel="alternate" hreflang="id-ID" href={canonical} />
     <link rel="alternate" hreflang="x-default" href={canonical} />
     <link rel="sitemap" type="application/xml" href={sitemapUrl} />
     <link rel="manifest" href={manifestUrl} />
@@ -187,7 +253,8 @@ const fullSchema = {
 
     <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href={faviconUrl} />
-    <link rel="apple-touch-icon" href={faviconUrl} />
+    <link rel="icon" type="image/png" sizes="512x512" href={logoUrl} />
+    <link rel="apple-touch-icon" sizes="512x512" href={logoUrl} />
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json" set:html={JSON.stringify(fullSchema)} />
