@@ -75,7 +75,7 @@ export default function PhotoboothStudio() {
     const paint = (now: number) => {
       if (!intersects || document.hidden) { frameId = 0; return; }
       if (now - lastPaint > 40) {
-        drawLensFrame(video, canvas, lens, mirror, selectedLayout.photoRatio);
+        drawLensFrame(video, canvas, lens, mirror);
         lastPaint = now;
       }
       frameId = requestAnimationFrame(paint);
@@ -88,7 +88,7 @@ export default function PhotoboothStudio() {
     observer.observe(canvas);
     document.addEventListener('visibilitychange', updateLoop);
     return () => { observer.disconnect(); document.removeEventListener('visibilitychange', updateLoop); if (frameId !== 0) cancelAnimationFrame(frameId); };
-  }, [camera.stream, lens, mirror, selectedLayout.photoRatio, step]);
+  }, [camera.stream, lens, mirror, step]);
 
   const renderOutput = useCallback(async () => {
     const version = ++renderVersion.current;

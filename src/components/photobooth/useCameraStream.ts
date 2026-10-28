@@ -32,21 +32,20 @@ export function useCameraStream() {
     try {
       stream?.getTracks().forEach((track) => track.stop());
       const isPortrait = requestedAspect < 1;
+      const target: MediaTrackConstraints = requestedDevice
+        ? { deviceId: { exact: requestedDevice } }
+        : { facingMode: { ideal: requestedFacing } };
+      // Ask for a sensor-native ratio (3:4 portrait / 16:9 landscape) instead of
+      // the exact 9:16 output. Forcing 9:16 makes some browsers crop-and-scale
+      // the sensor, which reads as an unwanted digital zoom in the viewfinder.
       const constraints: MediaStreamConstraints = {
         audio: false,
-        video: requestedDevice
-          ? {
-              deviceId: { exact: requestedDevice },
-              width: { ideal: isPortrait ? 1080 : 1920 },
-              height: { ideal: isPortrait ? 1920 : 1080 },
-              aspectRatio: { ideal: requestedAspect },
-            }
-          : {
-              facingMode: { ideal: requestedFacing },
-              width: { ideal: isPortrait ? 1080 : 1920 },
-              height: { ideal: isPortrait ? 1920 : 1080 },
-              aspectRatio: { ideal: requestedAspect },
-            },
+        video: {
+          ...target,
+          width: { ideal: isPortrait ? 1080 : 1920 },
+          height: { ideal: isPortrait ? 1440 : 1080 },
+          aspectRatio: { ideal: isPortrait ? 3 / 4 : 16 / 9 },
+        },
       };
       const next = await navigator.mediaDevices.getUserMedia(constraints);
       setStream(next);

@@ -1,0 +1,184 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { brand } from '../data/brand';
+import { assetUrl } from '../lib/paths';
+
+const breadcrumbs = [
+  { name: 'Beranda', item: '/' },
+  { name: 'Request Photobooth Event', item: '/request-event' },
+];
+
+const whatsappBase = `https://wa.me/6281288994021`;
+const emailBase = `mailto:${brand.partnershipEmail}`;
+---
+
+<BaseLayout
+  title="Request Photobooth Event & Wedding | Ruang Kilas"
+  description="Request virtual photobooth untuk wedding, ulang tahun, gathering kantor, atau festival. Bingkai custom, tamu foto dari HP sendiri, tanpa aplikasi."
+  keywords="request photobooth event, photobooth wedding, virtual photobooth acara, sewa photobooth online, custom frame photobooth"
+  breadcrumbs={breadcrumbs}
+>
+  <header class="site-header">
+    <a class="wordmark" href={assetUrl('/')} aria-label="Ruang Kilas, kembali ke beranda"><span>✦</span> RUANG <i>KILAS</i></a>
+    <nav aria-label="Navigasi request event">
+      <a href={assetUrl('/#lenses')}>Efek lensa</a>
+      <a href={assetUrl('/#frames')}>Koleksi frame</a>
+      <a href={assetUrl('/panduan')} class="nav-link-panduan">Panduan</a>
+      <a href={assetUrl('/studio')}>Studio</a>
+    </nav>
+    <a class="header-cta" href={assetUrl('/studio')}>Buka photobooth <span>↗</span></a>
+  </header>
+
+  <main class="request-page">
+    <section class="request-hero">
+      <p class="section-kicker">REQUEST PHOTOBOOTH EVENT</p>
+      <h1>Bikin photobooth virtual<br /><em>untuk acaramu.</em></h1>
+      <p class="hero-lede">
+        Ceritakan acaramu, kami siapkan halaman photobooth dengan bingkai custom yang bisa langsung dipakai tamu dari browser mereka.
+      </p>
+      <div class="request-facts">
+        <span>Bingkai custom</span>
+        <span>Tanpa aplikasi</span>
+        <span>Hasil langsung diunduh</span>
+      </div>
+    </section>
+
+    <section class="request-body">
+      <div class="request-form-card">
+        <h2>Ceritakan acaramu</h2>
+        <p>Isi detail singkat di bawah, lalu kirim lewat WhatsApp atau email. Kami balas dengan konsep bingkai dan estimasi pengerjaan.</p>
+
+        <form id="event-request-form" class="request-form">
+          <label class="request-field">
+            Nama kamu
+            <input type="text" name="name" autocomplete="name" placeholder="Nama lengkap" />
+          </label>
+          <label class="request-field">
+            Jenis acara
+            <select name="eventType">
+              <option value="Wedding">Wedding</option>
+              <option value="Ulang tahun">Ulang tahun</option>
+              <option value="Gathering kantor">Gathering kantor</option>
+              <option value="Festival / konser">Festival / konser</option>
+              <option value="Aktivasi brand">Aktivasi brand</option>
+              <option value="Lainnya">Lainnya</option>
+            </select>
+          </label>
+          <label class="request-field">
+            Tanggal acara
+            <input type="date" name="date" />
+          </label>
+          <label class="request-field">
+            Lokasi acara
+            <input type="text" name="venue" placeholder="Kota atau venue" />
+          </label>
+          <label class="request-field request-field-wide">
+            Nomor WhatsApp
+            <input type="tel" name="phone" autocomplete="tel" inputmode="tel" placeholder="08xx xxxx xxxx" />
+          </label>
+          <label class="request-field request-field-wide">
+            Catatan tambahan
+            <textarea name="notes" rows="3" placeholder="Tema acara, warna favorit, atau referensi bingkai"></textarea>
+          </label>
+        </form>
+
+        <div class="request-actions">
+          <a class="button-primary" id="request-submit" href={whatsappBase}>Kirim lewat WhatsApp <span>↗</span></a>
+          <a class="text-link" id="request-email" href={emailBase}>atau email ke {brand.partnershipEmail}</a>
+        </div>
+        <p class="request-fineprint">Data yang kamu isi hanya dipakai untuk menyusun pesan permintaan. Tidak ada yang dikirim ke server Ruang Kilas.</p>
+      </div>
+
+      <aside class="request-aside">
+        <h2>Yang kamu dapat</h2>
+        <ul class="request-list">
+          <li><span>01</span><div><b>Bingkai custom</b>Nama, tanggal, dan tema acara dibuat khusus untukmu.</div></li>
+          <li><span>02</span><div><b>Halaman photobooth sendiri</b>Satu tautan khusus yang dibagikan ke tamu.</div></li>
+          <li><span>03</span><div><b>JPG &amp; boomerang</b>Hasil foto berbingkai siap disimpan atau dibagikan.</div></li>
+          <li><span>04</span><div><b>Tanpa aplikasi</b>Semua berjalan di browser tamu, foto tidak diunggah.</div></li>
+        </ul>
+        <p class="request-portfolio-note">
+          Lihat contoh nyata: <a href={assetUrl('/wedding-ripki-aura/')}>virtual photobooth wedding Ripki &amp; Aura ↗</a>
+        </p>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <a class="wordmark" href={assetUrl('/')}><span>✦</span> RUANG <i>KILAS</i></a>
+        <p>Photobooth online instan langsung dari browser. Tanpa aplikasi, 100% diproses lokal di perangkat.</p>
+        <div class="footer-social">
+          <a href={brand.instagram} target="_blank" rel="noopener noreferrer">Instagram ↗</a>
+          <a href={brand.tiktok} target="_blank" rel="noopener noreferrer">TikTok ↗</a>
+          <span>@ruangkilas.id</span>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h3>Navigasi</h3>
+        <a href={assetUrl('/studio')}>Buka Studio</a>
+        <a href={assetUrl('/panduan')}>Panduan Studio</a>
+        <a href={assetUrl('/#lenses')}>Efek Lensa</a>
+        <a href={assetUrl('/#frames')}>Koleksi Bingkai</a>
+        <a href={assetUrl('/#faq')}>Bantuan & FAQ</a>
+      </div>
+
+      <div class="footer-contact footer-col">
+        <h3>Studio & Kontak</h3>
+        <address>{brand.address}</address>
+        <a href={`mailto:${brand.email}`}>{brand.email}</a>
+        <a href="https://wa.me/6281288994021">WhatsApp {brand.phone}</a>
+        <small>Senin–Minggu, 09.00–21.00 WIB</small>
+      </div>
+
+      <div class="footer-links footer-col">
+        <h3>Informasi</h3>
+        <a href={assetUrl('/panduan')}>Panduan Studio</a>
+        <a href={assetUrl('/terms')}>Ketentuan Layanan</a>
+        <a href={assetUrl('/brand')}>Panduan Brand</a>
+        <a href={assetUrl('/request-event/')}>Request Photobooth Event</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Ruang Kilas. Hak cipta dilindungi.</span>
+      <span>FOTO ANDA. PRIVASI ANDA. 100% DIPROSES LOKAL DI PERANGKAT.</span>
+      <a href="#top">Ke atas ↑</a>
+    </div>
+  </footer>
+
+  <script>
+    const form = document.querySelector<HTMLFormElement>('#event-request-form');
+    const submitLink = document.querySelector<HTMLAnchorElement>('#request-submit');
+    const emailLink = document.querySelector<HTMLAnchorElement>('#request-email');
+
+    if (form && submitLink && emailLink) {
+      const whatsappNumber = '6281288994021';
+      const partnerEmail = 'partnership@ruangkilas.my.id';
+
+      const syncRequestLinks = () => {
+        const data = new FormData(form);
+        const field = (key: string) => String(data.get(key) ?? '').trim();
+
+        const lines = [
+          'Halo Ruang Kilas, saya ingin request photobooth event.',
+          field('name') && `Nama: ${field('name')}`,
+          field('eventType') && `Jenis acara: ${field('eventType')}`,
+          field('date') && `Tanggal: ${field('date')}`,
+          field('venue') && `Lokasi: ${field('venue')}`,
+          field('phone') && `WhatsApp: ${field('phone')}`,
+          field('notes') && `Catatan: ${field('notes')}`,
+        ].filter((line): line is string => Boolean(line));
+
+        const message = lines.join('\n');
+        submitLink.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+        emailLink.href = `mailto:${partnerEmail}?subject=${encodeURIComponent('Request photobooth event')}&body=${encodeURIComponent(message)}`;
+      };
+
+      form.addEventListener('input', syncRequestLinks);
+      form.addEventListener('change', syncRequestLinks);
+      syncRequestLinks();
+    }
+  </script>
+</BaseLayout>

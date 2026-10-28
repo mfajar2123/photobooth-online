@@ -75,10 +75,16 @@ function fisheye(source: HTMLCanvasElement, target: HTMLCanvasElement) {
   dstContext.putImageData(dst, 0, 0);
 }
 
-export function drawLensFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement, lens: LensId, mirror = false, aspectRatio = 9 / 16) {
-  if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA || video.videoWidth === 0) return false;
-  const width = aspectRatio >= 1 ? 1280 : 720;
-  const height = aspectRatio >= 1 ? 720 : 1280;
+export function drawLensFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement, lens: LensId, mirror = false) {
+  if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA || video.videoWidth === 0 || video.videoHeight === 0) return false;
+
+  // Keep the canvas at the camera's own aspect ratio and draw the whole frame.
+  // The viewfinder letterboxes it with `object-fit: contain`, so the preview
+  // never digitally zooms or crops what the lens actually sees.
+  const longSide = 1280;
+  const sourceRatio = video.videoWidth / video.videoHeight;
+  const width = sourceRatio >= 1 ? longSide : Math.round(longSide * sourceRatio);
+  const height = sourceRatio >= 1 ? Math.round(longSide / sourceRatio) : longSide;
   if (canvas.width !== width || canvas.height !== height) {
     canvas.width = width;
     canvas.height = height;
@@ -91,12 +97,7 @@ export function drawLensFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement
     context.translate(width, 0);
     context.scale(-1, 1);
   }
-  const crop = Math.max(width / video.videoWidth, height / video.videoHeight);
-  const sw = width / crop;
-  const sh = height / crop;
-  const sx = (video.videoWidth - sw) / 2;
-  const sy = (video.videoHeight - sh) / 2;
-  context.drawImage(video, sx, sy, sw, sh, 0, 0, width, height);
+  context.drawImage(video, 0, 0, width, height);
   context.restore();
 
   if (isOriginal) {
@@ -105,7 +106,7 @@ export function drawLensFrame(video: HTMLVideoElement, canvas: HTMLCanvasElement
 
   if (lens === 'fisheye') {
     let source = fisheyeSources.get(canvas);
-    if (!source) {
+    if (!source || source.width !== width || source.height !== height) {
       source = document.createElement('canvas');
       source.width = width;
       source.height = height;

@@ -156,6 +156,43 @@ const faqSchema = {
       </div>
     </section>
 
+    <section class="event-section section-pad" id="event-photobooth" aria-labelledby="event-title">
+      <div class="event-copy">
+        <h2 id="event-title">Bikin photobooth virtual<br /><em>untuk acaramu.</em></h2>
+        <p>Wedding, ulang tahun, gathering kantor, sampai festival musik. Kami membuat virtual photobooth dengan bingkai custom yang bisa dibuka tamu lewat HP masing-masing — tanpa antre, tanpa aplikasi.</p>
+        <ul class="event-points">
+          <li>
+            <span class="event-point-num">01</span>
+            <div><strong>Bingkai &amp; ornamen custom</strong><small>Nama, tanggal, dan tema bingkai dibuat mengikuti acaramu.</small></div>
+          </li>
+          <li>
+            <span class="event-point-num">02</span>
+            <div><strong>Tamu foto dari HP sendiri</strong><small>Bagikan satu tautan atau QR, kamera langsung aktif di browser tamu.</small></div>
+          </li>
+          <li>
+            <span class="event-point-num">03</span>
+            <div><strong>Hasil langsung bisa diunduh</strong><small>Foto berbingkai dan boomerang siap disimpan saat acara berlangsung.</small></div>
+          </li>
+        </ul>
+        <div class="event-actions">
+          <a class="button-primary" href={assetUrl('/request-event/')}>Request photobooth event <span>↗</span></a>
+        </div>
+      </div>
+
+      <a class="event-portfolio" href={assetUrl('/wedding-ripki-aura/')} aria-label="Lihat contoh live virtual photobooth wedding Ripki dan Aura">
+        <div class="event-portfolio-media">
+          <span class="event-portfolio-tag">Contoh nyata</span>
+          <img src={assetUrl('/images/wedding-ripki-hero.jpg')} alt="Virtual photobooth wedding Ripki dan Aura di Sukabumi" loading="lazy" decoding="async" />
+        </div>
+        <div class="event-portfolio-body">
+          <span class="event-portfolio-meta"><span>Wedding</span><span>Sukabumi</span><span>28 Nov 2026</span></span>
+          <h3>Ripki &amp; Aura</h3>
+          <p>Virtual photobooth pernikahan dengan bingkai custom. Satu jepret langsung berbingkai, hasilnya bisa diunduh sebagai JPG atau boomerang.</p>
+          <span class="event-portfolio-link">Lihat contoh live <span aria-hidden="true">↗</span></span>
+        </div>
+      </a>
+    </section>
+
     <section class="faq-section section-pad" id="faq">
       <div class="faq-intro"><h2>Pertanyaan yang<br /><em>sering diajukan.</em></h2><p>Punya pertanyaan lain? Hubungi kami di <a href={`mailto:${brand.email}`}>{brand.email}</a>.</p></div>
       <div class="faq-list">{faqs.map((faq) => <details><summary>{faq.question}<span>+</span></summary><p>{faq.answer}</p></details>)}</div>

@@ -6,6 +6,5 @@ export default defineConfig({
   integrations: [react(), tailwind()],
   site: process.env.ASTRO_SITE || 'https://ruangkilas.my.id',
   base: process.env.ASTRO_BASE || '/',
-  trailingSlash: 'always',
   output: 'static',
 });
