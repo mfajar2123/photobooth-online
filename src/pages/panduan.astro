@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { brand } from '../data/brand';
+import SiteHeader from '../components/layout/SiteHeader.astro';
+import SiteFooter from '../components/layout/SiteFooter.astro';
 import { assetUrl } from '../lib/paths';
 
 const breadcrumbs = [
@@ -54,16 +55,7 @@ const howToSchema = {
   extraSchema={howToSchema}
 >
   <!-- Site Header -->
-  <header class="site-header">
-    <a class="wordmark" href={assetUrl('/')} aria-label="Ruang Kilas, kembali ke beranda"><span>✦</span> RUANG <i>KILAS</i></a>
-    <nav aria-label="Navigasi panduan">
-      <a href={assetUrl('/#lenses')}>Efek lensa</a>
-      <a href={assetUrl('/#frames')}>Koleksi frame</a>
-      <a href={assetUrl('/panduan')} class="nav-link-panduan" style="color: var(--poppy);">Panduan</a>
-      <a href={assetUrl('/studio')}>Studio</a>
-    </nav>
-    <a class="header-cta" href={assetUrl('/studio')}>Buka photobooth <span>↗</span></a>
-  </header>
+    <SiteHeader ctaLabel="Buka photobooth" />
 
   <main class="guide-page">
     <!-- Hero Section: Clean, Calm & To The Point -->
@@ -301,47 +293,5 @@ const howToSchema = {
   </main>
 
   <!-- Site Footer -->
-  <footer class="site-footer">
-    <div class="footer-main">
-      <div class="footer-brand">
-        <a class="wordmark" href={assetUrl('/')}><span>✦</span> RUANG <i>KILAS</i></a>
-        <p>Photobooth online instan langsung dari browser. Tanpa aplikasi, 100% diproses lokal di perangkat.</p>
-        <div class="footer-social">
-          <a href={brand.instagram} target="_blank" rel="noopener noreferrer">Instagram ↗</a>
-          <a href={brand.tiktok} target="_blank" rel="noopener noreferrer">TikTok ↗</a>
-          <span>@ruangkilas.id</span>
-        </div>
-      </div>
-
-      <div class="footer-col">
-        <h3>Navigasi</h3>
-        <a href={assetUrl('/studio')}>Buka Studio</a>
-        <a href={assetUrl('/panduan')}>Panduan Studio</a>
-        <a href={assetUrl('/#lenses')}>Efek Lensa</a>
-        <a href={assetUrl('/#frames')}>Koleksi Bingkai</a>
-        <a href={assetUrl('/#faq')}>Bantuan & FAQ</a>
-      </div>
-
-      <div class="footer-contact footer-col">
-        <h3>Studio & Kontak</h3>
-        <address>{brand.address}</address>
-        <a href={`mailto:${brand.email}`}>{brand.email}</a>
-        <a href="https://wa.me/6281288994021">WhatsApp {brand.phone}</a>
-        <small>Senin–Minggu, 09.00–21.00 WIB</small>
-      </div>
-
-      <div class="footer-links footer-col">
-        <h3>Informasi</h3>
-        <a href={assetUrl('/#privacy')}>Kebijakan Privasi</a>
-        <a href={assetUrl('/terms')}>Ketentuan Layanan</a>
-        <a href={assetUrl('/brand')}>Panduan Brand</a>
-        <a href={`mailto:${brand.partnershipEmail}?subject=Custom%20event%20frame`}>Request Custom Frame</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© 2026 Ruang Kilas. Hak cipta dilindungi.</span>
-      <span>FOTO ANDA. PRIVASI ANDA. 100% DIPROSES LOKAL DI PERANGKAT.</span>
-      <a href="#top">Ke atas ↑</a>
-    </div>
-  </footer>
+    <SiteFooter />
 </BaseLayout>

@@ -1,0 +1,100 @@
+---
+import { assetUrl } from '../../lib/paths';
+import { productLinks, primaryLinks } from '../../data/navigation';
+
+interface Props {
+  ctaHref?: string;
+  ctaLabel?: string;
+  active?: string;
+}
+
+const { ctaHref = '/studio/', ctaLabel = 'Buka Studio', active } = Astro.props;
+---
+
+<header class="site-header">
+  <a class="wordmark" href={assetUrl('/')} aria-label="Ruang Kilas, beranda"><span>✦</span> RUANG <i>KILAS</i></a>
+
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Buka menu">
+    <span></span><span></span><span></span>
+  </button>
+
+  <nav class="site-nav" id="site-nav" aria-label="Navigasi utama">
+    <div class="nav-item nav-dropdown">
+      <button class="nav-trigger" type="button" aria-expanded="false" aria-controls="product-menu">
+        Produk <span aria-hidden="true">▾</span>
+      </button>
+      <div class="nav-menu" id="product-menu">
+        {productLinks.map((item) => (
+          <a class="nav-menu-item" href={assetUrl(item.href)}>
+            <strong>{item.label}</strong>
+            <small>{item.description}</small>
+          </a>
+        ))}
+      </div>
+    </div>
+
+    {primaryLinks.map((item) => (
+      <a class={`nav-link${active === item.href ? ' is-active' : ''}`} href={assetUrl(item.href)}>{item.label}</a>
+    ))}
+
+    <a class="header-cta nav-cta-mobile" href={assetUrl(ctaHref)}>{ctaLabel} <span aria-hidden="true">↗</span></a>
+  </nav>
+
+  <a class="header-cta header-cta-desktop" href={assetUrl(ctaHref)}>{ctaLabel} <span aria-hidden="true">↗</span></a>
+</header>
+
+<script>
+  const header = document.querySelector('.site-header');
+  if (header) {
+    const toggle = header.querySelector<HTMLButtonElement>('.nav-toggle');
+    const nav = header.querySelector<HTMLElement>('.site-nav');
+    const dropdown = header.querySelector<HTMLElement>('.nav-dropdown');
+    const trigger = header.querySelector<HTMLButtonElement>('.nav-trigger');
+
+    const closeDropdown = () => {
+      dropdown?.classList.remove('is-open');
+      trigger?.setAttribute('aria-expanded', 'false');
+    };
+
+    const closeMobile = () => {
+      nav?.classList.remove('is-open');
+      closeDropdown();
+      toggle?.setAttribute('aria-expanded', 'false');
+      toggle?.setAttribute('aria-label', 'Buka menu');
+    };
+
+    toggle?.addEventListener('click', () => {
+      const open = Boolean(nav?.classList.toggle('is-open'));
+      if (!open) closeDropdown();
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Tutup menu' : 'Buka menu');
+    });
+
+    trigger?.addEventListener('click', () => {
+      const open = Boolean(dropdown?.classList.toggle('is-open'));
+      trigger.setAttribute('aria-expanded', String(open));
+    });
+
+    const desktop = window.matchMedia('(min-width: 701px)');
+    dropdown?.addEventListener('mouseenter', () => {
+      if (desktop.matches) { dropdown.classList.add('is-open'); trigger?.setAttribute('aria-expanded', 'true'); }
+    });
+    dropdown?.addEventListener('mouseleave', () => { if (desktop.matches) closeDropdown(); });
+    header.addEventListener('focusout', (event) => {
+      if (!dropdown?.contains((event as FocusEvent).relatedTarget as Node)) closeDropdown();
+    });
+    desktop.addEventListener('change', closeMobile);
+    document.addEventListener('click', (event) => {
+      if (dropdown && !dropdown.contains(event.target as Node)) closeDropdown();
+      if (!header.contains(event.target as Node)) closeMobile();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        const wasMobile = toggle?.getAttribute('aria-expanded') === 'true';
+        closeDropdown();
+        if (wasMobile) { closeMobile(); toggle?.focus(); } else { trigger?.focus(); }
+      }
+    });
+  }
+</script>

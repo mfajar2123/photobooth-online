@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
 import { assetUrl } from '../lib/paths';
 
 const breadcrumbs = [
@@ -13,8 +14,8 @@ const breadcrumbs = [
   description="Ketentuan layanan dan kebijakan privasi Ruang Kilas. Seluruh pemrosesan foto 100% lokal di browser tanpa penyimpanan server."
   breadcrumbs={breadcrumbs}
 >
+  <SiteHeader />
   <main class="legal-page">
-    <a class="wordmark" href={assetUrl('/')}><span>✦</span> RUANG <i>KILAS</i></a>
     <article>
       <p class="section-kicker">TERMS OF SERVICE</p>
       <h1>Ketentuan penggunaan.</h1>

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
 import PhotoboothStudio from '../components/photobooth/PhotoboothStudio';
 import { assetUrl } from '../lib/paths';
 
@@ -15,15 +16,7 @@ const breadcrumbs = [
   keywords="studio photobooth online, photobooth online gratis, bikin photostrip online, foto strip gratis, photobooth webcam browser"
   breadcrumbs={breadcrumbs}
 >
-  <header class="site-header studio-page-header">
-    <a class="wordmark" href={assetUrl('/')} aria-label="Ruang Kilas, kembali ke beranda"><span>✦</span> RUANG <i>KILAS</i></a>
-    <nav aria-label="Navigasi halaman studio">
-      <a href={assetUrl('/#lenses')}>Efek lensa</a>
-      <a href={assetUrl('/#frames')}>Koleksi frame</a>
-      <a href={assetUrl('/panduan')} class="nav-link-panduan">Panduan</a>
-    </nav>
-    <a class="header-cta" href={assetUrl('/')}>Kembali ke beranda <span>↗</span></a>
-  </header>
+    <SiteHeader ctaHref="/" ctaLabel="Kembali ke beranda" />
 
   <main class="studio-page">
     <section class="studio-section section-pad studio-page-section">

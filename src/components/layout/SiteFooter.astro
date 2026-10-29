@@ -1,0 +1,63 @@
+---
+import { assetUrl } from '../../lib/paths';
+import { brand } from '../../data/brand';
+import { footerLinks } from '../../data/navigation';
+
+interface Props {
+  showPrivacy?: boolean;
+  tagline?: string;
+}
+
+const {
+  showPrivacy = false,
+  tagline = 'Photobooth online dan undangan digital untuk momen yang layak dikenang. Mudah dibuka, mudah dibagikan.',
+} = Astro.props;
+---
+
+<footer class="site-footer">
+  <div class="footer-main">
+    <div class="footer-brand">
+      <a class="wordmark" href={assetUrl('/')}><span>✦</span> RUANG <i>KILAS</i></a>
+      <p>{tagline}</p>
+      <div class="footer-social">
+        <a href={brand.instagram} target="_blank" rel="noopener noreferrer">Instagram ↗</a>
+        <a href={brand.tiktok} target="_blank" rel="noopener noreferrer">TikTok ↗</a>
+        <span>@ruangkilas.id</span>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h3>Produk</h3>
+      {footerLinks.produk.map((item) => <a href={assetUrl(item.href)}>{item.label}</a>)}
+    </div>
+
+    <div class="footer-contact footer-col">
+      <h3>Studio & Kontak</h3>
+      <address>{brand.address}</address>
+      <a href={`mailto:${brand.email}`}>{brand.email}</a>
+      <a href="https://wa.me/6281288994021">WhatsApp {brand.phone}</a>
+      <small>Senin–Minggu, 09.00–21.00 WIB</small>
+    </div>
+
+    <div class="footer-links footer-col">
+      <h3>Informasi</h3>
+      {showPrivacy ? <a href="#privacy" data-privacy-open>Kebijakan Privasi</a> : <a href={assetUrl('/terms/')}>Kebijakan Privasi</a>}
+      {footerLinks.informasi.map((item) => <a href={assetUrl(item.href)}>{item.label}</a>)}
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span>© 2026 Ruang Kilas. Hak cipta dilindungi.</span>
+    <span>FOTO ANDA. PRIVASI ANDA. 100% DIPROSES LOKAL DI PERANGKAT.</span>
+    <a href="#top">Ke atas ↑</a>
+  </div>
+
+  {showPrivacy && (
+    <dialog class="privacy-dialog" id="privacy">
+      <button type="button" data-privacy-close aria-label="Tutup">×</button>
+      <p class="section-kicker">PRIVACY, PLAIN & SIMPLE</p>
+      <h2>Foto Anda sepenuhnya milik Anda.</h2>
+      <p>Seluruh proses kamera, filter, dan berkas foto berlangsung secara lokal di memori browser perangkat Anda. Ruang Kilas tidak pernah menerima, mengunggah, atau menyimpan foto Anda di server mana pun. Kode QR yang dihasilkan menyimpan pratinjau mini langsung di dalam kode tersebut, dan berkas resolusi penuh tetap berada di perangkat Anda. Matikan kamera atau tutup tab untuk mengakhiri sesi pemotretan kapan saja.</p>
+    </dialog>
+  )}
+</footer>

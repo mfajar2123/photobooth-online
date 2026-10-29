@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
+import SiteFooter from '../components/layout/SiteFooter.astro';
 import { brand, faqs } from '../data/brand';
 import { assetUrl } from '../lib/paths';
 
@@ -19,48 +21,33 @@ const faqSchema = {
 ---
 
 <BaseLayout
-  title="Photobooth Online Gratis & Efek Kamera Vintage | Ruang Kilas"
-  description="Photobooth online gratis langsung di browser. Pilih efek lensa vintage, frame estetik, dan unduh photostrip 300 DPI tanpa instalasi."
+  title="Photobooth & Undangan Digital | Ruang Kilas"
+  description="Rayakan momen bersama Ruang Kilas: photobooth online, photobooth acara, dan undangan digital untuk hari spesialmu."
   keywords="photobooth online, photobooth online gratis, photo booth online indonesia, photo strip online, photobooth browser, vintage photo booth, cetak photostrip, photobooth webcam, efek lensa vintage, fisheye camera online, frame photobooth estetik, ruang kilas, aplikasi photobooth gratis"
   extraSchema={faqSchema}
 >
-  <header class="site-header">
-    <a class="wordmark" href="#top" aria-label="Ruang Kilas, ke atas"><span>✦</span> RUANG <i>KILAS</i></a>
-    <nav aria-label="Navigasi utama">
-      <a href="#lenses">Efek lensa</a>
-      <a href="#frames">Koleksi frame</a>
-      <a href={assetUrl('/panduan')} class="nav-link-panduan">Panduan</a>
-      <a href={assetUrl('/studio')}>Studio</a>
-    </nav>
-    <a class="header-cta" href={assetUrl('/studio')}>Buka photobooth <span>↗</span></a>
-  </header>
+    <SiteHeader ctaLabel="Buka photobooth" />
 
-  <main id="top">
+  <main>
     <section class="hero-section">
       <div class="hero-bg-photos" aria-hidden="true">
         <div class="hero-mini-photo photo-left-top">
           <div class="mini-frame">
             <img src={friendsPhoto} alt="" class="mini-img img-classic-warm" />
           </div>
-          <span class="mini-caption">analog '04</span>
-        </div>
-        <div class="hero-mini-photo photo-left-bottom">
-          <div class="mini-frame">
-            <img src={friendsPhoto} alt="" class="mini-img img-classic-film" />
-          </div>
-          <span class="mini-caption">besties</span>
+          <span class="mini-caption">Photobooth</span>
         </div>
         <div class="hero-mini-photo photo-right-top">
           <div class="mini-frame">
-            <img src={friendsPhoto} alt="" class="mini-img img-classic-mono" />
+            <img src={assetUrl('/images/invitations/inv-11.jpg')} alt="" class="mini-img" decoding="async" />
           </div>
-          <span class="mini-caption">instant roll</span>
+          <span class="mini-caption">Wedding</span>
         </div>
       </div>
       <div class="hero-copy">
-        <h1 class="split-title">Abadikan momen seru,<br /><em>langsung dari browser Anda.</em></h1>
-        <p class="hero-lede">Studio photobooth online instan tanpa antre. Nikmati beragam efek lensa kamera vintage, kombinasikan bingkai tematik estetik, dan simpan photostrip berkualitas tinggi bersama orang terdekat detik ini juga.</p>
-        <div class="hero-actions"><a class="button-primary" href={assetUrl('/studio')}>Mulai photobooth sekarang <span>↗</span></a><a class="button-secondary" href="#frames">Lihat koleksi frame <span>↓</span></a></div>
+        <h1 class="split-title">Rayakan momenmu,<br /><em>simpan ceritanya.</em></h1>
+        <p class="hero-lede">Dari undangan digital hingga photobooth untuk seru-seruan bersama, Ruang Kilas membantu setiap momen spesial terasa lebih personal.</p>
+        <div class="hero-actions"><a class="button-primary" href={assetUrl('/studio')}>Mulai photobooth sekarang <span>↗</span></a><a class="button-secondary" href={assetUrl('/undangan/')}>Jelajahi undangan digital <span>↓</span></a></div>
       </div>
     </section>
 
@@ -131,8 +118,8 @@ const faqSchema = {
       <div class="frames-copy">
         <h2>Ragam pilihan bingkai.<br /><em>Sentuhan estetik di setiap jepretan.</em></h2>
         <p>Bukan sekadar bingkai polos biasa. Tersedia tema retro receipt, festival pass, 35mm film roll, hingga desain minimalis editorial yang membuat setiap momen kebersamaan terasa istimewa.</p>
-        <div class="frame-category-preview" role="tablist" aria-label="Kategori contoh frame">
-          <button type="button" class="is-active" data-frame-category="y2k">Y2K Cyber</button>
+        <div class="frame-category-preview" role="group" aria-label="Kategori contoh frame">
+          <button type="button" class="is-active" aria-pressed="true" data-frame-category="y2k">Y2K Cyber</button>
           <button type="button" data-frame-category="receipt">Retro Receipt</button>
           <button type="button" data-frame-category="museum">Museum Art</button>
           <button type="button" data-frame-category="gigs">Gigs & Music</button>
@@ -154,6 +141,25 @@ const faqSchema = {
       <div class="live-art" aria-label="Contoh photostrip animasi dengan frame Ruang Kilas">
         <div class="live-paper"><div class="live-photo"></div><b>BESTIES IN MOTION</b><small>▶ LOOP PREVIEW · 00:02</small></div>
       </div>
+    </section>
+
+    <section class="home-invitation section-pad" aria-labelledby="home-invitation-title">
+      <a class="home-invitation-card" href={assetUrl('/undangan/rifqi-aulya/')}>
+        <img src={assetUrl('/images/invitations/inv-11.jpg')} alt="Pasangan pengantin dalam suasana pernikahan" loading="lazy" decoding="async" />
+        <strong>Undangan yang bercerita.</strong>
+        <span>Lihat contoh undangan <span aria-hidden="true">&#8599;</span></span>
+      </a>
+      <div>
+        <h2 id="home-invitation-title">Cerita hari bahagiamu,<br /><em>dimulai dari undangan.</em></h2>
+        <p>Bagikan undangan pernikahan yang personal dalam satu tautan. Lengkapi dengan cerita, galeri, detail acara, peta, musik, dan konfirmasi kehadiran.</p>
+        <a class="button-primary" href={assetUrl('/undangan/katalog/')}>Jelajahi template <span aria-hidden="true">&#8599;</span></a>
+      </div>
+    </section>
+
+    <section class="celebration-section section-pad" aria-labelledby="celebration-title">
+      <h2 id="celebration-title">Dari kabar bahagia,<br /><em>jadi kenangan bersama.</em></h2>
+      <p>Undang orang tersayang lewat undangan digital, lalu abadikan kebersamaan dengan photobooth di hari acara. Ruang Kilas menemani setiap bagiannya, dengan sentuhan yang terasa seperti kamu.</p>
+      <img src={assetUrl('/images/invitations/inv-08.jpg')} alt="Momen kebersamaan pasangan di hari pernikahan" loading="lazy" decoding="async" />
     </section>
 
     <section class="event-section section-pad" id="event-photobooth" aria-labelledby="event-title">
@@ -179,7 +185,7 @@ const faqSchema = {
         </div>
       </div>
 
-      <a class="event-portfolio" href={assetUrl('/wedding-ripki-aura/')} aria-label="Lihat contoh live virtual photobooth wedding Ripki dan Aura">
+      <a class="event-portfolio" href={assetUrl('/wedding-ripki-aura/')}>
         <div class="event-portfolio-media">
           <span class="event-portfolio-tag">Contoh nyata</span>
           <img src={assetUrl('/images/wedding-ripki-hero.jpg')} alt="Virtual photobooth wedding Ripki dan Aura di Sukabumi" loading="lazy" decoding="async" />
@@ -199,50 +205,7 @@ const faqSchema = {
     </section>
   </main>
 
-  <footer class="site-footer">
-    <div class="footer-main">
-      <div class="footer-brand">
-        <a class="wordmark" href="#top"><span>✦</span> RUANG <i>KILAS</i></a>
-        <p>Photobooth online instan langsung dari browser. Tanpa aplikasi, 100% diproses lokal di perangkat.</p>
-        <div class="footer-social">
-          <a href={brand.instagram} target="_blank" rel="noopener noreferrer">Instagram ↗</a>
-          <a href={brand.tiktok} target="_blank" rel="noopener noreferrer">TikTok ↗</a>
-          <span>@ruangkilas.id</span>
-        </div>
-      </div>
-
-      <div class="footer-col">
-        <h3>Navigasi</h3>
-        <a href={assetUrl('/studio')}>Buka Studio</a>
-        <a href={assetUrl('/panduan')}>Panduan Studio</a>
-        <a href="#lenses">Efek Lensa</a>
-        <a href="#frames">Koleksi Bingkai</a>
-        <a href="#faq">Bantuan & FAQ</a>
-      </div>
-
-      <div class="footer-contact footer-col">
-        <h3>Studio & Kontak</h3>
-        <address>{brand.address}</address>
-        <a href={`mailto:${brand.email}`}>{brand.email}</a>
-        <a href="https://wa.me/6281288994021">WhatsApp {brand.phone}</a>
-        <small>Senin–Minggu, 09.00–21.00 WIB</small>
-      </div>
-
-      <div class="footer-links footer-col">
-        <h3>Informasi</h3>
-        <a href="#privacy" data-privacy-open>Kebijakan Privasi</a>
-        <a href={assetUrl('/terms')}>Ketentuan Layanan</a>
-        <a href={assetUrl('/brand')}>Panduan Brand</a>
-        <a href={`mailto:${brand.partnershipEmail}?subject=Custom%20event%20frame`}>Request Custom Frame</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© 2026 Ruang Kilas. Hak cipta dilindungi.</span>
-      <span>FOTO ANDA. PRIVASI ANDA. 100% DIPROSES LOKAL DI PERANGKAT.</span>
-      <a href="#top">Ke atas ↑</a>
-    </div>
-    <dialog class="privacy-dialog" id="privacy"><button type="button" data-privacy-close aria-label="Tutup">×</button><p class="section-kicker">PRIVACY, PLAIN & SIMPLE</p><h2>Foto Anda sepenuhnya milik Anda.</h2><p>Seluruh proses kamera, filter, dan berkas foto berlangsung secara lokal di memori browser perangkat Anda. Ruang Kilas tidak pernah menerima, mengunggah, atau menyimpan foto Anda di server mana pun. Kode QR yang dihasilkan menyimpan pratinjau mini langsung di dalam kode tersebut, dan berkas resolusi penuh tetap berada di perangkat Anda. Matikan kamera atau tutup tab untuk mengakhiri sesi pemotretan kapan saja.</p></dialog>
-  </footer>
+    <SiteFooter showPrivacy />
 
   <script>
     const lensDescriptions: Record<string, [string, string]> = {
@@ -279,7 +242,8 @@ const faqSchema = {
     };
     document.querySelectorAll<HTMLButtonElement>('[data-frame-category]').forEach((button) => {
       button.addEventListener('click', () => {
-        document.querySelectorAll('[data-frame-category]').forEach((item) => item.classList.remove('is-active'));
+        document.querySelectorAll('[data-frame-category]').forEach((item) => { item.classList.remove('is-active'); item.setAttribute('aria-pressed', 'false'); });
+        button.setAttribute('aria-pressed', 'true');
         button.classList.add('is-active');
         const key = button.dataset.frameCategory ?? 'y2k';
         const palette = samplePalettes[key] ?? samplePalettes.y2k;

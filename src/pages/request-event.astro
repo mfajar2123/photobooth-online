@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
+import SiteFooter from '../components/layout/SiteFooter.astro';
 import { brand } from '../data/brand';
 import { assetUrl } from '../lib/paths';
 
@@ -18,16 +20,7 @@ const emailBase = `mailto:${brand.partnershipEmail}`;
   keywords="request photobooth event, photobooth wedding, virtual photobooth acara, sewa photobooth online, custom frame photobooth"
   breadcrumbs={breadcrumbs}
 >
-  <header class="site-header">
-    <a class="wordmark" href={assetUrl('/')} aria-label="Ruang Kilas, kembali ke beranda"><span>✦</span> RUANG <i>KILAS</i></a>
-    <nav aria-label="Navigasi request event">
-      <a href={assetUrl('/#lenses')}>Efek lensa</a>
-      <a href={assetUrl('/#frames')}>Koleksi frame</a>
-      <a href={assetUrl('/panduan')} class="nav-link-panduan">Panduan</a>
-      <a href={assetUrl('/studio')}>Studio</a>
-    </nav>
-    <a class="header-cta" href={assetUrl('/studio')}>Buka photobooth <span>↗</span></a>
-  </header>
+    <SiteHeader ctaLabel="Buka photobooth" />
 
   <main class="request-page">
     <section class="request-hero">
@@ -104,49 +97,7 @@ const emailBase = `mailto:${brand.partnershipEmail}`;
     </section>
   </main>
 
-  <footer class="site-footer">
-    <div class="footer-main">
-      <div class="footer-brand">
-        <a class="wordmark" href={assetUrl('/')}><span>✦</span> RUANG <i>KILAS</i></a>
-        <p>Photobooth online instan langsung dari browser. Tanpa aplikasi, 100% diproses lokal di perangkat.</p>
-        <div class="footer-social">
-          <a href={brand.instagram} target="_blank" rel="noopener noreferrer">Instagram ↗</a>
-          <a href={brand.tiktok} target="_blank" rel="noopener noreferrer">TikTok ↗</a>
-          <span>@ruangkilas.id</span>
-        </div>
-      </div>
-
-      <div class="footer-col">
-        <h3>Navigasi</h3>
-        <a href={assetUrl('/studio')}>Buka Studio</a>
-        <a href={assetUrl('/panduan')}>Panduan Studio</a>
-        <a href={assetUrl('/#lenses')}>Efek Lensa</a>
-        <a href={assetUrl('/#frames')}>Koleksi Bingkai</a>
-        <a href={assetUrl('/#faq')}>Bantuan & FAQ</a>
-      </div>
-
-      <div class="footer-contact footer-col">
-        <h3>Studio & Kontak</h3>
-        <address>{brand.address}</address>
-        <a href={`mailto:${brand.email}`}>{brand.email}</a>
-        <a href="https://wa.me/6281288994021">WhatsApp {brand.phone}</a>
-        <small>Senin–Minggu, 09.00–21.00 WIB</small>
-      </div>
-
-      <div class="footer-links footer-col">
-        <h3>Informasi</h3>
-        <a href={assetUrl('/panduan')}>Panduan Studio</a>
-        <a href={assetUrl('/terms')}>Ketentuan Layanan</a>
-        <a href={assetUrl('/brand')}>Panduan Brand</a>
-        <a href={assetUrl('/request-event/')}>Request Photobooth Event</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© 2026 Ruang Kilas. Hak cipta dilindungi.</span>
-      <span>FOTO ANDA. PRIVASI ANDA. 100% DIPROSES LOKAL DI PERANGKAT.</span>
-      <a href="#top">Ke atas ↑</a>
-    </div>
-  </footer>
+    <SiteFooter />
 
   <script>
     const form = document.querySelector<HTMLFormElement>('#event-request-form');

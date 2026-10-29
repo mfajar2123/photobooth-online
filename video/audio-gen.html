@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="id">
+<head><meta charset="utf-8" /><title>Invitation theme generator</title></head>
+<body>
+  <canvas id="unused" width="8" height="8"></canvas>
+  <script>
+/** Soft wedding bed: pad + piano arpeggio + bass. No drums. ~32s loop. */
+const DURATION = 32;
+const SR = 48000;
+
+function makeNoiseBuffer(context) {
+  const buffer = context.createBuffer(1, Math.floor(context.sampleRate * 2), context.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < data.length; i += 1) data[i] = Math.random() * 2 - 1;
+  return buffer;
+}
+
+function schedule(context, master, noise, startAt = 0) {
+  const at = (s) => startAt + s;
+  const chords = [
+    { root: 146.83, notes: [293.66, 369.99, 440.0] },
+    { root: 110.0, notes: [220.0, 329.63, 440.0] },
+    { root: 123.47, notes: [246.94, 293.66, 369.99] },
+    { root: 98.0, notes: [196.0, 293.66, 392.0] },
+    { root: 146.83, notes: [293.66, 369.99, 440.0] },
+    { root: 110.0, notes: [220.0, 329.63, 440.0] },
+    { root: 98.0, notes: [196.0, 293.66, 392.0] },
+    { root: 110.0, notes: [220.0, 329.63, 440.0] },
+  ];
+
+  const tone = (time, opts) => {
+    const { frequency, type = 'sine', gain = 0.05, attack = 0.01, decay = 0.6, filterFrequency = null } = opts;
+    const osc = context.createOscillator();
+    osc.type = type;
+    osc.frequency.value = frequency;
+    const amp = context.createGain();
+    amp.gain.setValueAtTime(0.0001, time);
+    amp.gain.exponentialRampToValueAtTime(gain, time + attack);
+    amp.gain.exponentialRampToValueAtTime(0.0001, time + attack + decay);
+    let node = osc;
+    if (filterFrequency) {
+      const filter = context.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = filterFrequency;
+      node.connect(filter);
+      node = filter;
+    }
+    node.connect(amp);
+    amp.connect(master);
+    osc.start(time);
+    osc.stop(time + attack + decay + 0.05);
+  };
+
+  chords.forEach((chord, bar) => {
+    const barStart = bar * 4;
+    // pad
+    chord.notes.forEach((frequency) => {
+      const osc = context.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = frequency / 2;
+      const amp = context.createGain();
+      amp.gain.setValueAtTime(0.0001, at(barStart));
+      amp.gain.exponentialRampToValueAtTime(0.016, at(barStart + 0.8));
+      amp.gain.setValueAtTime(0.016, at(barStart + 3.2));
+      amp.gain.exponentialRampToValueAtTime(0.0001, at(barStart + 4.0));
+      osc.connect(amp);
+      amp.connect(master);
+      osc.start(at(barStart));
+      osc.stop(at(barStart + 4.05));
+    });
+    // bass
+    [0, 2].forEach((beat) => {
+      tone(at(barStart + beat), { frequency: chord.root, type: 'triangle', gain: 0.05, attack: 0.02, decay: 1.2, filterFrequency: 320 });
+    });
+    // piano arpeggio
+    [0, 1, 2, 3, 4, 5, 6, 7].forEach((step) => {
+      const note = chord.notes[step % 3];
+      tone(at(barStart + step * 0.5), {
+        frequency: note * (step % 4 === 3 ? 2 : 1),
+        type: 'triangle',
+        gain: step % 2 === 0 ? 0.028 : 0.02,
+        attack: 0.005,
+        decay: 0.7,
+        filterFrequency: 2400,
+      });
+    });
+  });
+}
+
+function encodeWav(buffer) {
+  const channels = buffer.numberOfChannels;
+  const frames = buffer.length;
+  const blockAlign = channels * 2;
+  const dataSize = frames * blockAlign;
+  const view = new DataView(new ArrayBuffer(44 + dataSize));
+  const writeString = (offset, value) => { for (let i = 0; i < value.length; i += 1) view.setUint8(offset + i, value.charCodeAt(i)); };
+  writeString(0, 'RIFF');
+  view.setUint32(4, 36 + dataSize, true);
+  writeString(8, 'WAVE');
+  writeString(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, channels, true);
+  view.setUint32(24, buffer.sampleRate, true);
+  view.setUint32(28, buffer.sampleRate * blockAlign, true);
+  view.setUint16(32, blockAlign, true);
+  view.setUint16(34, 16, true);
+  writeString(36, 'data');
+  view.setUint32(40, dataSize, true);
+  const data = [];
+  for (let c = 0; c < channels; c += 1) data.push(buffer.getChannelData(c));
+  let offset = 44;
+  for (let f = 0; f < frames; f += 1) {
+    for (let c = 0; c < channels; c += 1) {
+      const sample = Math.max(-1, Math.min(1, data[c][f]));
+      view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7fff, true);
+      offset += 2;
+    }
+  }
+  const bytes = new Uint8Array(view.buffer);
+  let binary = '';
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+  return btoa(binary);
+}
+
+window.renderAudio = async function renderAudio() {
+  const offline = new OfflineAudioContext(2, Math.ceil(SR * DURATION), SR);
+  const master = offline.createGain();
+  master.gain.value = 0.9;
+  master.connect(offline.destination);
+  schedule(offline, master, makeNoiseBuffer(offline), 0);
+  const buffer = await offline.startRendering();
+  return encodeWav(buffer);
+};
+
+window.__ready = true;
+  </script>
+</body>
+</html>

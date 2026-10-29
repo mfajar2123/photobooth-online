@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
 import { assetUrl } from '../lib/paths';
 
 const breadcrumbs = [
@@ -13,8 +14,8 @@ const breadcrumbs = [
   description="Standar identitas brand resmi Ruang Kilas untuk kolaborasi, kemitraan event, dan kustomisasi bingkai photobooth."
   breadcrumbs={breadcrumbs}
 >
+  <SiteHeader />
   <main class="legal-page">
-    <a class="wordmark" href={assetUrl('/')}><span>✦</span> RUANG <i>KILAS</i></a>
     <article>
       <p class="section-kicker">BRAND GUIDELINES</p>
       <h1>Identitas Ruang Kilas.</h1>

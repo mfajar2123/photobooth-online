@@ -1,0 +1,94 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../../components/layout/SiteHeader.astro';
+import SiteFooter from '../../components/layout/SiteFooter.astro';
+import { invitationTemplates } from '../../data/templates';
+import { invitations } from '../../data/invitations';
+import { assetUrl } from '../../lib/paths';
+
+const breadcrumbs = [
+  { name: 'Beranda', item: '/' },
+  { name: 'Undangan Digital', item: '/undangan' },
+];
+---
+
+<BaseLayout
+  title="Undangan Digital Wedding Interaktif | Ruang Kilas"
+  description="Undangan pernikahan digital dengan galeri, musik, hitung mundur, peta lokasi, dan konfirmasi kehadiran. Statis, cepat, dan bisa dikustomisasi."
+  keywords="undangan digital, undangan wedding online, undangan pernikahan digital, undangan interaktif, ruang kilas"
+  breadcrumbs={breadcrumbs}
+>
+  <SiteHeader ctaLabel="Buat undangan" ctaHref="/undangan/custom/" />
+
+  <main>
+    <section class="und-hero">
+      <div class="und-hero-inner">
+        <p class="section-kicker">UNDANGAN DIGITAL</p>
+        <h1>Undangan wedding yang<br /><em>terasa seperti kamu.</em></h1>
+        <p class="und-lede">
+          Satu tautan untuk semua tamu. Lengkap dengan nama mempelai, hitung mundur, rundown acara,
+          galeri foto, musik, tombol peta, dan konfirmasi kehadiran — tanpa aplikasi.
+        </p>
+        <div class="und-actions">
+          <a class="button-primary" href={assetUrl('/undangan/katalog/')}>Lihat katalog template <span aria-hidden="true">↗</span></a>
+          <a class="button-secondary" href={assetUrl('/undangan/custom/')}>Request undangan custom <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+
+<section class="section-pad und-section und-section-tint">
+      <p class="section-kicker">KATALOG TEMPLATE</p>
+      <h2 class="und-heading">Enam gaya, satu cerita kalian.</h2>
+      <div class="und-grid und-grid-3">
+        {invitationTemplates.map((template) => (
+          <article class="und-card">
+            <div class="und-card-media">
+              <img src={assetUrl(template.cover)} alt={`Template ${template.name}`} loading="lazy" decoding="async" />
+            </div>
+            <div class="und-card-body">
+              <span class="und-card-tag">{template.tagline}</span>
+              <h3>{template.name}</h3>
+              <p>{template.bestFor}</p>
+              <a class="text-link" href={assetUrl(`/undangan/${template.demoSlug}/`)}>Lihat demo <span aria-hidden="true">↗</span></a>
+            </div>
+          </article>
+        ))}
+      </div>
+      <a class="button-secondary und-more" href={assetUrl('/undangan/katalog/')}>Buka katalog lengkap <span aria-hidden="true">↗</span></a>
+    </section>
+
+    <section class="section-pad und-section">
+      <p class="section-kicker">PORTOFOLIO</p>
+      <h2 class="und-heading">Lihat ceritanya menjadi undangan.</h2>
+      <div class="und-grid und-grid-3">
+        {invitations.slice(0, 3).map((invitation) => (
+          <article class="und-card">
+            <div class="und-card-media">
+              <img src={assetUrl(invitation.cover)} alt={`Undangan ${invitation.couple.groom.short} & ${invitation.couple.bride.short}`} loading="lazy" decoding="async" />
+            </div>
+            <div class="und-card-body">
+              <span class="und-card-tag">{invitation.event.dateLabel}</span>
+              <h3>{invitation.couple.groom.short} &amp; {invitation.couple.bride.short}</h3>
+              <p>{invitation.event.reception.venue} · {invitation.event.reception.address.split(',').pop()?.trim()}</p>
+              <a class="text-link" href={assetUrl(`/undangan/${invitation.slug}/`)}>Lihat undangan <span aria-hidden="true">↗</span></a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <div class="und-browse-more"><a class="button-secondary" href={assetUrl('/undangan/portofolio/')}>Lihat semua contoh <span aria-hidden="true">&#8599;</span></a></div>
+
+    <section class="und-cta">
+      <p class="section-kicker">SIAP DIBUAT</p>
+      <h2>Punya tanggal? Kami siapkan undangannya.</h2>
+      <p>Kirim detail acara, kami susun undangan digital yang siap dibagikan ke tamu.</p>
+      <div class="und-actions">
+        <a class="button-primary" href={assetUrl('/undangan/custom/')}>Request undangan <span aria-hidden="true">↗</span></a>
+        <a class="button-secondary" href={assetUrl('/undangan/portofolio/')}>Lihat portofolio <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+  </main>
+
+  <SiteFooter />
+</BaseLayout>

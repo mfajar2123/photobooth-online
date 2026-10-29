@@ -1,0 +1,142 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../../components/layout/SiteHeader.astro';
+import SiteFooter from '../../components/layout/SiteFooter.astro';
+import { brand } from '../../data/brand';
+import { invitationTemplates } from '../../data/templates';
+import { assetUrl } from '../../lib/paths';
+
+const breadcrumbs = [
+  { name: 'Beranda', item: '/' },
+  { name: 'Undangan Digital', item: '/undangan' },
+  { name: 'Request Undangan', item: '/undangan/custom' },
+];
+
+const whatsappBase = 'https://wa.me/6281288994021';
+const emailBase = `mailto:${brand.partnershipEmail}`;
+---
+
+<BaseLayout
+  title="Request Undangan Digital Custom | Ruang Kilas"
+  description="Pesan undangan pernikahan digital custom: pilih template, kirim detail acara, dan undangan siap dibagikan dalam satu tautan."
+  keywords="request undangan digital, jasa undangan wedding online, undangan custom"
+  breadcrumbs={breadcrumbs}
+>
+  <SiteHeader ctaLabel="Buat undangan" ctaHref="/undangan/custom/" />
+
+  <main class="request-page">
+    <section class="request-hero">
+      <p class="section-kicker">REQUEST UNDANGAN DIGITAL</p>
+      <h1>Ceritakan acaramu,<br /><em>kami susun undangannya.</em></h1>
+      <p class="hero-lede">
+        Isi detail singkat di bawah. Kami balas dengan konsep, pilihan template, dan estimasi pengerjaan — tanpa perlu akun.
+      </p>
+      <div class="request-facts">
+        <span>Statis & cepat</span>
+        <span>Template + custom</span>
+        <span>Satu tautan untuk tamu</span>
+      </div>
+    </section>
+
+    <section class="request-body">
+      <div class="request-form-card">
+        <h2>Detail undangan</h2>
+        <p>Semua data hanya dipakai untuk menyusun pesan permintaan. Tidak ada yang dikirim ke server Ruang Kilas.</p>
+
+        <form id="undangan-request" class="request-form">
+          <label class="request-field">
+            Nama kamu
+            <input type="text" name="name" autocomplete="name" placeholder="Nama lengkap" />
+          </label>
+          <label class="request-field">
+            Nama mempelai pria
+            <input type="text" name="groom" placeholder="Contoh: Dimas Aryo" />
+          </label>
+          <label class="request-field">
+            Nama mempelai wanita
+            <input type="text" name="bride" placeholder="Contoh: Nabila Putri" />
+          </label>
+          <label class="request-field">
+            Tanggal acara
+            <input type="date" name="date" />
+          </label>
+          <label class="request-field">
+            Kota / venue
+            <input type="text" name="venue" placeholder="Contoh: Bandung" />
+          </label>
+          <label class="request-field">
+            Template
+            <select name="template">
+              {invitationTemplates.map((template) => (
+                <option value={template.name}>{template.name} — {template.tagline}</option>
+              ))}
+              <option value="Belum tahu">Belum tahu, minta rekomendasi</option>
+            </select>
+          </label>
+          <label class="request-field request-field-wide">
+            Catatan tambahan
+            <textarea name="notes" rows="3" placeholder="Contoh: butuh galeri 12 foto, musik piano, dan RSVP WhatsApp"></textarea>
+          </label>
+        </form>
+
+        <div class="request-actions">
+          <a class="button-primary" id="undangan-submit" href={whatsappBase}>Kirim lewat WhatsApp <span aria-hidden="true">↗</span></a>
+          <a class="text-link" id="undangan-email" href={emailBase}>atau email ke {brand.partnershipEmail}</a>
+        </div>
+        <p class="request-fineprint">Data yang kamu isi hanya dipakai untuk menyusun pesan permintaan.</p>
+      </div>
+
+      <aside class="request-aside">
+        <h2>Yang kamu dapat</h2>
+        <ul class="request-list">
+          <li><span>01</span><div><b>Halaman undangan sendiri</b>Satu tautan khusus yang dibagikan ke tamu.</div></li>
+          <li><span>02</span><div><b>Galeri, musik, peta</b>Semua bagian interaktif, bukan sekadar teks.</div></li>
+          <li><span>03</span><div><b>Nama & detail acara</b>Mempelai, tanggal, lokasi, dan rundown lengkap.</div></li>
+          <li><span>04</span><div><b>RSVP & save the date</b>Tamu bisa konfirmasi dan menyimpan tanggal.</div></li>
+        </ul>
+        <p class="request-portfolio-note">
+          Lihat contohnya: <a href={assetUrl('/undangan/portofolio/')}>portofolio undangan digital ↗</a>
+        </p>
+      </aside>
+    </section>
+  </main>
+
+  <SiteFooter />
+
+  <script>
+    const form = document.querySelector<HTMLFormElement>('#undangan-request');
+    const submitLink = document.querySelector<HTMLAnchorElement>('#undangan-submit');
+    const emailLink = document.querySelector<HTMLAnchorElement>('#undangan-email');
+
+    if (form && submitLink && emailLink) {
+      const whatsappNumber = '6281288994021';
+      const partnerEmail = 'partnership@ruangkilas.my.id';
+
+      const syncLinks = () => {
+        const data = new FormData(form);
+        const field = (key: string) => String(data.get(key) ?? '').trim();
+        const lines = [
+          'Halo Ruang Kilas, saya ingin request undangan digital.',
+          field('name') && `Nama: ${field('name')}`,
+          field('groom') && `Mempelai pria: ${field('groom')}`,
+          field('bride') && `Mempelai wanita: ${field('bride')}`,
+          field('date') && `Tanggal: ${field('date')}`,
+          field('venue') && `Kota/venue: ${field('venue')}`,
+          field('template') && `Template: ${field('template')}`,
+          field('notes') && `Catatan: ${field('notes')}`,
+        ].filter((line): line is string => Boolean(line));
+
+        const message = lines.join('\n');
+        submitLink.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+        emailLink.href = `mailto:${partnerEmail}?subject=${encodeURIComponent('Request undangan digital')}&body=${encodeURIComponent(message)}`;
+      };
+
+      const requestedTemplate = new URLSearchParams(window.location.search).get('template');
+      const templateSelect = form.querySelector<HTMLSelectElement>('select[name="template"]');
+      if (requestedTemplate && templateSelect && Array.from(templateSelect.options).some((option) => option.value === requestedTemplate)) templateSelect.value = requestedTemplate;
+      form.addEventListener('input', syncLinks);
+      form.addEventListener('change', syncLinks);
+      syncLinks();
+    }
+  </script>
+</BaseLayout>

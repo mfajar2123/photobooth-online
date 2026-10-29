@@ -1,0 +1,193 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../../components/layout/SiteHeader.astro';
+import SiteFooter from '../../components/layout/SiteFooter.astro';
+import InvitationCover from '../../components/invitation/InvitationCover';
+import Countdown from '../../components/invitation/Countdown';
+import Gallery from '../../components/invitation/Gallery';
+import InvitationTools from '../../components/invitation/InvitationTools';
+import { invitations } from '../../data/invitations';
+import { invitationTemplates } from '../../data/templates';
+import { assetUrl } from '../../lib/paths';
+
+export function getStaticPaths() {
+  return invitations.map((invitation) => ({
+    params: { slug: invitation.slug },
+    props: { invitation },
+  }));
+}
+
+const { invitation } = Astro.props;
+const template = invitationTemplates.find((item) => item.slug === invitation.theme) ?? invitationTemplates[0];
+const names = `${invitation.couple.groom.short} & ${invitation.couple.bride.short}`;
+const fullNames = `${invitation.couple.groom.name} & ${invitation.couple.bride.name}`;
+
+const breadcrumbs = [
+  { name: 'Beranda', item: '/' },
+  { name: 'Undangan Digital', item: '/undangan' },
+  { name: `Undangan ${names}`, item: `/undangan/${invitation.slug}` },
+];
+
+const eventSchema = {
+  '@type': 'Event',
+  name: `Pernikahan ${fullNames}`,
+  startDate: invitation.event.date,
+  eventStatus: 'https://schema.org/EventScheduled',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  location: {
+    '@type': 'Place',
+    name: invitation.event.reception.venue,
+    address: invitation.event.reception.address,
+  },
+  image: new URL(assetUrl(invitation.gallery[0].src), 'https://ruangkilas.my.id').toString(),
+  description: `Undangan pernikahan ${fullNames}, ${invitation.event.dateLabel}.`,
+};
+
+const orders: Record<string, number[]> = {
+  serat: [0,1,2,3,4,5,6,7], linen: [1,0,4,2,3,5,6,7], garden: [0,2,3,1,5,4,6,7], monokrom: [1,5,0,3,2,4,6,7], kertas: [4,1,5,0,2,3,6,7], senja: [5,0,1,4,3,2,6,7],
+};
+const sectionOrder = orders[invitation.theme];
+const themeStyle = `--inv-surface: ${template.surface}; --inv-accent: ${template.accent};`;
+---
+
+<BaseLayout
+  title={`Undangan ${names} — ${invitation.event.dateLabel} | Ruang Kilas`}
+  description={`Undangan pernikahan ${fullNames} pada ${invitation.event.dateLabel} di ${invitation.event.reception.venue}. Lengkap dengan galeri, musik, peta, dan konfirmasi kehadiran.`}
+  keywords={`undangan digital, undangan wedding ${names}, undangan online, ruang kilas`}
+  ogImage={invitation.cover}
+  ogImageAlt={`Undangan pernikahan ${fullNames}`}
+  breadcrumbs={breadcrumbs}
+  extraSchema={eventSchema}
+  noindex={true}
+>
+  <SiteHeader ctaLabel="Buat undangan" ctaHref="/undangan/custom/" />
+
+  <div class="inv-page" data-theme={invitation.theme} style={themeStyle}>
+    <InvitationCover
+      client:load
+      names={names}
+      dateLabel={invitation.event.dateLabel}
+      cover={assetUrl(invitation.cover)}
+      hashtag={invitation.extras?.hashtag}
+      music={invitation.music}
+    />
+
+    <main id="undangan-content">
+      {sectionOrder.map((section) => (<Fragment>
+        {section === 0 && (<section class="inv-section inv-intro">
+        <p class="section-kicker">UNDANGAN PERNIKAHAN</p>
+        <p class="inv-quote">“{invitation.quote.text}”</p>
+        {invitation.quote.source && <p class="inv-quote-source">— {invitation.quote.source}</p>}
+      </section>)}
+        {section === 1 && (<section class="inv-section inv-couple">
+        <p class="section-kicker">KEDUA MEMPELAI</p>
+        <h2 class="inv-heading">Dengan penuh rasa syukur</h2>
+        <p class="inv-lede">Kami mengundang Anda untuk menyaksikan dan merayakan hari bahagia kami.</p>
+
+        <div class="inv-couple-photo">
+          <img
+            src={assetUrl(invitation.couplePhoto)}
+            alt={`Foto ${invitation.couple.groom.name} dan ${invitation.couple.bride.name}`}
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+
+        <div class="inv-couple-names">
+          <article class="inv-person">
+            <h3>{invitation.couple.groom.name}</h3>
+            {invitation.couple.groom.parents && <p>{invitation.couple.groom.parents}</p>}
+          </article>
+
+          <div class="inv-ampersand" aria-hidden="true">&amp;</div>
+
+          <article class="inv-person">
+            <h3>{invitation.couple.bride.name}</h3>
+            {invitation.couple.bride.parents && <p>{invitation.couple.bride.parents}</p>}
+          </article>
+        </div>
+      </section>)}
+        {section === 2 && (<section class="inv-section inv-when">
+        <Countdown client:load date={invitation.event.date} dateLabel={invitation.event.dateLabel} />
+      </section>)}
+        {section === 3 && (<section class="inv-section inv-event">
+        <p class="section-kicker">DETAIL ACARA</p>
+        <h2 class="inv-heading">{invitation.event.dayLabel}, {invitation.event.dateLabel}</h2>
+
+        <div class="inv-event-grid">
+          <article class="inv-event-card">
+            <span class="inv-event-tag">Akad Nikah</span>
+            <p class="inv-event-time">{invitation.event.ceremony.time}</p>
+            <h3>{invitation.event.ceremony.venue}</h3>
+            <p>{invitation.event.ceremony.address}</p>
+            <a class="text-link" href={'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(invitation.event.ceremony.venue + ' ' + invitation.event.ceremony.address)} target="_blank" rel="noopener noreferrer">Peta akad ?</a>
+          </article>
+          <article class="inv-event-card">
+            <span class="inv-event-tag">Resepsi</span>
+            <p class="inv-event-time">{invitation.event.reception.time}</p>
+            <h3>{invitation.event.reception.venue}</h3>
+            <p>{invitation.event.reception.address}</p>
+            <a class="text-link" href={'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(invitation.event.reception.venue + ' ' + invitation.event.reception.address)} target="_blank" rel="noopener noreferrer">Peta resepsi ?</a>
+          </article>
+        </div>
+
+        {invitation.event.dressCode && (
+          <p class="inv-dresscode"><strong>Dress code:</strong> {invitation.event.dressCode}</p>
+        )}
+
+        <a class="button-primary" href={invitation.event.mapsUrl} target="_blank" rel="noopener noreferrer">
+          Buka peta lokasi <span aria-hidden="true">↗</span>
+        </a>
+      </section>)}
+        {section === 4 && (<section class="inv-section inv-story">
+        <p class="section-kicker">PERJALANAN KAMI</p>
+        <h2 class="inv-heading">Cerita singkat</h2>
+        <div class="inv-story-list">
+          {invitation.story.map((item) => (
+            <article class="inv-story-item">
+              <div class="inv-story-media">
+                <img src={assetUrl(item.image)} alt={item.title} loading="lazy" decoding="async" />
+              </div>
+              <div class="inv-story-copy">
+                <span class="inv-story-date">{item.date}</span>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>)}
+        {section === 5 && (<section class="inv-section inv-gallery-section">
+        <p class="section-kicker">GALERI</p>
+        <h2 class="inv-heading">Momen yang kami simpan</h2>
+        <Gallery client:load items={invitation.gallery} />
+      </section>)}
+        {section === 6 && (<section class="inv-section inv-tools-section">
+        <p class="section-kicker">KONFIRMASI & BAGIKAN</p>
+        <h2 class="inv-heading">Sampai jumpa di hari itu</h2>
+        <InvitationTools
+          client:load
+          names={fullNames}
+          dateISO={invitation.event.date}
+          dateLabel={invitation.event.dateLabel}
+          venue={invitation.event.reception.venue}
+          address={invitation.event.reception.address}
+          mapsUrl={invitation.event.mapsUrl}
+          rsvpUrl={invitation.event.rsvpUrl}
+          gift={invitation.extras?.gift}
+        />
+      </section>)}
+        {section === 7 && (<section class="inv-closing">
+        <p class="section-kicker">TERIMA KASIH</p>
+        <h2>Merupakan kebahagiaan bagi kami apabila Anda berkenan hadir.</h2>
+        <p class="inv-closing-names">{fullNames}</p>
+        <a class="button-primary" href={assetUrl('/undangan/custom/')}>
+          Buat undangan seperti ini <span aria-hidden="true">↗</span>
+        </a>
+      </section>)}
+      </Fragment>))}
+    </main>
+  </div>
+
+  <SiteFooter />
+</BaseLayout>

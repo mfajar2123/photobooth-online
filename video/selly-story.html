@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Selly — birthday story (9:16, 12s)</title>
+  <style>
+    @font-face {
+      font-family: 'Merriweather';
+      src: url('/node_modules/@fontsource/merriweather/files/merriweather-latin-400-normal.woff2') format('woff2');
+      font-weight: 400;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'Merriweather';
+      src: url('/node_modules/@fontsource/merriweather/files/merriweather-latin-700-normal.woff2') format('woff2');
+      font-weight: 700;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'Merriweather';
+      src: url('/node_modules/@fontsource/merriweather/files/merriweather-latin-900-normal.woff2') format('woff2');
+      font-weight: 900;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'Jakarta';
+      src: url('/node_modules/@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-normal.woff2') format('woff2');
+      font-weight: 200 800;
+      font-display: block;
+    }
+    html, body { margin: 0; background: #1b120f; }
+    canvas { display: block; width: 100vw; height: auto; }
+  </style>
+</head>
+<body>
+  <canvas id="stage" width="1080" height="1920"></canvas>
+  <script>
+/**
+ * Selly Ade Saputri — 12s birthday story (9:16, 60fps).
+ * Every cut, reveal and photo change sits on a 0.5s beat grid.
+ */
+const W = 1080;
+const H = 1920;
+const DURATION = 15;
+
+const C = {
+  cream: '#F7EEE2',
+  paper: '#FBF5EC',
+  espresso: '#2A1C17',
+  walnut: '#633828',
+  blush: '#E3B9B1',
+  sage: '#B7CDAE',
+  cognac: '#A05C3B',
+  gold: '#C9A46A',
+};
+
+const SERIF = '"Merriweather", Georgia, serif';
+const SANS = '"Jakarta", "Helvetica Neue", Arial, sans-serif';
+
+const canvas = document.getElementById('stage');
+const ctx = canvas.getContext('2d');
+
+const photos = { one: null, two: null, three: null, four: null };
+
+const clamp01 = (value) => Math.max(0, Math.min(1, value));
+const seg = (t, a, b) => (b === a ? (t >= b ? 1 : 0) : clamp01((t - a) / (b - a)));
+const easeOut = (t) => 1 - Math.pow(1 - clamp01(t), 3);
+const easeInOut = (t) => {
+  const x = clamp01(t);
+  return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+};
+const lerp = (a, b, t) => a + (b - a) * t;
+
+function roundRect(x, y, w, h, r = 0) {
+  const radius = Math.max(0, Math.min(r, w / 2, h / 2));
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + w - radius, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+  ctx.lineTo(x + w, y + h - radius);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+  ctx.lineTo(x + radius, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+}
+
+function text(value, x, y, opts = {}) {
+  const {
+    size = 40, weight = 700, family = SERIF, color = C.espresso,
+    align = 'left', spacing = 0, alpha = 1,
+  } = opts;
+  ctx.save();
+  ctx.globalAlpha *= alpha;
+  ctx.fillStyle = color;
+  ctx.font = `${weight} ${size}px ${family}`;
+  if ('letterSpacing' in ctx) ctx.letterSpacing = `${spacing}px`;
+  ctx.textAlign = align;
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText(value, x, y);
+  ctx.restore();
+}
+
+function measure(value, size, weight, family, spacing = 0) {
+  ctx.save();
+  ctx.font = `${weight} ${size}px ${family}`;
+  let width = ctx.measureText(value).width;
+  if (spacing) width += spacing * (value.length - 1);
+  ctx.restore();
+  return width;
+}
+
+function maskedText(value, x, y, opts = {}) {
+  const {
+    size = 120, weight = 900, family = SERIF, color = C.espresso,
+    align = 'left', spacing = 0, progress = 1, rise = 0.3,
+  } = opts;
+  const p = easeOut(progress);
+  if (p <= 0) return;
+  const width = measure(value, size, weight, family, spacing);
+  const left = align === 'right' ? x - width : align === 'center' ? x - width / 2 : x;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(left - size * 0.3, y - size * 1.12, width + size * 0.6, size * 1.4);
+  ctx.clip();
+  text(value, x, y + size * rise * (1 - p), { size, weight, family, color, align, spacing, alpha: p });
+  ctx.restore();
+}
+
+function wipeText(value, x, y, opts = {}) {
+  const {
+    size = 34, weight = 500, family = SANS, color = C.walnut,
+    align = 'left', spacing = 0, progress = 1,
+  } = opts;
+  const p = easeOut(progress);
+  if (p <= 0) return;
+  const width = measure(value, size, weight, family, spacing);
+  const left = align === 'right' ? x - width : align === 'center' ? x - width / 2 : x;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(left - 6, y - size * 1.2, (width + 12) * p, size * 1.6);
+  ctx.clip();
+  text(value, x, y, { size, weight, family, color, align, spacing });
+  ctx.restore();
+}
+
+function softShadow(x, y, w, h, radius, strength = 1) {
+  const layers = [
+    { spread: 30, alpha: 0.05 },
+    { spread: 14, alpha: 0.06 },
+    { spread: 4, alpha: 0.08 },
+  ];
+  layers.forEach((layer) => {
+    ctx.save();
+    ctx.fillStyle = `rgba(24, 14, 10, ${layer.alpha * strength})`;
+    roundRect(x - layer.spread * 0.25, y + layer.spread * 0.4, w + layer.spread * 0.5, h + layer.spread * 0.25, radius + layer.spread * 0.2);
+    ctx.fill();
+    ctx.restore();
+  });
+}
+
+function photoCover(image, x, y, w, h, opts = {}) {
+  if (!image) return;
+  const { radius = 0, scale = 1, focusX = 0.5, focusY = 0.5, alpha = 1 } = opts;
+  const ratio = Math.max(w / image.width, h / image.height) * scale;
+  const dw = image.width * ratio;
+  const dh = image.height * ratio;
+  ctx.save();
+  ctx.globalAlpha *= alpha;
+  roundRect(x, y, w, h, radius);
+  ctx.clip();
+  ctx.drawImage(image, x + (w - dw) * focusX, y + (h - dh) * focusY, dw, dh);
+  ctx.restore();
+}
+
+function star(x, y, size, color) {
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  for (let i = 0; i < 8; i += 1) {
+    const angle = (i * Math.PI) / 4 - Math.PI / 2;
+    const radius = i % 2 === 0 ? size : size * 0.32;
+    const px = x + Math.cos(angle) * radius;
+    const py = y + Math.sin(angle) * radius;
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+/* ------------------------------------------------------------ camera rig */
+
+const CAMERA_KEYS = [
+  { t: 0.00, s: 1.36, x: 400, y: 760 },
+  { t: 0.60, s: 1.26, x: 540, y: 990 },
+  { t: 1.20, s: 1.00, x: 540, y: 960 },
+  { t: 2.42, s: 1.02, x: 540, y: 960 },
+  { t: 2.58, s: 1.30, x: 540, y: 930 },
+  { t: 3.10, s: 1.20, x: 540, y: 995 },
+  { t: 3.62, s: 1.00, x: 540, y: 960 },
+  { t: 4.92, s: 1.02, x: 540, y: 960 },
+  { t: 5.08, s: 1.12, x: 540, y: 780 },
+  { t: 5.70, s: 1.00, x: 540, y: 960 },
+  { t: 7.30, s: 1.05, x: 540, y: 1120 },
+  { t: 7.50, s: 1.00, x: 540, y: 960 },
+  { t: 9.80, s: 1.06, x: 540, y: 1080 },
+  { t: 10.00, s: 1.00, x: 540, y: 960 },
+  { t: 12.30, s: 1.07, x: 540, y: 1020 },
+  { t: 12.52, s: 1.18, x: 540, y: 760 },
+  { t: 13.10, s: 1.00, x: 540, y: 960 },
+  { t: 14.92, s: 1.04, x: 540, y: 960 },
+];
+
+function cameraFor(t) {
+  if (t <= CAMERA_KEYS[0].t) return { ...CAMERA_KEYS[0] };
+  for (let i = 0; i < CAMERA_KEYS.length - 1; i += 1) {
+    const a = CAMERA_KEYS[i];
+    const b = CAMERA_KEYS[i + 1];
+    if (t <= b.t) {
+      const p = easeInOut(seg(t, a.t, b.t));
+      return { s: lerp(a.s, b.s, p), x: lerp(a.x, b.x, p), y: lerp(a.y, b.y, p) };
+    }
+  }
+  return { ...CAMERA_KEYS[CAMERA_KEYS.length - 1] };
+}
+
+function applyCamera(camera) {
+  ctx.translate(W / 2 - camera.s * camera.x, H / 2 - camera.s * camera.y);
+  ctx.scale(camera.s, camera.s);
+}
+
+/* ----------------------------------------------------------------- beats */
+
+function beatAlpha(lt, dur) {
+  return easeOut(seg(lt, 0, 0.14)) * (1 - easeInOut(seg(lt, dur - 0.18, dur)));
+}
+
+function hookBeat(lt, dur) {
+  ctx.save();
+  ctx.globalAlpha = beatAlpha(lt, dur);
+
+  star(96, 706, 15, C.blush);
+  maskedText('HAPPY', 88, 908, { size: 152, weight: 900, spacing: -6, progress: seg(lt, 0.0, 0.3) });
+  maskedText('BIRTHDAY', 88, 1064, { size: 152, weight: 900, spacing: -6, color: C.cognac, progress: seg(lt, 0.28, 0.6) });
+  wipeText('a film for you', 94, 1196, { size: 32, weight: 500, spacing: 5, color: C.walnut, progress: seg(lt, 0.62, 0.88) });
+
+  ctx.restore();
+}
+
+function nameBeat(lt, dur) {
+  ctx.save();
+  ctx.globalAlpha = beatAlpha(lt, dur);
+
+  wipeText('HAPPY BIRTHDAY,', 540, 760, {
+    size: 32, weight: 600, spacing: 8, align: 'center', color: C.blush, progress: seg(lt, 0.0, 0.24),
+  });
+  maskedText('SELLY', 540, 1006, {
+    size: 244, weight: 900, spacing: -10, align: 'center', color: C.cream, progress: seg(lt, 0.0, 0.34),
+  });
+
+  const line = easeOut(seg(lt, 0.34, 0.56));
+  ctx.save();
+  ctx.globalAlpha *= line;
+  ctx.fillStyle = C.gold;
+  ctx.fillRect(540 - 118 * line, 1080, 236 * line, 2);
+  ctx.restore();
+
+  wipeText('ADE SAPUTRI', 540, 1156, {
+    size: 50, weight: 600, spacing: 12, align: 'center', color: C.blush, progress: seg(lt, 0.36, 0.62),
+  });
+
+  ctx.restore();
+}
+
+function firstPhotoBeat(lt, dur) {
+  ctx.save();
+  ctx.globalAlpha = beatAlpha(lt, dur);
+
+  const enter = easeOut(seg(lt, 0.0, 0.34));
+  const exit = seg(lt, dur - 0.16, dur);
+  const cardX = 110;
+  const cardY = 214;
+  const cardW = 860;
+  const cardH = 1150;
+
+  if (enter > 0) {
+    ctx.save();
+    ctx.globalAlpha *= enter;
+    softShadow(cardX, cardY, cardW, cardH, 18);
+    photoCover(photos.one, cardX, cardY, cardW, cardH, {
+      radius: 18,
+      scale: lerp(1.14, 1, enter) * (1 + exit * 0.06),
+      focusY: 0.42,
+    });
+    ctx.restore();
+  }
+
+  wipeText('May this year sound as good', 540, 1472, {
+    size: 38, weight: 500, align: 'center', color: C.espresso, progress: seg(lt, 0.28, 0.5),
+  });
+  wipeText('as your favorite song.', 540, 1528, {
+    size: 38, weight: 500, align: 'center', color: C.espresso, progress: seg(lt, 0.36, 0.58),
+  });
+
+  ctx.restore();
+}
+
+function studioBeat(lt, dur) {
+  ctx.save();
+  ctx.globalAlpha = beatAlpha(lt, dur);
+
+  const enter = easeOut(seg(lt, 0.0, 0.3));
+  const exit = seg(lt, dur - 0.16, dur);
+  if (enter > 0) {
+    ctx.save();
+    ctx.globalAlpha *= enter;
+    ctx.fillStyle = C.espresso;
+    ctx.fillRect(-40, -40, W + 80, H + 80);
+    photoCover(photos.two, 0, 0, W, H, {
+      scale: lerp(1.1, 1, enter) * (1 + exit * 0.05),
+      focusY: 0.4,
+    });
+    const gradient = ctx.createLinearGradient(0, H * 0.5, 0, H);
+    gradient.addColorStop(0, 'rgba(30, 16, 11, 0)');
+    gradient.addColorStop(0.55, 'rgba(30, 16, 11, 0.7)');
+    gradient.addColorStop(1, 'rgba(30, 16, 11, 0.97)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, H * 0.5, W, H * 0.5);
+    ctx.restore();
+  }
+
+  maskedText('More music.', 88, 1456, { size: 66, weight: 900, spacing: -2, color: C.cream, progress: seg(lt, 0.22, 0.42) });
+  maskedText('More light.', 88, 1536, { size: 66, weight: 900, spacing: -2, color: C.cream, progress: seg(lt, 0.3, 0.5) });
+  maskedText('More you.', 88, 1616, { size: 66, weight: 900, spacing: -2, color: C.blush, progress: seg(lt, 0.38, 0.58) });
+
+  ctx.restore();
+}
+
+function secondPhotoBeat(lt, dur) {
+  ctx.save();
+  ctx.globalAlpha = beatAlpha(lt, dur);
+
+  const enter = easeOut(seg(lt, 0.0, 0.34));
+  const exit = seg(lt, dur - 0.16, dur);
+  const cardX = 150;
+  const cardY = 210;
+  const cardW = 780;
+  const cardH = 1160;
+
+  if (enter > 0) {
+    ctx.save();
+    ctx.globalAlpha *= enter;
+    softShadow(cardX, cardY, cardW, cardH, 18);
+    photoCover(photos.three, cardX, cardY, cardW, cardH, {
+      radius: 18,
+      scale: lerp(1.12, 1, enter) * (1 + exit * 0.06),
+      focusY: 0.45,
+    });
+    ctx.restore();
+  }
+
+  wipeText('Here’s to more moments', 540, 1462, {
+    size: 38, weight: 500, align: 'center', color: C.espresso, progress: seg(lt, 0.24, 0.46),
+  });
+  wipeText('worth keeping.', 540, 1518, {
+    size: 38, weight: 500, align: 'center', color: C.espresso, progress: seg(lt, 0.32, 0.54),
+  });
+
+  ctx.restore();
+}
+
+function endBeat(lt, dur) {
+  ctx.save();
+  ctx.globalAlpha = easeOut(seg(lt, 0.0, 0.24));
+
+  star(92, 196, 14, C.gold);
+
+  const enter = easeOut(seg(lt, 0.0, 0.36));
+  const cardX = 262;
+  const cardY = 268;
+  const cardW = 556;
+  const cardH = 834;
+
+  if (enter > 0) {
+    ctx.save();
+    ctx.globalAlpha *= enter;
+    softShadow(cardX, cardY, cardW, cardH, 10, 1.2);
+    ctx.fillStyle = '#FFFDF9';
+    roundRect(cardX - 12, cardY - 12, cardW + 24, cardH + 24, 12);
+    ctx.fill();
+    photoCover(photos.four, cardX, cardY, cardW, cardH, {
+      radius: 4,
+      scale: lerp(1.1, 1, enter),
+      focusY: 0.5,
+    });
+    ctx.restore();
+  }
+
+  wipeText('29 · 10 · 2026', 540, 1268, {
+    size: 42, weight: 600, spacing: 10, align: 'center', color: C.gold, progress: seg(lt, 0.3, 0.52),
+  });
+  maskedText('with love,', 540, 1384, {
+    size: 60, weight: 400, align: 'center', color: C.cream, progress: seg(lt, 0.38, 0.6),
+  });
+  wipeText('for Selly', 540, 1458, {
+    size: 30, weight: 600, spacing: 6, align: 'center', color: C.blush, progress: seg(lt, 0.46, 0.68),
+  });
+
+  ctx.restore();
+}
+
+/* ------------------------------------------------------------- timeline */
+/* All boundaries are exact 0.5s beats so the cuts land with the kick. */
+
+const BEATS = [
+  { start: 0.0, end: 2.5, draw: hookBeat },
+  { start: 2.38, end: 5.0, draw: nameBeat },
+  { start: 4.88, end: 7.5, draw: firstPhotoBeat },
+  { start: 7.38, end: 10.0, draw: studioBeat },
+  { start: 9.88, end: 12.5, draw: secondPhotoBeat },
+  { start: 12.38, end: 15.0, draw: endBeat },
+];
+
+const BACKGROUNDS = [C.cream, C.espresso, C.cream, C.cream, C.cream, C.espresso];
+
+function backgroundFor(t) {
+  let index = 0;
+  BEATS.forEach((beat, i) => {
+    if (t >= beat.start) index = i;
+  });
+  return { index, color: BACKGROUNDS[index] };
+}
+
+function renderFrame(t) {
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = C.espresso;
+  ctx.fillRect(0, 0, W, H);
+  ctx.restore();
+
+  const { index, color } = backgroundFor(t);
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.fillRect(0, 0, W, H);
+  if (index > 0 && color !== C.espresso) {
+    const beat = BEATS[index];
+    const p = easeOut(seg(t, beat.start, beat.start + 0.14));
+    if (p < 1) {
+      ctx.globalAlpha = 1 - p;
+      ctx.fillStyle = BACKGROUNDS[index - 1];
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalAlpha = 1;
+    }
+  }
+  ctx.restore();
+
+  ctx.save();
+  applyCamera(cameraFor(t));
+  BEATS.forEach((beat) => {
+    if (t < beat.start || t > beat.end) return;
+    beat.draw(t - beat.start, beat.end - beat.start, t);
+  });
+  ctx.restore();
+}
+
+/* ---------------------------------------------------------------- audio */
+/* 120 BPM. Every accent lands on a beat boundary that also carries a cut. */
+
+function makeNoiseBuffer(context) {
+  const buffer = context.createBuffer(1, Math.floor(context.sampleRate * 2), context.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < data.length; i += 1) data[i] = Math.random() * 2 - 1;
+  return buffer;
+}
+
+function scheduleScore(context, master, noiseBuffer, startAt = 0) {
+  const at = (seconds) => startAt + seconds;
+  const BEAT = 0.5;
+  const BAR = BEAT * 4;
+
+  const chords = [
+    { root: 174.61, notes: [349.23, 440.0, 523.25, 659.25] },
+    { root: 146.83, notes: [293.66, 349.23, 440.0, 523.25] },
+    { root: 116.54, notes: [233.08, 293.66, 349.23, 440.0] },
+    { root: 130.81, notes: [261.63, 329.63, 392.0, 493.88] },
+    { root: 174.61, notes: [349.23, 440.0, 523.25, 659.25] },
+    { root: 116.54, notes: [233.08, 293.66, 349.23, 440.0] },
+  ];
+
+  const tone = (time, opts) => {
+    const {
+      frequency = 440, type = 'sine', gain = 0.1, attack = 0.004, decay = 0.25,
+      endFrequency = null, filterFrequency = null, detune = 0, pan = 0,
+    } = opts;
+    const osc = context.createOscillator();
+    osc.type = type;
+    osc.frequency.setValueAtTime(frequency, time);
+    osc.detune.value = detune;
+    if (endFrequency) osc.frequency.exponentialRampToValueAtTime(Math.max(20, endFrequency), time + decay);
+    const amp = context.createGain();
+    amp.gain.setValueAtTime(0.0001, time);
+    amp.gain.exponentialRampToValueAtTime(gain, time + attack);
+    amp.gain.exponentialRampToValueAtTime(0.0001, time + attack + decay);
+    let node = osc;
+    if (filterFrequency) {
+      const filter = context.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = filterFrequency;
+      filter.Q.value = 0.7;
+      node.connect(filter);
+      node = filter;
+    }
+    node.connect(amp);
+    if (pan && context.createStereoPanner) {
+      const panner = context.createStereoPanner();
+      panner.pan.value = pan;
+      amp.connect(panner);
+      panner.connect(master);
+    } else {
+      amp.connect(master);
+    }
+    osc.start(time);
+    osc.stop(time + attack + decay + 0.05);
+  };
+
+  const noise = (time, opts) => {
+    const {
+      gain = 0.08, decay = 0.12, type = 'bandpass', frequency = 2000,
+      endFrequency = null, q = 1, attack = 0.008,
+    } = opts;
+    const source = context.createBufferSource();
+    source.buffer = noiseBuffer;
+    const filter = context.createBiquadFilter();
+    filter.type = type;
+    filter.frequency.setValueAtTime(frequency, time);
+    filter.Q.value = q;
+    if (endFrequency) filter.frequency.exponentialRampToValueAtTime(Math.max(40, endFrequency), time + decay);
+    const amp = context.createGain();
+    amp.gain.setValueAtTime(0.0001, time);
+    amp.gain.exponentialRampToValueAtTime(gain, time + attack);
+    amp.gain.exponentialRampToValueAtTime(0.0001, time + decay);
+    source.connect(filter);
+    filter.connect(amp);
+    amp.connect(master);
+    source.start(time);
+    source.stop(time + decay + 0.05);
+  };
+
+  // --- pad, sidechained to the kick
+  chords.forEach((chord, bar) => {
+    const barStart = bar * 2;
+    if (barStart >= 12.4) return;
+    chord.notes.slice(0, 3).forEach((frequency, index) => {
+      const osc = context.createOscillator();
+      osc.type = 'sawtooth';
+      osc.frequency.value = frequency / 2;
+      osc.detune.value = index === 1 ? 5 : -5;
+      const filter = context.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 780;
+      const amp = context.createGain();
+      amp.gain.setValueAtTime(0.0001, at(barStart));
+      amp.gain.exponentialRampToValueAtTime(0.026, at(barStart + 0.08));
+      for (let beat = 0; beat < 4; beat += 1) {
+        const time = barStart + beat * BEAT;
+        if (time >= barStart + 1.95) break;
+        amp.gain.setValueAtTime(0.026, at(time));
+        amp.gain.exponentialRampToValueAtTime(0.009, at(time + 0.09));
+        amp.gain.exponentialRampToValueAtTime(0.026, at(time + 0.32));
+      }
+      amp.gain.setValueAtTime(0.026, at(barStart + 1.8));
+      amp.gain.exponentialRampToValueAtTime(0.0001, at(barStart + 2.02));
+      osc.connect(filter);
+      filter.connect(amp);
+      amp.connect(master);
+      osc.start(at(barStart));
+      osc.stop(at(barStart + 2.05));
+    });
+  });
+
+  // --- drums
+  for (let beat = 0; beat < 25; beat += 1) {
+    const time = beat * BEAT;
+    if (time >= 12.4) break;
+    tone(at(time), { frequency: 118, endFrequency: 42, type: 'sine', gain: 0.5, attack: 0.003, decay: 0.19 });
+    noise(at(time), { gain: 0.05, decay: 0.03, type: 'highpass', frequency: 3200, q: 0.7 });
+    if (beat % 4 === 1 || beat % 4 === 3) {
+      noise(at(time), { gain: 0.12, decay: 0.12, type: 'bandpass', frequency: 1800, q: 1.1 });
+      noise(at(time + 0.012), { gain: 0.05, decay: 0.08, type: 'bandpass', frequency: 2600, q: 1.4 });
+    }
+    noise(at(time + BEAT / 2), { gain: 0.045, decay: 0.055, type: 'highpass', frequency: 7600, q: 0.6 });
+    noise(at(time + BEAT / 2), { gain: 0.018, decay: 0.035, type: 'highpass', frequency: 9200, q: 0.6 });
+  }
+
+  // --- bass: driving 8ths
+  const bassPattern = [0, 0, 12, 0, 7, 0, 12, 7];
+  chords.forEach((chord, bar) => {
+    const barStart = bar * 2;
+    if (barStart >= 12.4) return;
+    for (let step = 0; step < 8; step += 1) {
+      const time = barStart + step * (BEAT / 2);
+      if (time >= 12.4) break;
+      tone(at(time), {
+        frequency: chord.root * Math.pow(2, bassPattern[step] / 12),
+        type: 'triangle',
+        gain: step % 2 === 0 ? 0.17 : 0.11,
+        attack: 0.004,
+        decay: 0.2,
+        filterFrequency: 420,
+      });
+    }
+  });
+
+  // --- piano comping on the grid
+  chords.forEach((chord, bar) => {
+    const barStart = bar * 2;
+    if (barStart >= 12.4) return;
+    [0, 2].forEach((beat) => {
+      const time = barStart + beat * BEAT;
+      chord.notes.forEach((frequency, index) => {
+        tone(at(time + index * 0.008), {
+          frequency,
+          type: 'triangle',
+          gain: 0.045,
+          attack: 0.004,
+          decay: 0.3,
+          filterFrequency: 2800,
+          pan: -0.25 + index * 0.16,
+        });
+      });
+    });
+    for (let step = 0; step < 4; step += 1) {
+      const time = barStart + step * BEAT + BEAT / 2;
+      tone(at(time), {
+        frequency: chord.notes[step % chord.notes.length],
+        type: 'sine',
+        gain: 0.03,
+        attack: 0.004,
+        decay: 0.18,
+      });
+    }
+  });
+
+  // --- accented SFX, locked to the grid
+  const whoosh = (time) => {
+    noise(at(time), { gain: 0.11, decay: 0.42, frequency: 380, endFrequency: 3000, q: 0.9 });
+  };
+  const click = (time) => {
+    noise(at(time), { gain: 0.18, decay: 0.05, type: 'highpass', frequency: 2200, q: 0.7 });
+    tone(at(time + 0.015), { frequency: 2100, endFrequency: 900, type: 'square', gain: 0.05, attack: 0.002, decay: 0.05 });
+  };
+
+  whoosh(2.38);
+  whoosh(4.88);
+  whoosh(7.38);
+  whoosh(9.88);
+  whoosh(12.38);
+
+  click(5.0);
+  click(7.5);
+  click(10.0);
+  click(12.5);
+
+  [523.25, 659.25, 783.99].forEach((frequency, index) => {
+    tone(at(2.52 + index * 0.05), { frequency, type: 'sine', gain: 0.055, attack: 0.006, decay: 0.9, pan: -0.25 + index * 0.25 });
+  });
+
+  // build into the final photo
+  noise(at(10.6), { gain: 0.06, decay: 1.85, frequency: 500, endFrequency: 6000, q: 1.5 });
+  for (let step = 0; step < 6; step += 1) {
+    noise(at(11.0 + step * 0.2), { gain: 0.05, decay: 0.08, type: 'bandpass', frequency: 2400, q: 1.2 });
+  }
+
+  tone(at(12.5), { frequency: 96, endFrequency: 40, type: 'sine', gain: 0.42, attack: 0.003, decay: 0.3 });
+  noise(at(12.5), { gain: 0.12, decay: 0.3, type: 'lowpass', frequency: 1000, q: 0.6 });
+
+  [349.23, 440.0, 523.25, 659.25, 880.0].forEach((frequency, index) => {
+    tone(at(12.58 + index * 0.03), {
+      frequency, type: 'sine', gain: 0.04, attack: 0.015, decay: 1.6, pan: -0.3 + index * 0.15,
+    });
+  });
+
+  // warm outro bed so the last section never goes silent
+  [174.61, 261.63, 349.23].forEach((frequency, index) => {
+    const osc = context.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = frequency;
+    osc.detune.value = index === 1 ? 4 : -4;
+    const amp = context.createGain();
+    amp.gain.setValueAtTime(0.0001, at(12.45));
+    amp.gain.exponentialRampToValueAtTime(0.024, at(13.0));
+    amp.gain.setValueAtTime(0.024, at(14.35));
+    amp.gain.exponentialRampToValueAtTime(0.0001, at(15.0));
+    osc.connect(amp);
+    amp.connect(master);
+    osc.start(at(12.45));
+    osc.stop(at(15.05));
+  });
+  [523.25, 659.25, 783.99, 1046.5].forEach((frequency, index) => {
+    tone(at(13.05 + index * 0.55), {
+      frequency, type: 'sine', gain: 0.032, attack: 0.01, decay: 0.9, pan: -0.2 + index * 0.13,
+    });
+  });
+  [13.5, 14.5].forEach((time) => {
+    tone(at(time), { frequency: 96, endFrequency: 44, type: 'sine', gain: 0.14, attack: 0.004, decay: 0.22 });
+  });
+}
+
+function encodeWav(buffer) {
+  const channels = buffer.numberOfChannels;
+  const frames = buffer.length;
+  const blockAlign = channels * 2;
+  const dataSize = frames * blockAlign;
+  const view = new DataView(new ArrayBuffer(44 + dataSize));
+  const writeString = (offset, value) => {
+    for (let i = 0; i < value.length; i += 1) view.setUint8(offset + i, value.charCodeAt(i));
+  };
+  writeString(0, 'RIFF');
+  view.setUint32(4, 36 + dataSize, true);
+  writeString(8, 'WAVE');
+  writeString(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, channels, true);
+  view.setUint32(24, buffer.sampleRate, true);
+  view.setUint32(28, buffer.sampleRate * blockAlign, true);
+  view.setUint16(32, blockAlign, true);
+  view.setUint16(34, 16, true);
+  writeString(36, 'data');
+  view.setUint32(40, dataSize, true);
+
+  const data = [];
+  for (let channel = 0; channel < channels; channel += 1) data.push(buffer.getChannelData(channel));
+  let offset = 44;
+  for (let frame = 0; frame < frames; frame += 1) {
+    for (let channel = 0; channel < channels; channel += 1) {
+      const sample = Math.max(-1, Math.min(1, data[channel][frame]));
+      view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7fff, true);
+      offset += 2;
+    }
+  }
+
+  const bytes = new Uint8Array(view.buffer);
+  let binary = '';
+  const chunkSize = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+  }
+  return btoa(binary);
+}
+
+async function renderAudioWav(seconds = DURATION) {
+  const sampleRate = 48000;
+  const offline = new OfflineAudioContext(2, Math.ceil(sampleRate * seconds), sampleRate);
+  const master = offline.createGain();
+  master.gain.value = 0.9;
+  master.connect(offline.destination);
+  scheduleScore(offline, master, makeNoiseBuffer(offline), 0);
+  const buffer = await offline.startRendering();
+  return encodeWav(buffer);
+}
+
+/* ------------------------------------------------------------ bootstrap */
+
+async function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error(`Image failed: ${src}`));
+    image.src = src;
+  });
+}
+
+async function boot() {
+  await document.fonts.load('900 200px "Merriweather"');
+  await document.fonts.load('700 60px "Merriweather"');
+  await document.fonts.load('500 40px "Jakarta"');
+  await document.fonts.ready;
+
+  photos.one = await loadImage('/video/selly/p1.jpg');
+  photos.two = await loadImage('/video/selly/p2.jpg');
+  photos.three = await loadImage('/video/selly/p3.jpg');
+  photos.four = await loadImage('/video/selly/p4.jpg');
+
+  renderFrame(0);
+  window.__ready = true;
+}
+
+window.renderFrameDataUrl = (t) => {
+  renderFrame(t);
+  return canvas.toDataURL('image/jpeg', 0.95);
+};
+
+window.renderFrames = (times) => times.map((t) => window.renderFrameDataUrl(t));
+
+window.renderAudio = () => renderAudioWav(DURATION);
+
+boot();
+  </script>
+</body>
+</html>

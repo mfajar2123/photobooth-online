@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../../components/layout/SiteHeader.astro';
+import SiteFooter from '../../components/layout/SiteFooter.astro';
+import { invitationTemplates } from '../../data/templates';
+import { invitations } from '../../data/invitations';
+import { assetUrl } from '../../lib/paths';
+
+const breadcrumbs = [
+  { name: 'Beranda', item: '/' },
+  { name: 'Undangan Digital', item: '/undangan' },
+  { name: 'Portofolio', item: '/undangan/portofolio' },
+];
+---
+
+<BaseLayout
+  title="Portofolio Undangan Digital Wedding | Ruang Kilas"
+  description="Contoh undangan pernikahan digital Ruang Kilas yang sudah jadi: enam tema dengan komposisi dan alur cerita berbeda, lengkap dengan galeri, musik, peta, dan RSVP."
+  keywords="portofolio undangan digital, contoh undangan wedding online, undangan pernikahan digital"
+  breadcrumbs={breadcrumbs}
+>
+  <SiteHeader ctaLabel="Buat undangan" ctaHref="/undangan/custom/" />
+
+  <main>
+    <section class="und-hero und-hero-small">
+      <div class="und-hero-inner">
+        <p class="section-kicker">PORTOFOLIO</p>
+        <h1>Enam tema,<br /><em>enam cara bercerita.</em></h1>
+        <p class="und-lede">Jelajahi contoh desain dengan data demonstrasi. Buka setiap undangan untuk mencoba pengalaman tamu — lengkap dengan musik, galeri, peta, dan tombol konfirmasi.</p>
+      </div>
+    </section>
+
+    <section class="section-pad und-section">
+      <div class="und-grid und-grid-3 portfolio-grid">
+        {invitations.map((invitation) => {
+          const template = invitationTemplates.find((item) => item.slug === invitation.theme)!;
+          return (
+            <article class="und-card">
+              <a class="und-card-media" href={assetUrl('/undangan/' + invitation.slug + '/')} aria-label={'Buka contoh tema ' + template.name}>
+                <img src={assetUrl(invitation.cover)} alt={'Contoh undangan tema ' + template.name} loading="lazy" decoding="async" />
+              </a>
+              <div class="und-card-body">
+                <span class="und-card-tag">{template.name} &middot; {template.tagline}</span>
+                <h2>{invitation.couple.groom.short} &amp; {invitation.couple.bride.short}</h2>
+                <p>{invitation.event.dateLabel}<br />{invitation.event.reception.venue}</p>
+                <div class="und-card-actions">
+                  <a class="button-secondary" href={assetUrl('/undangan/' + invitation.slug + '/')}>Buka undangan <span aria-hidden="true">&#8599;</span></a>
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+
+    <section class="und-cta">
+      <p class="section-kicker">GILIRAN KAMU</p>
+      <h2>Undanganmu bisa jadi contoh berikutnya.</h2>
+      <p>Kirim detail acara, kami susun undangan digital yang siap dibagikan.</p>
+      <a class="button-primary" href={assetUrl('/undangan/custom/')}>Request undangan <span aria-hidden="true">↗</span></a>
+    </section>
+  </main>
+
+  <SiteFooter />
+</BaseLayout>

@@ -23,12 +23,12 @@ interface Props {
 }
 
 const {
-  title = 'Ruang Kilas - Photobooth Online Gratis, Efek Kamera Vintage & Frame Estetik',
-  description = 'Studio photobooth online gratis langsung dari browser tanpa instalasi. Nikmati efek kamera vintage (Fisheye, Leica, Digicam), frame estetik, dan unduh photostrip cetak 300 DPI.',
+  title = 'Photobooth & Undangan Digital | Ruang Kilas',
+  description = 'Rayakan momen bersama Ruang Kilas: photobooth online, photobooth acara, dan undangan digital personal yang mudah dibagikan.',
   keywords = 'photobooth online, photobooth online gratis, photo booth online indonesia, photo strip online, photobooth browser, vintage photo booth, cetak photostrip, photobooth webcam, efek lensa vintage, fisheye camera online, frame photobooth estetik, ruang kilas, aplikasi photobooth gratis',
   ogImage = '/images/og-share.png',
-  ogImageType = 'image/png',
-  ogImageAlt = 'Ruang Kilas - Photobooth Online di Browser',
+  ogImageType = Astro.props.ogImage?.match(/\.jpe?g$/i) ? 'image/jpeg' : 'image/png',
+  ogImageAlt = 'Ruang Kilas ? Photobooth dan Undangan Digital',
   ogType = 'website',
   canonicalUrl,
   noindex = false,
@@ -87,7 +87,7 @@ const schemaGraph: any[] = [
     url: `${siteUrl}/`,
     name: brand.name,
     alternateName: [`${brand.name} Photobooth Online`, 'RuangKilas'],
-    description: 'Studio photobooth online praktis langsung dari browser dengan efek lensa vintage dan koleksi bingkai tematik estetik.',
+    description: 'Photobooth online, photobooth acara, dan undangan digital untuk merayakan momen spesial.',
     inLanguage: 'id-ID',
     publisher: {
       '@id': organizationId,
@@ -147,7 +147,7 @@ const schemaGraph: any[] = [
     publisher: {
       '@id': organizationId,
     },
-    description,
+    description: 'Photobooth online gratis di browser dengan efek lensa, bingkai, dan unduhan photostrip.',
     offers: {
       '@type': 'Offer',
       price: '0',
@@ -245,9 +245,8 @@ const fullSchema = {
     <meta name="format-detection" content="telephone=no" />
 
     <!-- Security & Permissions -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; frame-ancestors 'none'; form-action 'self'; base-uri 'self'; upgrade-insecure-requests;" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; form-action 'self'; base-uri 'self'; upgrade-insecure-requests;" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-    <meta http-equiv="X-Frame-Options" content="DENY" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta http-equiv="Permissions-Policy" content="camera=(self), microphone=(), geolocation=(), interest-cohort=()" />
 
@@ -271,7 +270,7 @@ const fullSchema = {
       }
     </style>
   </head>
-  <body>
+  <body id="top">
     <slot />
   </body>
 </html>
