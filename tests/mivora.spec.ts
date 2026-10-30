@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test('landing page keeps its editorial alignment and complete contact details', async ({ page }) => {
+test('landing page keeps its editorial alignment and address-free contact details', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
   await expect(page.getByRole('heading', { name: /Abadikan momen seru/i })).toBeVisible();
@@ -11,7 +11,7 @@ test('landing page keeps its editorial alignment and complete contact details', 
   const right = await page.locator('#frames .frames-copy').evaluate((element) => getComputedStyle(element).textAlign);
   expect(['left', 'start']).toContain(left);
   expect(right).toBe('right');
-  await expect(page.locator('footer')).toContainText('Gedung Kemang Point');
+  await expect(page.locator('footer')).not.toContainText('Gedung Kemang Point');
   await expect(page.locator('footer')).toContainText('halo@ruangkilas.my.id');
   await expect(page.locator('footer')).toContainText('+62 812-8899-4021');
 });

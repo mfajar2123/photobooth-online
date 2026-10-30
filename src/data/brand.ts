@@ -6,7 +6,6 @@ export const brand = {
   phone: '+62 812-8899-4021',
   instagram: 'https://instagram.com/ruangkilas.id',
   tiktok: 'https://tiktok.com/@ruangkilas.id',
-  address: 'Gedung Kemang Point Lt. 3, Jl. Kemang Raya No. 3, Bangka, Kec. Mampang Prapatan, Jakarta Selatan, DKI Jakarta 12730',
 } as const;
 
 export const faqs = [

@@ -391,7 +391,6 @@ h1, h2, h3, p { margin-top: 0; }
 .footer-social span { color: #8c867a; font-size: 11px; }
 .footer-contact, .footer-links, .footer-col { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
 .footer-contact h3, .footer-links h3, .footer-col h3 { margin: 0 0 6px; font: 800 13px var(--mono); letter-spacing: 0.05em; text-transform: uppercase; color: var(--butter); }
-.footer-contact address, .footer-col address { max-width: 280px; margin-bottom: 4px; color: #c8c2b4; font-size: 11px; font-style: normal; line-height: 1.55; }
 .footer-contact a, .footer-links a, .footer-col a { color: #f5f0e4; font-size: 11px; text-decoration: none; transition: color 0.15s ease; }
 .footer-contact a:hover, .footer-links a:hover, .footer-col a:hover { color: var(--sky); }
 .footer-contact > small, .footer-col > small { color: #8c867a; font-size: 10px; margin-top: 2px; }
