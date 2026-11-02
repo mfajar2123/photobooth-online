@@ -7,7 +7,7 @@ const href = assetUrl(`/artikel/${article.slug}/`);
 ---
 <article class="und-card article-card">
   <a class="und-card-media" href={href} tabindex="-1" aria-hidden="true">
-    <img src={assetUrl(article.image)} alt="" loading="lazy" decoding="async" />
+    <img src={article.image.startsWith('http') ? article.image : assetUrl(article.image)} alt="" loading="lazy" decoding="async" />
   </a>
   <div class="und-card-body">
     <span class="und-card-tag">{article.category}</span>

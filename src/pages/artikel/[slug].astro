@@ -11,7 +11,8 @@ const related = articles.filter((item) => item.slug !== article.slug).sort((a, b
 const path = `/artikel/${article.slug}/`;
 const breadcrumbs = [{ name: 'Beranda', item: '/' }, { name: 'Artikel', item: '/artikel/' }, { name: article.title, item: path }];
 const site = Astro.site || new URL('https://ruangkilas.my.id');
-const schema = { '@type': 'Article', headline: article.title, description: article.description, image: new URL(assetUrl(article.image), site).toString(), datePublished: articleDate, dateModified: articleDate, author: { '@type': 'Organization', name: 'Ruang Kilas' }, publisher: { '@type': 'Organization', name: 'Ruang Kilas' }, mainEntityOfPage: new URL(assetUrl(path), site).toString() };
+const imageUrl = article.image.startsWith('http') ? article.image : new URL(assetUrl(article.image), site).toString();
+const schema = { '@type': 'Article', headline: article.title, description: article.description, image: imageUrl, datePublished: articleDate, dateModified: articleDate, author: { '@type': 'Organization', name: 'Ruang Kilas' }, publisher: { '@type': 'Organization', name: 'Ruang Kilas' }, mainEntityOfPage: new URL(assetUrl(path), site).toString() };
 ---
 <BaseLayout title={`${article.title} | Ruang Kilas`} description={article.description} ogImage={article.image} ogImageAlt={article.imageAlt} ogType="article" breadcrumbs={breadcrumbs} extraSchema={schema}>
   <SiteHeader active="/artikel/" />
@@ -26,7 +27,8 @@ const schema = { '@type': 'Article', headline: article.title, description: artic
         </div>
       </header>
       <div class="article-content-wrap">
-        <img class="article-cover" src={assetUrl(article.image)} alt={article.imageAlt} decoding="async" />
+          <img class="article-cover" src={imageUrl} alt={article.imageAlt} decoding="async" />
+        {article.image.startsWith('https://images.unsplash.com/') && <p class="article-image-credit">Foto ilustrasi dari <a href="https://unsplash.com/license" target="_blank" rel="noopener noreferrer">Unsplash</a>.</p>}
         <div class="article-content">
           {article.sections.map((section) => <section><h2>{section.heading}</h2>{section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}</section>)}
           {article.source && <p class="article-source">Bacaan terkait: <a href={article.source.url} target="_blank" rel="noopener noreferrer">{article.source.label} ↗</a></p>}

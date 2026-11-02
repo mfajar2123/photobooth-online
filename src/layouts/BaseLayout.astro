@@ -237,7 +237,7 @@ const fullSchema = {
     <meta name="format-detection" content="telephone=no" />
 
     <!-- Security & Permissions -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; form-action 'self'; base-uri 'self'; upgrade-insecure-requests;" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob: https://images.unsplash.com https://*.googlesyndication.com https://*.google.com; media-src 'self' blob: mediastream:; connect-src 'self' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://tpc.googlesyndication.com; frame-src https://googleads.g.doubleclick.net https://www.google.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; form-action 'self'; base-uri 'self'; upgrade-insecure-requests;" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta http-equiv="Permissions-Policy" content="camera=(self), microphone=(), geolocation=(), interest-cohort=()" />
