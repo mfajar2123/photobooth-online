@@ -4,6 +4,8 @@ import SiteHeader from '../components/layout/SiteHeader.astro';
 import SiteFooter from '../components/layout/SiteFooter.astro';
 import { brand, faqs } from '../data/brand';
 import { assetUrl } from '../lib/paths';
+import { articles } from '../data/articles';
+import ArticleCard from '../components/articles/ArticleCard.astro';
 
 const friendsPhoto = assetUrl('/images/friends-photo-booth.jpg');
 
@@ -197,6 +199,14 @@ const faqSchema = {
           <span class="event-portfolio-link">Lihat contoh live <span aria-hidden="true">↗</span></span>
         </div>
       </a>
+    </section>
+
+    <section class="home-articles section-pad" aria-labelledby="home-articles-title">
+      <div class="article-section-heading">
+        <div><p class="section-kicker">CERITA &amp; INSPIRASI</p><h2 id="home-articles-title">Ide untuk momenmu,<br /><em>cerita untuk dibagikan.</em></h2></div>
+        <a class="text-link" href={assetUrl('/artikel/')}>Lihat semua artikel <span aria-hidden="true">&#8599;</span></a>
+      </div>
+      <div class="und-grid und-grid-2">{articles.slice(0, 2).map((article) => <ArticleCard article={article} />)}</div>
     </section>
 
     <section class="faq-section section-pad" id="faq">

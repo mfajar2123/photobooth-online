@@ -1,0 +1,43 @@
+﻿---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../../components/layout/SiteHeader.astro';
+import SiteFooter from '../../components/layout/SiteFooter.astro';
+import ArticleCard from '../../components/articles/ArticleCard.astro';
+import { articles, articleDate } from '../../data/articles';
+import { assetUrl } from '../../lib/paths';
+export function getStaticPaths() { return articles.map((article) => ({ params: { slug: article.slug }, props: { article } })); }
+const { article } = Astro.props;
+const related = articles.filter((item) => item.slug !== article.slug).sort((a, b) => Number(b.category === article.category) - Number(a.category === article.category)).slice(0, 2);
+const path = `/artikel/${article.slug}/`;
+const breadcrumbs = [{ name: 'Beranda', item: '/' }, { name: 'Artikel', item: '/artikel/' }, { name: article.title, item: path }];
+const site = Astro.site || new URL('https://ruangkilas.my.id');
+const schema = { '@type': 'Article', headline: article.title, description: article.description, image: new URL(assetUrl(article.image), site).toString(), datePublished: articleDate, dateModified: articleDate, author: { '@type': 'Organization', name: 'Ruang Kilas' }, publisher: { '@type': 'Organization', name: 'Ruang Kilas' }, mainEntityOfPage: new URL(assetUrl(path), site).toString() };
+---
+<BaseLayout title={`${article.title} | Ruang Kilas`} description={article.description} ogImage={article.image} ogImageAlt={article.imageAlt} ogType="article" breadcrumbs={breadcrumbs} extraSchema={schema}>
+  <SiteHeader active="/artikel/" />
+  <main>
+    <article>
+      <header class="article-header">
+        <div class="article-header-inner">
+          <nav class="article-breadcrumb" aria-label="Breadcrumb"><a href={assetUrl('/')}>Beranda</a><span aria-hidden="true">/</span><a href={assetUrl('/artikel/')}>Artikel</a><span aria-hidden="true">/</span><span aria-current="page">{article.title}</span></nav>
+          <p class="article-category">{article.category} · <time datetime={articleDate}>2 November 2026</time></p>
+          <h1>{article.title}</h1>
+          <p class="article-lede">{article.description}</p>
+        </div>
+      </header>
+      <div class="article-content-wrap">
+        <img class="article-cover" src={assetUrl(article.image)} alt={article.imageAlt} decoding="async" />
+        <div class="article-content">
+          {article.sections.map((section) => <section><h2>{section.heading}</h2>{section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}</section>)}
+          {article.source && <p class="article-source">Bacaan terkait: <a href={article.source.url} target="_blank" rel="noopener noreferrer">{article.source.label} ↗</a></p>}
+          <p class="article-next">Jelajahi <a href={assetUrl('/studio/')}>photobooth online</a> atau temukan <a href={assetUrl('/undangan/')}>undangan digital</a> untuk momen spesialmu.</p>
+        </div>
+      </div>
+    </article>
+    <section class="article-related und-section" aria-labelledby="related-heading">
+      <div class="article-section-heading"><div><p class="section-kicker">LANJUT MEMBACA</p><h2 id="related-heading">Inspirasi lainnya.</h2></div><a class="text-link" href={assetUrl('/artikel/')}>Semua artikel <span aria-hidden="true">&#8599;</span></a></div>
+      <div class="und-grid und-grid-2">{related.map((item) => <ArticleCard article={item} />)}</div>
+    </section>
+  </main>
+  <SiteFooter />
+</BaseLayout>

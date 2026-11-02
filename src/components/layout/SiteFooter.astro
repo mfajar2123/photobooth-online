@@ -40,7 +40,7 @@ const {
 
     <div class="footer-links footer-col">
       <h3>Informasi</h3>
-      {showPrivacy ? <a href="#privacy" data-privacy-open>Kebijakan Privasi</a> : <a href={assetUrl('/terms/')}>Kebijakan Privasi</a>}
+      <a href={assetUrl('/terms/')}>Kebijakan Privasi</a>
       {footerLinks.informasi.map((item) => <a href={assetUrl(item.href)}>{item.label}</a>)}
     </div>
   </div>
