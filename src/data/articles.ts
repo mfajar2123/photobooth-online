@@ -210,4 +210,200 @@ export const articles: Article[] = [
       { heading: 'Batasi akses dan simpan seperlunya', paragraphs: ['Jika berbagi album, gunakan pengaturan akses yang sesuai dan jangan sebarkan tautannya ke publik tanpa alasan. Tinjau siapa yang dapat melihat atau mengunduh foto.', 'Hapus foto yang dibagikan tanpa izin setelah menerima permintaan yang wajar. Kebiasaan transparan membantu semua orang merasa lebih nyaman.'] },
     ],
   },
-].slice(0, 25);
+  {
+    slug: 'panduan-memilih-lokasi-photobooth', title: 'Panduan Memilih Lokasi Photobooth di Venue Acara', description: 'Temukan posisi yang mudah dijangkau, terang, dan tidak menghambat alur tamu saat membuat area foto.', category: 'Photobooth', image: '/images/friends-photo-booth.jpg', imageAlt: 'Teman berfoto bersama di area photobooth',
+    sections: [
+      { heading: 'Cari area yang terlihat dan tidak mengganggu', paragraphs: ['Pilih tempat yang mudah ditemukan dari pintu masuk atau area berkumpul. Hindari jalur keluar, akses katering, dan titik yang membuat antrean memotong jalan tamu.', 'Sisakan ruang untuk orang yang menunggu dan kelompok yang sedang berfoto. Jika ruang terbatas, gunakan petunjuk sederhana agar tamu memahami urutan tanpa perlu berdesakan.'] },
+      { heading: 'Periksa cahaya dan akses teknis', paragraphs: ['Lakukan uji foto pada jam acara berlangsung karena kondisi cahaya dapat berubah. Perhatikan pantulan dari jendela, lampu panggung, dan latar yang terlalu ramai.', 'Untuk photobooth berbasis web, cek sinyal internet di titik tersebut. Siapkan lokasi alternatif jika jaringan atau pencahayaan utama kurang mendukung.'] },
+    ],
+  },
+  {
+    slug: 'ukuran-foto-untuk-undangan-digital', title: 'Ukuran Foto untuk Undangan Digital agar Tetap Tajam', description: 'Siapkan foto dengan rasio, resolusi, dan ukuran berkas yang seimbang untuk layar ponsel.', category: 'Undangan digital', image: '/images/invitations/inv-12.jpg', imageAlt: 'Inspirasi foto untuk undangan digital',
+    sections: [
+      { heading: 'Pilih foto sesuai ruang tampil', paragraphs: ['Tentukan lebih dulu apakah foto akan menjadi gambar sampul, galeri, atau latar. Foto portrait cocok untuk tampilan tegak, sedangkan foto landscape memberi ruang lebih lebar untuk komposisi berdua.', 'Simpan berkas asli sebelum mengubah ukuran. Periksa titik potong pada pratinjau ponsel karena bagian tepi gambar bisa tidak terlihat pada layar yang berbeda.'] },
+      { heading: 'Jaga kualitas tanpa memperlambat halaman', paragraphs: ['Gunakan salinan foto yang ukurannya sesuai kebutuhan tampilan dan kompres seperlunya. Hindari memperbesar foto kecil secara berlebihan karena detailnya tidak akan kembali.', 'Buka undangan dengan koneksi seluler untuk melihat apakah foto terasa cepat dimuat. Pastikan wajah dan informasi penting tetap terlihat setelah gambar tampil.'] },
+    ],
+  },
+  {
+    slug: 'cara-menulis-alamat-undangan-pernikahan', title: 'Cara Menulis Alamat Acara di Undangan Digital', description: 'Bantu tamu tiba dengan informasi lokasi yang lengkap, tautan peta yang tepat, dan petunjuk singkat.', category: 'Undangan digital', image: '/images/invitations/inv-11.jpg', imageAlt: 'Suasana pernikahan sebagai inspirasi undangan',
+    sections: [
+      { heading: 'Cantumkan alamat yang mudah dikenali', paragraphs: ['Tuliskan nama gedung atau tempat, jalan, kelurahan atau kawasan, kota, dan patokan yang membantu. Jika acara memakai ruang tertentu, sebutkan nama aula atau lantainya.', 'Pisahkan alamat untuk setiap rangkaian acara bila akad dan resepsi berlangsung di tempat berbeda. Jangan mengandalkan nama venue saja jika ada beberapa cabang dengan nama serupa.'] },
+      { heading: 'Uji tautan peta dari ponsel', paragraphs: ['Buka tombol peta dari perangkat seluler dan pastikan pin jatuh di pintu masuk yang benar. Periksa juga apakah rute menuju area parkir atau gerbang yang dapat digunakan tamu.', 'Tambahkan nomor kontak panitia untuk keadaan darurat. Minta orang lain mencoba mencari lokasi hanya dari undangan untuk mengetahui apakah petunjuknya cukup jelas.'] },
+    ],
+  },
+  {
+    slug: 'panduan-membuat-daftar-tamu-pernikahan', title: 'Menyusun Daftar Tamu Pernikahan dengan Rapi', description: 'Kelola nama, kelompok undangan, dan konfirmasi kehadiran agar koordinasi keluarga lebih mudah.', category: 'Persiapan acara', image: '/images/invitations/inv-08.jpg', imageAlt: 'Perayaan bersama keluarga dan sahabat',
+    sections: [
+      { heading: 'Kelompokkan daftar sejak awal', paragraphs: ['Buat daftar terpisah untuk keluarga, teman, rekan kerja, dan undangan dari masing-masing pihak. Catat satu nama kontak utama per rumah tangga agar pengiriman tidak berulang.', 'Sepakati kapasitas acara sebelum memperluas daftar. Sisakan kolom untuk jumlah tamu, cara menghubungi, dan catatan kebutuhan akses atau konsumsi.'] },
+      { heading: 'Catat konfirmasi seperlunya', paragraphs: ['Tentukan batas konfirmasi yang realistis dan catat jawabannya di satu dokumen yang hanya dapat diakses panitia terkait. Perbarui status saat ada perubahan.', 'Gunakan informasi kontak hanya untuk urusan acara. Hindari membagikan daftar lengkap di grup terbuka karena data tersebut berisi informasi pribadi.'] },
+    ],
+  },
+  {
+    slug: 'ide-buku-tamu-pernikahan-digital', title: 'Ide Buku Tamu Digital untuk Menyimpan Ucapan', description: 'Pilih cara sederhana mengumpulkan pesan tamu dan menjaga kenangan acara tetap mudah ditemukan.', category: 'Inspirasi', image: '/images/wedding-ripki-hero.jpg', imageAlt: 'Dekorasi pernikahan yang hangat',
+    sections: [
+      { heading: 'Tentukan bentuk pesan yang diinginkan', paragraphs: ['Tamu dapat menulis ucapan singkat, memilih satu pertanyaan pemantik, atau merekam pesan suara jika fasilitasnya tersedia. Instruksi yang singkat membuat orang lebih mudah berpartisipasi.', 'Sediakan pilihan buku fisik bagi tamu yang tidak ingin memakai ponsel. Tempatkan petunjuk di lokasi yang tidak menghalangi penerimaan tamu.'] },
+      { heading: 'Atur akses dan penyimpanan', paragraphs: ['Beri tahu siapa yang dapat membaca pesan dan berapa lama data akan disimpan. Hindari meminta informasi yang tidak dibutuhkan untuk kenangan acara.', 'Setelah acara, simpan salinan untuk pasangan dan keluarga sesuai kesepakatan. Minta izin sebelum mengutip pesan atau menampilkan nama penulis di media sosial.'] },
+    ],
+  },
+  {
+    slug: 'tips-memilih-musik-undangan-digital', title: 'Tips Memilih Musik untuk Undangan Pernikahan Digital', description: 'Pilih musik yang mendukung suasana tanpa mengganggu tamu saat membaca informasi acara.', category: 'Undangan digital', image: '/images/invitations/inv-13.jpg', imageAlt: 'Detail dekorasi pernikahan',
+    sections: [
+      { heading: 'Sesuaikan pilihan dengan suasana', paragraphs: ['Pilih lagu yang punya makna bagi pasangan atau mendukung tema acara. Pertimbangkan versi instrumental jika liriknya membuat teks atau pesan undangan terasa kurang selaras.', 'Pastikan musik tidak menjadi satu-satunya cara menyampaikan informasi. Tamu tetap perlu dapat membaca undangan dengan suara perangkat dimatikan.'] },
+      { heading: 'Beri kendali kepada pengunjung', paragraphs: ['Sediakan tombol putar dan jeda yang mudah ditemukan, lalu biarkan musik mulai setelah pengunjung memilihnya. Pemutaran otomatis dapat mengejutkan orang yang membuka tautan di tempat umum.', 'Periksa hak penggunaan audio yang dipilih dan uji kontrolnya pada ponsel. Pastikan musik tidak menghalangi tombol peta atau RSVP.'] },
+    ],
+  },
+  {
+    slug: 'cara-membuat-undangan-digital-aksesibel', title: 'Membuat Undangan Digital yang Nyaman untuk Berbagai Tamu', description: 'Perhatikan kontras, ukuran teks, navigasi, dan alternatif akses agar informasi mudah dipahami.', category: 'Undangan digital', image: '/images/invitations/inv-14.jpg', imageAlt: 'Inspirasi tata visual undangan pernikahan',
+    sections: [
+      { heading: 'Buat konten mudah dibaca', paragraphs: ['Gunakan kontras yang cukup antara teks dan latar serta ukuran huruf yang nyaman di layar kecil. Batasi huruf dekoratif untuk aksen dan pilih kalimat yang jelas.', 'Jangan menaruh informasi penting hanya di dalam gambar. Tulis nama acara, tanggal, alamat, dan petunjuk dalam teks yang bisa dibaca langsung.'] },
+      { heading: 'Permudah navigasi', paragraphs: ['Gunakan tombol dengan label yang menjelaskan tujuannya, misalnya “Buka peta” atau “Konfirmasi kehadiran”. Pastikan area tombol cukup mudah disentuh.', 'Uji halaman dengan pembesaran layar dan tanpa suara. Minta tamu dari kelompok usia berbeda mencoba menemukan jadwal dan lokasi.'] },
+    ],
+  },
+  {
+    slug: 'persiapan-photobooth-ulang-tahun-anak', title: 'Persiapan Photobooth untuk Pesta Ulang Tahun Anak', description: 'Rancang area foto yang menyenangkan, sederhana, dan nyaman untuk anak serta pendampingnya.', category: 'Photobooth', image: '/images/friends-photo-booth.jpg', imageAlt: 'Teman-teman berfoto bersama',
+    sections: [
+      { heading: 'Buat area foto aman dan mudah dijangkau', paragraphs: ['Gunakan dekorasi yang kokoh dan jauhkan kabel dari jalur bermain. Sesuaikan tinggi properti dengan anak, tetapi pastikan tidak ada benda kecil atau tajam yang mudah terlepas.', 'Tempatkan area foto dekat pengawasan orang dewasa dan sisakan ruang untuk pendamping. Beri anak kesempatan memilih apakah ingin ikut berfoto.'] },
+      { heading: 'Pilih tema yang tidak terlalu ramai', paragraphs: ['Gunakan warna atau karakter yang disukai anak pada bingkai, lalu sisakan ruang cukup luas untuk wajah. Properti sederhana seperti topi ringan atau papan ucapan bisa menjadi pilihan.', 'Uji pencahayaan sebelum tamu datang dan hindari lampu yang menyilaukan. Siapkan cara menyimpan foto yang mudah dipahami orang tua.'] },
+    ],
+  },
+  {
+    slug: 'panduan-foto-grup-banyak-orang', title: 'Cara Mengatur Foto Grup agar Semua Wajah Terlihat', description: 'Atur posisi, jarak kamera, dan arahan singkat untuk foto kelompok yang rapi di acara.', category: 'Tips foto', image: '/images/friends-photo-booth.jpg', imageAlt: 'Sekelompok teman berpose untuk foto',
+    sections: [
+      { heading: 'Atur susunan berdasarkan tinggi', paragraphs: ['Tempatkan orang dalam beberapa baris atau gunakan kursi untuk membuat susunan bertingkat. Pastikan orang di belakang tidak tertutup dan tidak berdiri terlalu jauh dari kelompok.', 'Minta semua orang mendekat sedikit ke tengah tanpa menutupi wajah. Periksa pratinjau dari tepi ke tepi sebelum hitung mundur dimulai.'] },
+      { heading: 'Gunakan arahan yang singkat', paragraphs: ['Tentukan satu orang untuk memberi instruksi agar kelompok tidak menerima banyak arahan sekaligus. Minta semua melihat kamera dan tahan posisi sejenak.', 'Ambil satu foto percobaan, cek apakah wajah di pinggir masuk bingkai, lalu sesuaikan jarak perangkat. Untuk kelompok besar, beberapa foto berturut-turut membantu menangkap ekspresi terbaik.'] },
+    ],
+  },
+  {
+    slug: 'memilih-latar-belakang-photobooth', title: 'Memilih Latar Belakang Photobooth yang Tepat', description: 'Gunakan latar yang mendukung tema acara dan menjaga subjek tetap menjadi fokus foto.', category: 'Tips foto', image: '/images/referensi-kamera.jpeg', imageAlt: 'Perlengkapan fotografi untuk acara',
+    sections: [
+      { heading: 'Sesuaikan dengan ruang dan pakaian', paragraphs: ['Pilih latar yang tidak bertabrakan dengan warna pakaian atau dekorasi utama. Warna netral sering membantu wajah dan busana tetap menonjol.', 'Perhatikan ukuran area dan jarak kamera. Latar yang terlalu sempit dapat membuat kelompok besar sulit masuk, sementara pola ramai bisa mengalihkan perhatian.'] },
+      { heading: 'Cek pantulan dan pencahayaan', paragraphs: ['Bahan mengilap dapat memantulkan lampu atau menampilkan bayangan kamera. Ambil foto uji dari posisi tamu berdiri untuk menemukan pantulan yang mengganggu.', 'Pastikan latar terpasang stabil dan tidak menghalangi akses. Jika memakai dekorasi venue, tanyakan kepada pengelola sebelum memindahkan atau menempelkannya.'] },
+    ],
+  },
+  {
+    slug: 'cara-membagikan-foto-acara-dengan-tamu', title: 'Cara Membagikan Foto Acara kepada Tamu', description: 'Pilih kanal berbagi yang praktis, jelaskan aksesnya, dan hormati privasi orang dalam foto.', category: 'Photobooth', image: '/images/wedding-ripki-hero.jpg', imageAlt: 'Kenangan dari acara pernikahan',
+    sections: [
+      { heading: 'Pilih cara akses yang mudah', paragraphs: ['Tentukan apakah foto diunduh langsung, dibagikan melalui tautan, atau dikirim ke album bersama. Berikan instruksi ringkas dan uji tautan dari ponsel yang berbeda.', 'Jika menggunakan album, atur siapa yang boleh melihat dan mengunggah. Beri tahu tamu bila tautan memiliki batas waktu atau membutuhkan akun tertentu.'] },
+      { heading: 'Minta persetujuan untuk publikasi', paragraphs: ['Foto untuk kenangan pribadi belum tentu boleh digunakan untuk promosi. Minta izin sebelum mengunggah foto tamu ke akun publik atau materi pemasaran.', 'Sediakan cara menghubungi pengelola bila seseorang ingin fotonya dihapus. Tinjau isi album secara berkala dan hapus unggahan yang tidak sesuai.'] },
+    ],
+  },
+  {
+    slug: 'rencana-cadangan-teknis-photobooth', title: 'Rencana Cadangan Teknis untuk Photobooth Acara', description: 'Siapkan langkah sederhana saat kamera, jaringan, atau perangkat tidak bekerja sesuai rencana.', category: 'Photobooth', image: '/images/referensi-kamera.jpeg', imageAlt: 'Kamera yang digunakan untuk mengambil foto',
+    sections: [
+      { heading: 'Uji perangkat dan koneksi lebih awal', paragraphs: ['Coba kamera, browser, tombol unduh, dan jaringan di lokasi acara. Catat langkah pemulihan dasar seperti memuat ulang halaman atau mengganti perangkat.', 'Pastikan perangkat terisi daya dan tersedia stopkontak yang aman bila diperlukan. Simpan tautan akses dan petunjuk di tempat yang mudah ditemukan panitia.'] },
+      { heading: 'Tentukan alternatif yang masuk akal', paragraphs: ['Jika koneksi melemah, siapkan opsi berbagi tautan melalui jaringan seluler atau jalur akses lain yang disetujui venue. Hindari menjanjikan fitur yang belum diuji.', 'Tunjuk satu petugas untuk menangani kendala dan memberi kabar kepada tamu. Jika photobooth tidak bisa digunakan sementara, arahkan tamu ke area foto alternatif.'] },
+    ],
+  },
+  {
+    slug: 'panduan-mengatur-rsvp-keluarga', title: 'Mengatur Konfirmasi Kehadiran Keluarga dengan Sopan', description: 'Susun pertanyaan RSVP dan tindak lanjut yang jelas tanpa membuat tamu merasa tertekan.', category: 'Undangan digital', image: '/images/invitations/inv-15.jpg', imageAlt: 'Suasana perayaan pernikahan',
+    sections: [
+      { heading: 'Tanyakan informasi yang diperlukan', paragraphs: ['Cukup minta nama, jumlah orang yang hadir, dan jawaban kehadiran bila itu membantu perencanaan. Jelaskan batas waktu dan siapa yang dapat dihubungi jika tamu perlu mengubah jawaban.', 'Untuk keluarga yang tidak nyaman mengisi formulir, sediakan pilihan menjawab melalui telepon atau pesan. Pastikan semua jawaban masuk ke catatan yang sama.'] },
+      { heading: 'Lakukan tindak lanjut dengan ramah', paragraphs: ['Kirim pengingat singkat hanya kepada orang yang belum menjawab dan beri waktu untuk merespons. Hindari menambahkan penerima ke grup tanpa persetujuan.', 'Gunakan data RSVP untuk kebutuhan acara saja. Batasi akses daftar kepada panitia yang perlu mengatur tempat duduk atau konsumsi.'] },
+    ],
+  },
+  {
+    slug: 'ide-souvenir-foto-untuk-tamu', title: 'Ide Kenang-Kenangan Foto untuk Tamu Acara', description: 'Jadikan foto sebagai kenangan sederhana yang mudah dibawa pulang dan dibagikan secara sukarela.', category: 'Inspirasi', image: '/images/friends-photo-booth.jpg', imageAlt: 'Teman merayakan momen bersama',
+    sections: [
+      { heading: 'Pilih bentuk kenangan sesuai acara', paragraphs: ['Foto digital berbingkai dapat langsung disimpan, sedangkan cetakan kecil cocok dibawa pulang jika tersedia fasilitas cetak. Sesuaikan pilihan dengan durasi, jumlah tamu, dan anggaran.', 'Sertakan nama atau tanggal secara proporsional agar foto tetap menjadi pusat perhatian. Pastikan teks terbaca tetapi tidak menutupi wajah.'] },
+      { heading: 'Beri pilihan kepada tamu', paragraphs: ['Tidak semua orang ingin difoto atau menerima cetakan. Sampaikan bahwa partisipasi bersifat sukarela dan tunjukkan cara mengambil hasil tanpa harus membagikannya di media sosial.', 'Untuk foto kelompok, minta persetujuan sebelum mengirim salinan ke anggota lain. Pilihan yang jelas membuat kenang-kenangan terasa lebih nyaman.'] },
+    ],
+  },
+  {
+    slug: 'menyusun-timeline-persiapan-undangan', title: 'Timeline Menyiapkan Undangan Digital Pernikahan', description: 'Bagi pekerjaan mengumpulkan materi, memeriksa isi, dan mengirim undangan dalam beberapa tahap.', category: 'Persiapan acara', image: '/images/invitations/inv-10.jpg', imageAlt: 'Detail suasana pernikahan',
+    sections: [
+      { heading: 'Kumpulkan materi dan informasi', paragraphs: ['Mulai dengan nama, jadwal, alamat, kontak, foto, dan daftar tautan yang akan dipakai. Konfirmasi detail acara dengan keluarga serta venue sebelum memasukkannya ke undangan.', 'Tentukan siapa yang mengumpulkan foto dan siapa yang memeriksa teks. Simpan versi final pada satu tempat agar tidak ada beberapa salinan yang berbeda.'] },
+      { heading: 'Sisihkan waktu untuk uji coba', paragraphs: ['Buka pratinjau dari ponsel dan komputer, lalu uji peta, RSVP, dan tombol lainnya. Minta satu orang yang belum melihat naskah memeriksa informasi penting.', 'Kirim undangan dengan jeda yang cukup sebelum hari acara. Jika ada perubahan, perbarui halaman dan beri tahu tamu melalui kanal yang sama.'] },
+    ],
+  },
+  {
+    slug: 'tips-mengambil-foto-candid-acara', title: 'Tips Mengambil Foto Candid yang Natural di Acara', description: 'Tangkap momen spontan dengan tetap menghormati ruang pribadi dan kenyamanan orang yang difoto.', category: 'Tips foto', image: '/images/friends-photo-booth.jpg', imageAlt: 'Teman menikmati suasana acara',
+    sections: [
+      { heading: 'Amati momen tanpa mengganggu', paragraphs: ['Perhatikan percakapan, tawa, dan interaksi yang berlangsung alami. Gunakan jarak yang tidak membuat orang merasa diawasi dan hindari menghalangi kegiatan acara.', 'Ambil beberapa foto dengan tenang, lalu pilih hasil yang menunjukkan suasana tanpa mempermalukan siapa pun. Tidak semua momen perlu direkam.'] },
+      { heading: 'Hormati izin dan konteks', paragraphs: ['Tanyakan sebelum membagikan foto candid ke akun publik, terutama jika orang terlihat jelas atau foto diambil pada momen pribadi.', 'Jika seseorang tidak nyaman difoto, hormati permintaannya dan jangan meneruskan gambar. Tuan rumah dapat menyampaikan aturan dokumentasi kepada fotografer dan tamu.'] },
+    ],
+  },
+  {
+    slug: 'cara-membuat-brief-desain-undangan', title: 'Cara Membuat Brief Desain Undangan Digital', description: 'Sampaikan kebutuhan, suasana, dan materi dengan jelas agar desain undangan sesuai acara.', category: 'Undangan digital', image: '/images/invitations/inv-09.jpg', imageAlt: 'Inspirasi desain undangan pernikahan',
+    sections: [
+      { heading: 'Jelaskan kebutuhan utama', paragraphs: ['Tulis jenis acara, siapa tamunya, informasi yang wajib tampil, serta fitur yang dibutuhkan seperti peta atau RSVP. Sertakan contoh desain sebagai referensi suasana, bukan untuk disalin persis.', 'Tentukan warna, gaya visual, dan hal yang perlu dihindari. Prioritaskan keterbacaan dan kemudahan penggunaan di ponsel.'] },
+      { heading: 'Siapkan materi dalam satu paket', paragraphs: ['Kirim ejaan nama yang sudah disetujui, jadwal, alamat, foto berkualitas, serta tautan resmi. Tandai foto mana yang boleh digunakan dan siapa pemiliknya.', 'Minta waktu untuk memeriksa draf di beberapa ukuran layar. Kumpulkan koreksi dalam satu daftar agar revisi tidak terpecah di banyak percakapan.'] },
+    ],
+  },
+  {
+    slug: 'panduan-menggunakan-properti-photobooth', title: 'Menggunakan Properti Photobooth agar Foto Tetap Rapi', description: 'Pilih aksesori yang nyaman, aman, dan tidak menutupi wajah atau detail penting pada foto.', category: 'Photobooth', image: '/images/friends-photo-booth.jpg', imageAlt: 'Teman berpose di photobooth',
+    sections: [
+      { heading: 'Pilih properti yang sesuai tema', paragraphs: ['Batasi pilihan pada beberapa aksesori yang mudah dikenali seperti papan ucapan atau topi ringan. Warna dan bentuknya dapat mengikuti tema tanpa membuat latar terlalu ramai.', 'Pastikan properti bersih, tidak tajam, dan nyaman digunakan. Hindari aksesori yang menghalangi pandangan atau berpotensi mengganggu pakaian tamu.'] },
+      { heading: 'Atur dan rawat selama acara', paragraphs: ['Tempatkan properti pada wadah yang mudah dijangkau dan tidak menghambat antrean. Tunjuk petugas untuk merapikan serta membersihkannya secara berkala.', 'Beri pilihan untuk berfoto tanpa properti. Cek hasil pratinjau agar aksesori tidak menutupi wajah atau teks bingkai.'] },
+    ],
+  },
+  {
+    slug: 'menyiapkan-area-foto-di-rumah', title: 'Menyiapkan Area Foto Sederhana di Rumah', description: 'Manfaatkan ruang, cahaya, dan latar yang ada untuk membuat sudut foto keluarga yang nyaman.', category: 'Tips foto', image: '/images/referensi-kamera.jpeg', imageAlt: 'Kamera untuk mengambil foto di rumah',
+    sections: [
+      { heading: 'Pilih titik dengan cahaya lembut', paragraphs: ['Cari area dekat jendela pada waktu cahaya tidak terlalu keras. Arahkan wajah ke sumber cahaya dan hindari jendela terang tepat di belakang subjek.', 'Rapikan latar secukupnya dan pindahkan benda yang mengganggu. Tidak perlu dekorasi berlebihan jika ruang sudah memiliki warna atau tekstur yang menarik.'] },
+      { heading: 'Atur kamera dan ruang gerak', paragraphs: ['Letakkan ponsel pada penyangga yang stabil setinggi mata. Beri ruang agar seluruh anggota keluarga dapat masuk dan pastikan jalur di sekitar kamera aman.', 'Ambil foto uji untuk memeriksa fokus serta komposisi. Beri anak atau anggota keluarga waktu untuk menyesuaikan diri sebelum mulai memotret.'] },
+    ],
+  },
+  {
+    slug: 'membuat-undangan-digital-untuk-acara-keluarga', title: 'Membuat Undangan Digital untuk Acara Keluarga', description: 'Sesuaikan informasi dan gaya undangan untuk ulang tahun, syukuran, reuni, atau pertemuan keluarga.', category: 'Undangan digital', image: '/images/invitations/inv-07.jpg', imageAlt: 'Keluarga berkumpul dalam sebuah perayaan',
+    sections: [
+      { heading: 'Tampilkan detail yang dibutuhkan', paragraphs: ['Cantumkan nama acara, tanggal, waktu, alamat, kontak, dan petunjuk khusus seperti akses masuk atau pakaian. Untuk acara informal, bahasa yang hangat dan langsung biasanya mudah dipahami.', 'Jika acara berlangsung beberapa sesi, tulis jadwal setiap bagian secara terpisah. Gunakan peta yang sudah diuji untuk membantu tamu dari luar daerah.'] },
+      { heading: 'Pilih cara berbagi yang sesuai', paragraphs: ['Kirim tautan dengan pesan personal dan ringkasan informasi utama. Pastikan penerima dapat membuka halaman tanpa membuat akun atau memasang aplikasi tambahan.', 'Periksa kembali perubahan jadwal sebelum hari acara. Sampaikan pembaruan langsung kepada tamu yang sudah menerima undangan sebelumnya.'] },
+    ],
+  },
+  {
+    slug: 'mengelola-foto-setelah-acara', title: 'Mengelola dan Memilih Foto Setelah Acara', description: 'Rapikan hasil foto, buat salinan cadangan, dan bagikan pilihan terbaik dengan persetujuan.', category: 'Tips foto', image: '/images/wedding-ripki-hero.jpg', imageAlt: 'Momen perayaan yang diabadikan',
+    sections: [
+      { heading: 'Pilih dan simpan salinan', paragraphs: ['Pindahkan foto ke folder khusus dan buat salinan cadangan sebelum menghapus berkas dari perangkat kamera. Kelompokkan berdasarkan sesi atau waktu agar lebih mudah dicari.', 'Pilih foto yang fokus dan memiliki ekspresi baik, tetapi simpan beberapa momen spontan yang bermakna. Hindari mengedit berlebihan hingga warna kulit atau suasana berubah jauh.'] },
+      { heading: 'Bagikan dengan konteks yang jelas', paragraphs: ['Pilih kanal berbagi yang sesuai dengan audiens dan jelaskan siapa yang dapat mengaksesnya. Hindari mengunggah foto anak atau tamu ke ruang publik tanpa persetujuan yang diperlukan.', 'Hapus foto yang salah kirim atau tidak disetujui. Jika membagikan tautan album, tinjau kembali pengaturan aksesnya setelah kebutuhan acara selesai.'] },
+    ],
+  },
+  {
+    slug: 'tips-memilih-warna-frame-photobooth', title: 'Memilih Warna Frame Photobooth yang Serasi', description: 'Padukan warna bingkai dengan tema acara sambil menjaga teks dan wajah tetap terlihat jelas.', category: 'Inspirasi', image: '/images/wedding-ripki-hero.jpg', imageAlt: 'Inspirasi warna untuk bingkai foto acara',
+    sections: [
+      { heading: 'Tentukan warna utama dan aksen', paragraphs: ['Ambil satu atau dua warna dari undangan atau dekorasi sebagai dasar. Warna aksen dapat dipakai untuk nama dan tanggal tanpa membuat bingkai terasa penuh.', 'Pertimbangkan variasi warna pakaian tamu. Latar yang terlalu dekat dengan warna busana dapat membuat subjek kurang menonjol.'] },
+      { heading: 'Uji kontras pada hasil foto', paragraphs: ['Periksa keterbacaan teks pada layar ponsel dan foto yang sudah diunduh. Pastikan elemen bingkai tidak menutupi wajah pada posisi foto yang berbeda.', 'Coba desain dengan beberapa foto uji, termasuk foto kelompok. Minta masukan dari orang lain sebelum membagikan frame ke tamu.'] },
+    ],
+  },
+  {
+    slug: 'panduan-foto-pernikahan-untuk-tamu', title: 'Panduan Sederhana untuk Tamu yang Ingin Memotret Pernikahan', description: 'Abadikan momen penting dengan sopan tanpa menghalangi prosesi atau fotografer resmi.', category: 'Tips foto', image: '/images/invitations/inv-11.jpg', imageAlt: 'Prosesi pernikahan bersama keluarga',
+    sections: [
+      { heading: 'Perhatikan jalannya acara', paragraphs: ['Ikuti arahan panitia dan hindari berdiri di lorong atau di depan fotografer saat prosesi berlangsung. Simpan ponsel ketika pasangan atau pembawa acara meminta perhatian penuh.', 'Gunakan mode senyap agar suara kamera tidak mengganggu. Ambil foto dari tempat yang tidak menghalangi pandangan tamu lain.'] },
+      { heading: 'Minta izin sebelum mengunggah', paragraphs: ['Tanyakan kepada pasangan atau tuan rumah sebelum membagikan foto yang belum diumumkan. Pertimbangkan juga privasi anak dan tamu lain yang terlihat di latar.', 'Jika pasangan meminta tamu menikmati acara tanpa merekam, hormati permintaan tersebut. Foto yang baik tetap perlu mempertimbangkan kenyamanan semua orang.'] },
+    ],
+  },
+  {
+    slug: 'cara-mengatur-antrean-photobooth', title: 'Mengatur Antrean Photobooth agar Tamu Nyaman', description: 'Kurangi penumpukan dengan alur yang jelas, sesi singkat, dan bantuan petugas acara.', category: 'Photobooth', image: '/images/friends-photo-booth.jpg', imageAlt: 'Teman menunggu giliran berfoto',
+    sections: [
+      { heading: 'Buat alur yang mudah dipahami', paragraphs: ['Letakkan petunjuk mulai dari titik antre, cara berfoto, hingga cara mengambil hasil. Sisakan jalur masuk dan keluar yang berbeda jika ruang memungkinkan.', 'Sediakan perkiraan durasi singkat per kelompok dan minta satu orang membantu mengarahkan giliran. Hindari sistem yang memerlukan terlalu banyak langkah.'] },
+      { heading: 'Sesuaikan dengan jumlah tamu', paragraphs: ['Pada acara ramai, sediakan beberapa jam operasional atau ajak tamu datang pada waktu yang lebih lengang. Beri tahu bahwa mereka dapat kembali setelah prosesi utama.', 'Pantau antrean dan kenyamanan orang yang menunggu. Pastikan area tidak menutup akses kursi roda, pintu keluar, atau layanan venue.'] },
+    ],
+  },
+  {
+    slug: 'mengirim-undangan-digital-ke-tamu-luar-kota', title: 'Mengirim Undangan Digital kepada Tamu Luar Kota', description: 'Bantu kerabat merencanakan perjalanan dengan jadwal, alamat, dan informasi praktis yang lengkap.', category: 'Undangan digital', image: '/images/invitations/inv-10.jpg', imageAlt: 'Persiapan perayaan pernikahan',
+    sections: [
+      { heading: 'Sertakan informasi perjalanan', paragraphs: ['Cantumkan alamat lengkap, tautan peta, waktu acara, serta patokan atau gerbang masuk. Jika ada beberapa lokasi, jelaskan jarak dan urutannya.', 'Bagikan informasi penginapan atau transportasi hanya jika sudah dikonfirmasi. Hindari memberi rekomendasi yang belum diperiksa atau mengesankan bahwa tamu wajib mengikutinya.'] },
+      { heading: 'Kirim lebih awal dan beri jalur bertanya', paragraphs: ['Kirim undangan dengan waktu yang membantu tamu mengatur perjalanan. Sertakan kontak keluarga atau panitia yang dapat menjawab pertanyaan praktis.', 'Bila ada perubahan jadwal atau lokasi, beri tahu tamu luar kota secara langsung. Pastikan informasi terbaru mudah ditemukan di halaman undangan.'] },
+    ],
+  },
+  {
+    slug: 'ide-foto-reuni-sekolah', title: 'Ide Foto Reuni Sekolah yang Seru dan Teratur', description: 'Gabungkan foto kelompok, kenangan kelas, dan potret spontan agar reuni punya dokumentasi yang beragam.', category: 'Inspirasi', image: '/images/friends-photo-booth.jpg', imageAlt: 'Sekelompok teman berkumpul untuk foto',
+    sections: [
+      { heading: 'Rencanakan kelompok foto', paragraphs: ['Mulai dari foto semua peserta, lalu lanjutkan per kelas, angkatan, atau kelompok kecil. Tunjuk satu orang yang membantu memanggil peserta supaya waktu tidak habis untuk mencari teman.', 'Pilih latar yang cukup luas dan terang. Siapkan daftar urutan sederhana dan sampaikan jadwal foto melalui kanal reuni.'] },
+      { heading: 'Tambahkan momen yang spontan', paragraphs: ['Sediakan waktu untuk foto bebas atau photobooth dengan properti bertema sekolah. Biarkan peserta memilih pose yang nyaman dan tidak memaksa siapa pun tampil.', 'Sebelum membagikan album, sepakati siapa yang dapat mengaksesnya. Minta izin sebelum mengunggah foto peserta ke akun publik atau grup di luar acara.'] },
+    ],
+  },
+  {
+    slug: 'daftar-periksa-hari-acara-photobooth', title: 'Daftar Periksa Photobooth pada Hari Acara', description: 'Gunakan pemeriksaan singkat untuk memastikan area, perangkat, dan petunjuk siap sebelum tamu datang.', category: 'Photobooth', image: '/images/referensi-kamera.jpeg', imageAlt: 'Peralatan kamera sebelum acara',
+    sections: [
+      { heading: 'Periksa area dan perangkat', paragraphs: ['Pastikan lokasi tidak menghalangi jalur, cahaya cukup, dan dekorasi stabil. Uji kamera, tautan, QR, hasil foto, serta proses penyimpanan menggunakan perangkat yang tersedia.', 'Periksa ejaan nama dan tanggal di frame. Isi daya perangkat dan pastikan kabel tidak melintang pada jalur tamu.'] },
+      { heading: 'Pastikan petugas tahu alurnya', paragraphs: ['Tunjuk orang yang dapat membantu tamu serta memahami langkah dasar saat kamera atau koneksi bermasalah. Simpan kontak penanggung jawab venue.', 'Letakkan instruksi dan tautan cadangan di tempat yang mudah ditemukan. Lakukan satu sesi uji terakhir sebelum area dibuka untuk tamu.'] },
+    ],
+  },
+  {
+    slug: 'menentukan-jam-pengiriman-undangan', title: 'Kapan Waktu yang Tepat Mengirim Undangan Digital?', description: 'Tentukan jadwal pengiriman berdasarkan kebutuhan tamu, rangkaian acara, dan waktu persiapan.', category: 'Persiapan acara', image: '/images/invitations/inv-12.jpg', imageAlt: 'Detail undangan pernikahan digital',
+    sections: [
+      { heading: 'Berikan waktu untuk membuat rencana', paragraphs: ['Pertimbangkan jarak perjalanan, kebutuhan cuti, dan kebiasaan keluarga saat menentukan waktu pengiriman. Tamu dari luar kota biasanya perlu informasi lebih awal untuk menyusun perjalanan.', 'Pastikan detail penting sudah dikonfirmasi sebelum tautan dibagikan. Undangan yang dikirim terlalu dini dengan informasi sementara dapat menimbulkan kebingungan.'] },
+      { heading: 'Kirim pengingat dengan bijak', paragraphs: ['Jika perlu, kirim pengingat singkat menjelang batas RSVP atau hari acara. Sertakan tautan yang sama dan informasi inti agar tamu tidak perlu mencari pesan lama.', 'Jangan mengirim pesan berulang dalam waktu dekat. Untuk perubahan mendadak, hubungi tamu yang terdampak secara langsung dan jelaskan detail terbaru.'] },
+    ],
+  },
+].filter((_, index) => index < 25 || index >= 32);
