@@ -92,7 +92,7 @@ export const articles: Article[] = [
     ],
   },
   {
-    slug: 'ide-tema-photobooth-ulang-tahun', title: '7 Tema Photobooth Ulang Tahun yang Seru dan Personal', description: 'Dari warna favorit sampai gaya retro, temukan ide tema bingkai yang cocok untuk pesta ulang tahun.', category: 'Inspirasi', image: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=82', imageAlt: 'Suasana pesta ulang tahun dengan balon warna-warni',
+    slug: 'ide-tema-photobooth-ulang-tahun', title: 'Ide Tema Photobooth Ulang Tahun yang Seru dan Personal', description: 'Dari warna favorit sampai gaya retro, temukan ide tema bingkai yang cocok untuk pesta ulang tahun.', category: 'Inspirasi', image: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=82', imageAlt: 'Suasana pesta ulang tahun dengan balon warna-warni',
     sections: [
       { heading: 'Pilih tema yang mencerminkan pemilik acara', paragraphs: ['Coba palet warna favorit, tema tahun kelahiran, film yang disukai, atau gaya piknik sederhana. Tema retro dengan warna hangat juga cocok untuk hasil photostrip bergaya nostalgia.', 'Tambahkan nama dan umur secara kecil sebagai kenang-kenangan, lalu sisakan ruang foto yang lapang. Hindari memenuhi bingkai dengan ornamen yang menutupi ekspresi.'] },
       { heading: 'Buat pengalaman mudah diikuti', paragraphs: ['Sertakan petunjuk singkat untuk tamu dan uji frame dengan satu atau beberapa orang. Buat beberapa contoh pose di dekat area foto agar tamu yang malu punya inspirasi.', 'Pilih tema yang terlihat baik dalam foto dengan pencahayaan venue. Jika lampu pesta berwarna kuat, tes hasil kamera terlebih dahulu.'] },
@@ -148,7 +148,7 @@ export const articles: Article[] = [
     ],
   },
   {
-    slug: 'pose-photobooth-berdua', title: '12 Ide Pose Photobooth Berdua untuk Pasangan', description: 'Ide pose sederhana untuk foto pasangan yang terlihat santai, romantis, dan tidak monoton.', category: 'Inspirasi', image: 'https://images.unsplash.com/photo-1529636798458-92182e662485?auto=format&fit=crop&w=1200&q=82', imageAlt: 'Pasangan berjalan berdampingan di luar ruangan',
+    slug: 'pose-photobooth-berdua', title: 'Ide Pose Photobooth Berdua untuk Pasangan', description: 'Ide pose sederhana untuk foto pasangan yang terlihat santai, romantis, dan tidak monoton.', category: 'Inspirasi', image: 'https://images.unsplash.com/photo-1529636798458-92182e662485?auto=format&fit=crop&w=1200&q=82', imageAlt: 'Pasangan berjalan berdampingan di luar ruangan',
     sections: [
       { heading: 'Pose manis yang mudah dicoba', paragraphs: ['Mulai dengan berdiri berdampingan, saling menggenggam tangan, atau bersandar ringan. Coba melihat kamera pada satu foto lalu saling melihat pada foto berikutnya.', 'Tambahkan variasi seperti membuat bentuk hati bersama, memberi kecupan di pipi jika nyaman, atau menunjukkan benda kecil yang punya cerita bagi kalian.'] },
       { heading: 'Buat hasil tetap terasa alami', paragraphs: ['Gunakan hitung mundur untuk mengambil beberapa pose tanpa terburu-buru. Bergerak sedikit di antara jepretan agar rangkaian foto punya ekspresi yang berbeda.', 'Tidak ada pose wajib. Pilih yang terasa nyaman untuk kalian dan berhenti kapan saja jika merasa tidak nyaman.'] },

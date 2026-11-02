@@ -4,9 +4,15 @@ import SiteHeader from '../../components/layout/SiteHeader.astro';
 import SiteFooter from '../../components/layout/SiteFooter.astro';
 import ArticleCard from '../../components/articles/ArticleCard.astro';
 import { articles, articleDate } from '../../data/articles';
+import { articleExtras } from '../../data/article-extras';
 import { assetUrl } from '../../lib/paths';
 export function getStaticPaths() { return articles.map((article) => ({ params: { slug: article.slug }, props: { article } })); }
 const { article } = Astro.props;
+const extras = articleExtras[article.slug] ?? [];
+const invitationTopic = article.category === 'Undangan digital';
+const eventTopic = ['photobooth-virtual-untuk-pernikahan', 'rencana-anggaran-photobooth-pernikahan', 'checklist-persiapan-photobooth-event'].includes(article.slug);
+const nextLink = invitationTopic ? '/undangan/katalog/' : eventTopic ? '/request-event/' : '/studio/';
+const nextTitle = invitationTopic ? 'Jelajahi template undangan digital' : eventTopic ? 'Diskusikan photobooth untuk acaramu' : 'Coba photobooth online';
 const related = articles.filter((item) => item.slug !== article.slug).sort((a, b) => Number(b.category === article.category) - Number(a.category === article.category)).slice(0, 2);
 const path = `/artikel/${article.slug}/`;
 const breadcrumbs = [{ name: 'Beranda', item: '/' }, { name: 'Artikel', item: '/artikel/' }, { name: article.title, item: path }];
@@ -31,8 +37,10 @@ const schema = { '@type': 'Article', headline: article.title, description: artic
         {article.image.startsWith('https://images.unsplash.com/') && <p class="article-image-credit">Foto ilustrasi dari <a href="https://unsplash.com/license" target="_blank" rel="noopener noreferrer">Unsplash</a>.</p>}
         <div class="article-content">
           {article.sections.map((section) => <section><h2>{section.heading}</h2>{section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}</section>)}
+          {extras.map((section) => <section><h2>{section.heading}</h2>{section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}</section>)}
+          {article.slug === 'photobooth-virtual-untuk-pernikahan' && <p><a href={assetUrl('/wedding-ripki-aura/')}>Lihat contoh photobooth Ripki &amp; Aura ↗</a></p>}
           {article.source && <p class="article-source">Bacaan terkait: <a href={article.source.url} target="_blank" rel="noopener noreferrer">{article.source.label} ↗</a></p>}
-          <p class="article-next">Jelajahi <a href={assetUrl('/studio/')}>photobooth online</a> atau temukan <a href={assetUrl('/undangan/')}>undangan digital</a> untuk momen spesialmu.</p>
+          <p class="article-next"><a href={assetUrl(nextLink)}>{nextTitle} ↗</a></p>
         </div>
       </div>
     </article>
