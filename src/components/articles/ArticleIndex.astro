@@ -7,14 +7,14 @@ import type { Article } from '../../data/articles';
 import { assetUrl } from '../../lib/paths';
 
 interface Props {
-  articles: Article[];
+  allArticles: Article[];
   page: number;
   pageSize: number;
   total: number;
   pageCount: number;
 }
 
-const { articles, page, pageSize, total, pageCount } = Astro.props;
+const { allArticles, page, pageSize, total, pageCount } = Astro.props;
 const firstItem = (page - 1) * pageSize + 1;
 const lastItem = Math.min(page * pageSize, total);
 const pageHref = (pageNumber: number) => pageNumber === 1
@@ -23,6 +23,7 @@ const pageHref = (pageNumber: number) => pageNumber === 1
 const visiblePages = Array.from({ length: pageCount }, (_, index) => index + 1)
   .filter((pageNumber) => pageNumber === 1 || pageNumber === pageCount || Math.abs(pageNumber - page) <= 1);
 const breadcrumbs = [{ name: 'Beranda', item: '/' }, { name: 'Artikel', item: '/artikel/' }];
+const categories = [...new Set(allArticles.map((article) => article.category))].sort((a, b) => a.localeCompare(b, 'id'));
 ---
 
 <BaseLayout
@@ -39,10 +40,29 @@ const breadcrumbs = [{ name: 'Beranda', item: '/' }, { name: 'Artikel', item: '/
         <p class="und-lede">Panduan dan ide seputar photobooth, undangan digital, dan cara merayakan kebersamaan.</p>
       </div>
     </section>
-    <section class="und-section article-list" aria-label="Daftar artikel">
+    <section class="und-section article-list" aria-label="Daftar artikel" data-current-page={page} data-page-size={pageSize} data-total={total}>
+      <form class="article-filters" role="search" aria-label="Cari dan filter artikel">
+        <label class="article-search-field">
+          <span>Cari artikel</span>
+          <input type="search" name="q" placeholder="Cari judul atau topik…" autocomplete="off" aria-controls="article-grid" />
+        </label>
+        <label class="article-category-field">
+          <span>Topik</span>
+          <select name="category" aria-controls="article-grid">
+            <option value="">Semua topik</option>
+            {categories.map((category) => <option value={category}>{category}</option>)}
+          </select>
+        </label>
+        <button class="article-clear-filters" type="reset" hidden>Hapus filter</button>
+      </form>
       <p class="article-results" aria-live="polite">Menampilkan {firstItem}–{lastItem} dari {total} artikel</p>
-      <div class="und-grid und-grid-3">
-        {articles.map((article) => <ArticleCard article={article} />)}
+      <p class="article-empty-state" role="status" hidden>Tidak ada artikel yang cocok. Coba kata kunci atau topik lain.</p>
+      <div class="und-grid und-grid-3" id="article-grid">
+        {allArticles.map((article, index) => (
+          <div class="article-result-item" data-category={article.category} data-search={`${article.title} ${article.category} ${article.description} ${article.sections.map((section) => section.heading).join(' ')}`} data-page={Math.ceil((index + 1) / pageSize)} hidden={Math.ceil((index + 1) / pageSize) !== page}>
+            <ArticleCard article={article} />
+          </div>
+        ))}
       </div>
       {pageCount > 1 && (
         <nav class="article-pagination" aria-label="Navigasi halaman artikel">
@@ -60,5 +80,45 @@ const breadcrumbs = [{ name: 'Beranda', item: '/' }, { name: 'Artikel', item: '/
       )}
     </section>
   </main>
+  <script>
+    const form = document.querySelector<HTMLFormElement>('.article-filters');
+    const searchInput = form?.querySelector<HTMLInputElement>('input[name="q"]');
+    const categorySelect = form?.querySelector<HTMLSelectElement>('select[name="category"]');
+    const clearButton = form?.querySelector<HTMLButtonElement>('.article-clear-filters');
+    const resultItems = [...document.querySelectorAll<HTMLElement>('.article-result-item')];
+    const resultText = document.querySelector<HTMLElement>('.article-results');
+    const emptyState = document.querySelector<HTMLElement>('.article-empty-state');
+    const pagination = document.querySelector<HTMLElement>('.article-pagination');
+    const listSection = document.querySelector<HTMLElement>('.article-list');
+    const currentPage = Number(listSection?.dataset.currentPage ?? 1);
+    const pageSize = Number(listSection?.dataset.pageSize ?? 12);
+    const total = Number(listSection?.dataset.total ?? 0);
+
+    function updateArticleResults() {
+      const query = searchInput?.value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('id') ?? '';
+      const category = categorySelect?.value ?? '';
+      const hasFilters = Boolean(query || category);
+      let visibleCount = 0;
+
+      for (const item of resultItems) {
+        const text = (item.dataset.search ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('id');
+        const matches = (!query || text.includes(query)) && (!category || item.dataset.category === category);
+        const visible = matches && (hasFilters || Number(item.dataset.page) === currentPage);
+        item.hidden = !visible;
+        if (visible) visibleCount += 1;
+      }
+
+      if (resultText) resultText.textContent = hasFilters
+        ? `${visibleCount} artikel ditemukan`
+        : `Menampilkan ${Math.min((currentPage - 1) * pageSize + 1, total)}–${Math.min(currentPage * pageSize, total)} dari ${total} artikel`;
+      if (emptyState) emptyState.hidden = visibleCount > 0;
+      if (pagination) pagination.hidden = hasFilters;
+      if (clearButton) clearButton.hidden = !hasFilters;
+    }
+
+    searchInput?.addEventListener('input', updateArticleResults);
+    categorySelect?.addEventListener('change', updateArticleResults);
+    form?.addEventListener('reset', () => requestAnimationFrame(updateArticleResults));
+  </script>
   <SiteFooter />
 </BaseLayout>

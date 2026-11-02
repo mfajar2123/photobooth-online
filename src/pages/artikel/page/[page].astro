@@ -12,12 +12,11 @@ export function getStaticPaths() {
 }
 
 const page = Number(Astro.params.page);
-const start = (page - 1) * pageSize;
 const pageCount = Math.ceil(articles.length / pageSize);
 ---
 
 <ArticleIndex
-  articles={articles.slice(start, start + pageSize)}
+  allArticles={articles}
   page={page}
   pageSize={pageSize}
   total={articles.length}
