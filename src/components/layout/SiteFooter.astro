@@ -19,11 +19,6 @@ const {
     <div class="footer-brand">
       <a class="wordmark" href={assetUrl('/')}><span>✦</span> RUANG <i>KILAS</i></a>
       <p>{tagline}</p>
-      <div class="footer-social">
-        <a href={brand.instagram} target="_blank" rel="noopener noreferrer">Instagram ↗</a>
-        <a href={brand.tiktok} target="_blank" rel="noopener noreferrer">TikTok ↗</a>
-        <span>@ruangkilas.id</span>
-      </div>
     </div>
 
     <div class="footer-col">
@@ -33,8 +28,7 @@ const {
 
     <div class="footer-contact footer-col">
       <h3>Kontak</h3>
-      <a href={`mailto:${brand.email}`}>{brand.email}</a>
-      <a href="https://wa.me/6281288994021">WhatsApp {brand.phone}</a>
+      <a href={`https://wa.me/${brand.whatsapp}`} target="_blank" rel="noopener noreferrer">WhatsApp {brand.phone}</a>
       <small>Senin–Minggu, 09.00–21.00 WIB</small>
     </div>
 

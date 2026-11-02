@@ -2,7 +2,6 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SiteHeader from '../../components/layout/SiteHeader.astro';
 import SiteFooter from '../../components/layout/SiteFooter.astro';
-import { brand } from '../../data/brand';
 import { invitationTemplates } from '../../data/templates';
 import { assetUrl } from '../../lib/paths';
 
@@ -12,8 +11,7 @@ const breadcrumbs = [
   { name: 'Request Undangan', item: '/undangan/custom' },
 ];
 
-const whatsappBase = 'https://wa.me/6281288994021';
-const emailBase = `mailto:${brand.partnershipEmail}`;
+const whatsappBase = 'https://wa.me/6282143863319';
 ---
 
 <BaseLayout
@@ -81,7 +79,6 @@ const emailBase = `mailto:${brand.partnershipEmail}`;
 
         <div class="request-actions">
           <a class="button-primary" id="undangan-submit" href={whatsappBase}>Kirim lewat WhatsApp <span aria-hidden="true">↗</span></a>
-          <a class="text-link" id="undangan-email" href={emailBase}>atau email ke {brand.partnershipEmail}</a>
         </div>
         <p class="request-fineprint">Data yang kamu isi hanya dipakai untuk menyusun pesan permintaan.</p>
       </div>
@@ -106,11 +103,8 @@ const emailBase = `mailto:${brand.partnershipEmail}`;
   <script>
     const form = document.querySelector<HTMLFormElement>('#undangan-request');
     const submitLink = document.querySelector<HTMLAnchorElement>('#undangan-submit');
-    const emailLink = document.querySelector<HTMLAnchorElement>('#undangan-email');
-
-    if (form && submitLink && emailLink) {
-      const whatsappNumber = '6281288994021';
-      const partnerEmail = 'partnership@ruangkilas.my.id';
+    if (form && submitLink) {
+      const whatsappNumber = '6282143863319';
 
       const syncLinks = () => {
         const data = new FormData(form);
@@ -128,7 +122,6 @@ const emailBase = `mailto:${brand.partnershipEmail}`;
 
         const message = lines.join('\n');
         submitLink.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-        emailLink.href = `mailto:${partnerEmail}?subject=${encodeURIComponent('Request undangan digital')}&body=${encodeURIComponent(message)}`;
       };
 
       const requestedTemplate = new URLSearchParams(window.location.search).get('template');

@@ -110,13 +110,10 @@ const schemaGraph: any[] = [
     image: {
       '@id': logoId,
     },
-    email: brand.email,
     telephone: brand.phone,
-    sameAs: [brand.instagram, brand.tiktok],
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer support',
-      email: brand.email,
       telephone: brand.phone,
       availableLanguage: ['id', 'en'],
       areaServed: 'ID',

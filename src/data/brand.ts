@@ -1,11 +1,8 @@
 export const brand = {
   name: 'Ruang Kilas',
   domain: 'ruangkilas.my.id',
-  email: 'halo@ruangkilas.my.id',
-  partnershipEmail: 'partnership@ruangkilas.my.id',
-  phone: '+62 812-8899-4021',
-  instagram: 'https://instagram.com/ruangkilas.id',
-  tiktok: 'https://tiktok.com/@ruangkilas.id',
+  phone: '0821 4386 3319',
+  whatsapp: '6282143863319',
 } as const;
 
 export const faqs = [
