@@ -1,25 +1,14 @@
-﻿---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import SiteHeader from '../../components/layout/SiteHeader.astro';
-import SiteFooter from '../../components/layout/SiteFooter.astro';
-import ArticleCard from '../../components/articles/ArticleCard.astro';
-import { articles } from '../../data/articles';
-import { assetUrl } from '../../lib/paths';
-const breadcrumbs = [{ name: 'Beranda', item: '/' }, { name: 'Artikel', item: '/artikel/' }];
 ---
-<BaseLayout title="Artikel & Inspirasi Photobooth dan Undangan Digital | Ruang Kilas" description="Temukan panduan photobooth online, ide foto, dan tips undangan digital untuk merayakan momen spesialmu." breadcrumbs={breadcrumbs}>
-  <SiteHeader active="/artikel/" />
-  <main>
-    <section class="und-hero und-hero-small">
-      <div class="und-hero-inner">
-        <nav class="article-breadcrumb" aria-label="Breadcrumb"><a href={assetUrl('/')}>Beranda</a><span aria-hidden="true">/</span><span aria-current="page">Artikel</span></nav>
-        <h1>Cerita dan inspirasi<br /><em>untuk setiap momen.</em></h1>
-        <p class="und-lede">Panduan dan ide seputar photobooth, undangan digital, dan cara merayakan kebersamaan.</p>
-      </div>
-    </section>
-    <section class="und-section article-list" aria-label="Daftar artikel">
-      <div class="und-grid und-grid-3">{articles.map((article) => <ArticleCard article={article} />)}</div>
-    </section>
-  </main>
-  <SiteFooter />
-</BaseLayout>
+import ArticleIndex from '../../components/articles/ArticleIndex.astro';
+import { articles } from '../../data/articles';
+
+const pageSize = 12;
+---
+
+<ArticleIndex
+  articles={articles.slice(0, pageSize)}
+  page={1}
+  pageSize={pageSize}
+  total={articles.length}
+  pageCount={Math.ceil(articles.length / pageSize)}
+/>

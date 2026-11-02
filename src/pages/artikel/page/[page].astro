@@ -1,0 +1,25 @@
+---
+import ArticleIndex from '../../../components/articles/ArticleIndex.astro';
+import { articles } from '../../../data/articles';
+
+const pageSize = 12;
+
+export function getStaticPaths() {
+  const pageCount = Math.ceil(articles.length / 12);
+  return Array.from({ length: Math.max(0, pageCount - 1) }, (_, index) => ({
+    params: { page: String(index + 2) },
+  }));
+}
+
+const page = Number(Astro.params.page);
+const start = (page - 1) * pageSize;
+const pageCount = Math.ceil(articles.length / pageSize);
+---
+
+<ArticleIndex
+  articles={articles.slice(start, start + pageSize)}
+  page={page}
+  pageSize={pageSize}
+  total={articles.length}
+  pageCount={pageCount}
+/>
