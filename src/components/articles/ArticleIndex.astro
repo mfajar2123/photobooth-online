@@ -40,8 +40,15 @@ const categories = [...new Set(allArticles.map((article) => article.category))].
         <p class="und-lede">Panduan dan ide seputar photobooth, undangan digital, dan cara merayakan kebersamaan.</p>
       </div>
     </section>
-    <section class="und-section article-list" aria-label="Daftar artikel" data-current-page={page} data-page-size={pageSize} data-total={total}>
-      <form class="article-filters" role="search" aria-label="Cari dan filter artikel">
+    <section
+      class="und-section article-list"
+      aria-label="Daftar artikel"
+      data-base={assetUrl('/artikel/')}
+      data-page-prefix={assetUrl('/artikel/page/')}
+      data-current-page={page}
+      data-page-size={pageSize}
+    >
+      <form class="article-filters" role="search" aria-label="Cari dan filter artikel" action={assetUrl('/artikel/')} method="get">
         <label class="article-search-field">
           <span>Cari artikel</span>
           <input type="search" name="q" placeholder="Cari judul atau topik…" autocomplete="off" aria-controls="article-grid" />
@@ -56,69 +63,237 @@ const categories = [...new Set(allArticles.map((article) => article.category))].
         <button class="article-clear-filters" type="reset" hidden>Hapus filter</button>
       </form>
       <p class="article-results" aria-live="polite">Menampilkan {firstItem}–{lastItem} dari {total} artikel</p>
-      <p class="article-empty-state" role="status" hidden>Tidak ada artikel yang cocok. Coba kata kunci atau topik lain.</p>
+      <div class="article-empty-state" role="status" hidden>
+        <p>Tidak ada artikel yang cocok dengan pencarianmu. Coba kata kunci atau topik lain.</p>
+        <button class="article-empty-reset" type="button">Hapus filter</button>
+      </div>
       <div class="und-grid und-grid-3" id="article-grid">
         {allArticles.map((article, index) => (
-          <div class="article-result-item" data-category={article.category} data-search={`${article.title} ${article.category} ${article.description} ${article.sections.map((section) => section.heading).join(' ')}`} data-page={Math.ceil((index + 1) / pageSize)} hidden={Math.ceil((index + 1) / pageSize) !== page}>
+          <div
+            class="article-result-item"
+            data-category={article.category}
+            data-search={`${article.title} ${article.category} ${article.description} ${article.sections.map((section) => section.heading).join(' ')}`}
+            data-page={Math.ceil((index + 1) / pageSize)}
+            hidden={Math.ceil((index + 1) / pageSize) !== page}
+          >
             <ArticleCard article={article} />
           </div>
         ))}
       </div>
-      {pageCount > 1 && (
-        <nav class="article-pagination" aria-label="Navigasi halaman artikel">
-          {page > 1 && <a class="article-page-link article-page-previous" href={pageHref(page - 1)} rel="prev">&larr; Sebelumnya</a>}
-          <ol>
-            {visiblePages.map((pageNumber, index) => (
-              <>
-                {index > 0 && visiblePages[index - 1] !== pageNumber - 1 && <li class="article-page-ellipsis" aria-hidden="true">…</li>}
-                <li><a href={pageHref(pageNumber)} aria-label={`Halaman ${pageNumber}`} aria-current={pageNumber === page ? 'page' : undefined}>{pageNumber}</a></li>
-              </>
-            ))}
-          </ol>
-          {page < pageCount && <a class="article-page-link article-page-next" href={pageHref(page + 1)} rel="next">Berikutnya &rarr;</a>}
-        </nav>
-      )}
+      <nav class="article-pagination" aria-label="Navigasi halaman artikel" hidden={pageCount <= 1}>
+        {page > 1
+          ? <a class="article-page-link article-page-previous" href={pageHref(page - 1)} rel="prev">&larr; <span class="article-page-label">Sebelumnya</span></a>
+          : <span class="article-page-link article-page-placeholder" aria-hidden="true"></span>}
+        <ol>
+          {visiblePages.map((pageNumber, index) => (
+            <>
+              {index > 0 && visiblePages[index - 1] !== pageNumber - 1 && <li class="article-page-ellipsis" aria-hidden="true">…</li>}
+              <li><a href={pageHref(pageNumber)} aria-label={`Halaman ${pageNumber}`} aria-current={pageNumber === page ? 'page' : undefined}>{pageNumber}</a></li>
+            </>
+          ))}
+        </ol>
+        {page < pageCount
+          ? <a class="article-page-link article-page-next" href={pageHref(page + 1)} rel="next"><span class="article-page-label">Berikutnya</span> &rarr;</a>
+          : <span class="article-page-link article-page-placeholder" aria-hidden="true"></span>}
+      </nav>
     </section>
   </main>
   <script>
-    const form = document.querySelector<HTMLFormElement>('.article-filters');
-    const searchInput = form?.querySelector<HTMLInputElement>('input[name="q"]');
-    const categorySelect = form?.querySelector<HTMLSelectElement>('select[name="category"]');
-    const clearButton = form?.querySelector<HTMLButtonElement>('.article-clear-filters');
-    const resultItems = [...document.querySelectorAll<HTMLElement>('.article-result-item')];
-    const resultText = document.querySelector<HTMLElement>('.article-results');
-    const emptyState = document.querySelector<HTMLElement>('.article-empty-state');
-    const pagination = document.querySelector<HTMLElement>('.article-pagination');
-    const listSection = document.querySelector<HTMLElement>('.article-list');
-    const currentPage = Number(listSection?.dataset.currentPage ?? 1);
-    const pageSize = Number(listSection?.dataset.pageSize ?? 12);
-    const total = Number(listSection?.dataset.total ?? 0);
+    interface ArticleEntry { el: HTMLElement; category: string; text: string; }
 
-    function updateArticleResults() {
-      const query = searchInput?.value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('id') ?? '';
-      const category = categorySelect?.value ?? '';
-      const hasFilters = Boolean(query || category);
-      let visibleCount = 0;
+    const normalize = (value: string) => value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLocaleLowerCase('id')
+      .replace(/\s+/g, ' ')
+      .trim();
 
-      for (const item of resultItems) {
-        const text = (item.dataset.search ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('id');
-        const matches = (!query || text.includes(query)) && (!category || item.dataset.category === category);
-        const visible = matches && (hasFilters || Number(item.dataset.page) === currentPage);
-        item.hidden = !visible;
-        if (visible) visibleCount += 1;
-      }
+    const section = document.querySelector<HTMLElement>('.article-list');
 
-      if (resultText) resultText.textContent = hasFilters
-        ? `${visibleCount} artikel ditemukan`
-        : `Menampilkan ${Math.min((currentPage - 1) * pageSize + 1, total)}–${Math.min(currentPage * pageSize, total)} dari ${total} artikel`;
-      if (emptyState) emptyState.hidden = visibleCount > 0;
-      if (pagination) pagination.hidden = hasFilters;
-      if (clearButton) clearButton.hidden = !hasFilters;
+    if (section) {
+      const form = section.querySelector<HTMLFormElement>('.article-filters');
+      const searchInput = form?.querySelector<HTMLInputElement>('input[name="q"]');
+      const categorySelect = form?.querySelector<HTMLSelectElement>('select[name="category"]');
+      const clearButton = form?.querySelector<HTMLButtonElement>('.article-clear-filters');
+      const emptyState = section.querySelector<HTMLElement>('.article-empty-state');
+      const emptyReset = section.querySelector<HTMLButtonElement>('.article-empty-reset');
+      const grid = section.querySelector<HTMLElement>('#article-grid');
+      const resultsText = section.querySelector<HTMLElement>('.article-results');
+      const pagination = section.querySelector<HTMLElement>('.article-pagination');
+
+      const base = section.dataset.base ?? '/artikel/';
+      const pagePrefix = section.dataset.pagePrefix ?? `${base}page/`;
+      const pageSize = Number(section.dataset.pageSize ?? 12) || 12;
+      const initialPage = Math.max(1, Number(section.dataset.currentPage ?? 1) || 1);
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const entries: ArticleEntry[] = [...section.querySelectorAll<HTMLElement>('.article-result-item')].map((el) => ({
+        el,
+        category: el.dataset.category ?? '',
+        text: normalize(el.dataset.search ?? ''),
+      }));
+
+      const state = { query: '', category: '', page: initialPage };
+      const hasFilters = () => Boolean(state.query || state.category);
+
+      const filteredEntries = () => {
+        const tokens = normalize(state.query).split(' ').filter(Boolean);
+        return entries.filter((entry) => {
+          if (state.category && entry.category !== state.category) return false;
+          return tokens.every((token) => entry.text.includes(token));
+        });
+      };
+
+      const pageHref = (pageNumber: number) => {
+        if (!hasFilters()) return pageNumber === 1 ? base : `${pagePrefix}${pageNumber}/`;
+        const params = new URLSearchParams();
+        if (state.query) params.set('q', state.query);
+        if (state.category) params.set('category', state.category);
+        if (pageNumber > 1) params.set('page', String(pageNumber));
+        const query = params.toString();
+        return query ? `${base}?${query}` : base;
+      };
+
+      const pageNumbers = (totalPages: number) => {
+        const pages: number[] = [];
+        for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
+          if (pageNumber === 1 || pageNumber === totalPages || Math.abs(pageNumber - state.page) <= 1) pages.push(pageNumber);
+        }
+        return pages;
+      };
+
+      const renderPagination = (totalPages: number) => {
+        if (!pagination) return;
+        if (totalPages <= 1) {
+          pagination.hidden = true;
+          pagination.replaceChildren();
+          return;
+        }
+
+        pagination.hidden = false;
+        const pages = pageNumbers(totalPages);
+        const items: string[] = [];
+        pages.forEach((pageNumber, index) => {
+          if (index > 0 && pages[index - 1] !== pageNumber - 1) {
+            items.push('<li class="article-page-ellipsis" aria-hidden="true">…</li>');
+          }
+          const current = pageNumber === state.page ? ' aria-current="page"' : '';
+          items.push(`<li><a href="${pageHref(pageNumber)}" aria-label="Halaman ${pageNumber}"${current}>${pageNumber}</a></li>`);
+        });
+
+        const previous = state.page > 1
+          ? `<a class="article-page-link article-page-previous" href="${pageHref(state.page - 1)}" rel="prev">&larr; <span class="article-page-label">Sebelumnya</span></a>`
+          : '<span class="article-page-link article-page-placeholder" aria-hidden="true"></span>';
+        const next = state.page < totalPages
+          ? `<a class="article-page-link article-page-next" href="${pageHref(state.page + 1)}" rel="next"><span class="article-page-label">Berikutnya</span> &rarr;</a>`
+          : '<span class="article-page-link article-page-placeholder" aria-hidden="true"></span>';
+
+        pagination.innerHTML = `${previous}<ol>${items.join('')}</ol>${next}`;
+      };
+
+      const render = (options: { scroll?: boolean } = {}) => {
+        const list = filteredEntries();
+        const totalPages = Math.max(1, Math.ceil(list.length / pageSize));
+        state.page = Math.min(Math.max(state.page, 1), totalPages);
+
+        const startIndex = (state.page - 1) * pageSize;
+        const visible = new Set(list.slice(startIndex, startIndex + pageSize).map((entry) => entry.el));
+        for (const entry of entries) entry.el.hidden = !visible.has(entry.el);
+
+        const filtered = hasFilters();
+        if (clearButton) clearButton.hidden = !filtered;
+        if (emptyState) emptyState.hidden = list.length > 0;
+        if (grid) grid.hidden = list.length === 0;
+        if (resultsText) {
+          resultsText.textContent = list.length === 0
+            ? '0 artikel ditemukan.'
+            : `Menampilkan ${startIndex + 1}–${Math.min(startIndex + pageSize, list.length)} dari ${list.length} artikel${filtered ? ' yang cocok' : ''}`;
+        }
+
+        renderPagination(totalPages);
+
+        if (options.scroll && list.length > 0) {
+          form?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+        }
+      };
+
+      const syncUrl = (mode: 'push' | 'replace') => {
+        const url = pageHref(state.page);
+        if (mode === 'push') history.pushState({ page: state.page }, '', url);
+        else history.replaceState({ page: state.page }, '', url);
+      };
+
+      const readUrlState = () => {
+        const params = new URLSearchParams(window.location.search);
+        const pathMatch = window.location.pathname.match(/\/artikel\/page\/(\d+)\/?$/);
+        const urlPage = Number(params.get('page') ?? pathMatch?.[1] ?? initialPage);
+        let query = params.get('q') ?? '';
+        let category = params.get('category') ?? '';
+
+        if (category && categorySelect && ![...categorySelect.options].some((option) => option.value === category)) {
+          category = '';
+        }
+
+        state.query = query;
+        state.category = category;
+        state.page = Number.isFinite(urlPage) && urlPage > 0 ? urlPage : initialPage;
+        if (searchInput) searchInput.value = query;
+        if (categorySelect) categorySelect.value = category;
+      };
+
+      const applyFilters = () => {
+        state.query = searchInput?.value.trim() ?? '';
+        state.category = categorySelect?.value ?? '';
+        state.page = 1;
+        syncUrl('replace');
+        render();
+      };
+
+      let inputTimer: number | undefined;
+      searchInput?.addEventListener('input', () => {
+        window.clearTimeout(inputTimer);
+        inputTimer = window.setTimeout(applyFilters, 140);
+      });
+      searchInput?.addEventListener('search', () => {
+        window.clearTimeout(inputTimer);
+        applyFilters();
+      });
+      categorySelect?.addEventListener('change', applyFilters);
+      form?.addEventListener('reset', () => {
+        window.setTimeout(() => {
+          state.query = '';
+          state.category = '';
+          state.page = 1;
+          syncUrl('replace');
+          render();
+        }, 0);
+      });
+      emptyReset?.addEventListener('click', () => form?.reset());
+
+      pagination?.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement | null;
+        const link = target?.closest<HTMLAnchorElement>('a[href]');
+        if (!link || !pagination.contains(link)) return;
+
+        event.preventDefault();
+        const url = new URL(link.href, window.location.href);
+        const pathMatch = url.pathname.match(/\/artikel\/page\/(\d+)\/?$/);
+        const pageNumber = Number(url.searchParams.get('page') ?? pathMatch?.[1] ?? 1);
+        if (!Number.isFinite(pageNumber) || pageNumber < 1) return;
+
+        state.page = pageNumber;
+        syncUrl('push');
+        render({ scroll: true });
+      });
+
+      window.addEventListener('popstate', () => {
+        readUrlState();
+        render();
+      });
+
+      readUrlState();
+      render();
     }
-
-    searchInput?.addEventListener('input', updateArticleResults);
-    categorySelect?.addEventListener('change', updateArticleResults);
-    form?.addEventListener('reset', () => requestAnimationFrame(updateArticleResults));
   </script>
   <SiteFooter />
 </BaseLayout>
