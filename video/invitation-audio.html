@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="id">
+<head><meta charset="utf-8" /><title>Invitation music generator</title></head>
+<body>
+  <canvas id="unused" width="8" height="8"></canvas>
+  <script>
+/**
+ * Five instrumental wedding/love arrangements from public-domain compositions.
+ * Original synthesized recordings by Ruang Kilas. No commercial masters.
+ */
+const SR = 48000;
+const DURATION = 32;
+const SEMITONES = { C: 0, 'C#': 1, D: 2, 'D#': 3, E: 4, F: 5, 'F#': 6, G: 7, 'G#': 8, A: 9, 'A#': 10, B: 11 };
+
+function freq(note) {
+  const match = /^([A-G]#?)(-?\d)$/.exec(note);
+  if (!match) return 440;
+  const midi = 60 + SEMITONES[match[1]] + (Number(match[2]) - 4) * 12;
+  return 440 * Math.pow(2, (midi - 69) / 12);
+}
+
+const TRACKS = {
+  canon: {
+    title: 'Canon in D',
+    chords: [
+      ['D3', 'F#3', 'A3'], ['A2', 'C#3', 'E3'], ['B2', 'D3', 'F#3'], ['F#2', 'A2', 'C#3'],
+      ['G2', 'B2', 'D3'], ['D3', 'F#3', 'A3'], ['G2', 'B2', 'D3'], ['A2', 'C#3', 'E3'],
+    ],
+    melody: [
+      ['F#5', 0, 1], ['E5', 1, 1], ['D5', 2, 1], ['C#5', 3, 1],
+      ['B4', 4, 1], ['A4', 5, 1], ['B4', 6, 1], ['C#5', 7, 1],
+      ['D5', 8, 1], ['C#5', 9, 1], ['B4', 10, 1], ['A4', 11, 1],
+      ['G4', 12, 1], ['F#4', 13, 1], ['G4', 14, 1], ['A4', 15, 1],
+      ['B4', 16, 1], ['A4', 17, 1], ['G4', 18, 1], ['F#4', 19, 1],
+      ['G4', 20, 1], ['F#4', 21, 1], ['E4', 22, 1], ['D4', 23, 1],
+      ['B4', 24, 1], ['A4', 25, 1], ['G4', 26, 1], ['F#4', 27, 1],
+      ['E4', 28, 1], ['D4', 29, 1], ['C#4', 30, 1], ['D4', 31, 1],
+    ],
+    arpPattern: [0, 1, 2, 1, 0, 2, 1, 2],
+    arpOctave: 2,
+    padGain: 0.018,
+    bassGain: 0.055,
+    arpGain: 0.018,
+    leadType: 'triangle',
+    leadGain: 0.052,
+    leadAttack: 0.02,
+    leadDecay: 1.0,
+  },
+  bridal: {
+    title: 'Bridal Chorus',
+    chords: [
+      ['C3', 'E3', 'G3'], ['G2', 'B2', 'D3'], ['A2', 'C3', 'E3'], ['F2', 'A2', 'C3'],
+      ['C3', 'E3', 'G3'], ['G2', 'B2', 'D3'], ['C3', 'E3', 'G3'], ['G2', 'B2', 'D3'],
+    ],
+    melody: [
+      ['G4', 0, 2], ['G4', 2, 1], ['C5', 3, 1],
+      ['B4', 4, 1], ['A4', 5, 1], ['G4', 6, 2],
+      ['A4', 8, 2], ['A4', 10, 1], ['D5', 11, 1],
+      ['C5', 12, 1], ['B4', 13, 1], ['A4', 14, 2],
+      ['G4', 16, 2], ['G4', 18, 1], ['C5', 19, 1],
+      ['B4', 20, 1], ['A4', 21, 1], ['G4', 22, 2],
+      ['C5', 24, 2], ['D5', 26, 1], ['E5', 27, 1],
+      ['D5', 28, 1], ['B4', 29, 1], ['G4', 30, 2],
+    ],
+    arpPattern: [0, 1, 2, 2, 1, 0, 1, 2],
+    arpOctave: 2,
+    padGain: 0.02,
+    bassGain: 0.05,
+    arpGain: 0.015,
+    leadType: 'sawtooth',
+    leadGain: 0.034,
+    leadAttack: 0.02,
+    leadDecay: 0.8,
+    leadFilter: 2000,
+  },
+  air: {
+    title: 'Air on the G String',
+    chords: [
+      ['D3', 'F#3', 'A3'], ['A2', 'C#3', 'E3'], ['B2', 'D3', 'F#3'], ['F#2', 'A2', 'C#3'],
+      ['G2', 'B2', 'D3'], ['D3', 'F#3', 'A3'], ['G2', 'B2', 'D3'], ['A2', 'C#3', 'E3'],
+    ],
+    melody: [
+      ['A4', 0, 2], ['B4', 2, 2], ['C#5', 4, 2], ['D5', 6, 2],
+      ['E5', 8, 2], ['F#5', 10, 2], ['E5', 12, 2], ['D5', 14, 2],
+      ['C#5', 16, 2], ['B4', 18, 2], ['A4', 20, 2], ['G4', 22, 2],
+      ['F#4', 24, 2], ['G4', 26, 2], ['A4', 28, 4],
+    ],
+    arpPattern: [0, 1, 2, 1, 0, 2, 1, 0],
+    arpOctave: 2,
+    padGain: 0.016,
+    bassGain: 0.045,
+    arpGain: 0.014,
+    leadType: 'triangle',
+    leadGain: 0.05,
+    leadAttack: 0.08,
+    leadDecay: 1.6,
+    vibrato: true,
+  },
+  clair: {
+    title: 'Clair de Lune',
+    chords: [
+      ['C3', 'E3', 'G3'], ['A2', 'C3', 'E3'], ['F2', 'A2', 'C3'], ['G2', 'B2', 'D3'],
+      ['E2', 'G2', 'B2'], ['A2', 'C3', 'E3'], ['D2', 'F2', 'A2'], ['G2', 'B2', 'D3'],
+    ],
+    melody: [
+      ['E5', 0, 2], ['G5', 2, 2], ['C5', 4, 2], ['B4', 6, 2],
+      ['A4', 8, 2], ['G4', 10, 2], ['E4', 12, 4],
+      ['G4', 16, 2], ['A4', 18, 2], ['C5', 20, 2], ['E5', 22, 2],
+      ['D5', 24, 2], ['C5', 26, 2], ['A4', 28, 4],
+    ],
+    arpPattern: [0, 2, 1, 2, 0, 1, 2, 1],
+    arpOctave: 2,
+    padGain: 0.012,
+    bassGain: 0.04,
+    arpGain: 0.022,
+    leadType: 'triangle',
+    leadGain: 0.045,
+    leadAttack: 0.03,
+    leadDecay: 2.0,
+    reverb: 0.34,
+  },
+  ave: {
+    title: 'Ave Maria',
+    chords: [
+      ['C3', 'E3', 'G3'], ['G2', 'B2', 'D3'], ['A2', 'C3', 'E3'], ['F2', 'A2', 'C3'],
+      ['C3', 'E3', 'G3'], ['G2', 'B2', 'D3'], ['C3', 'E3', 'G3'], ['G2', 'B2', 'D3'],
+    ],
+    melody: [
+      ['G4', 0, 2], ['A4', 2, 2], ['B4', 4, 2], ['C5', 6, 2],
+      ['B4', 8, 2], ['A4', 10, 2], ['G4', 12, 2], ['E4', 14, 2],
+      ['G4', 16, 2], ['A4', 18, 2], ['B4', 20, 2], ['C5', 22, 2],
+      ['D5', 24, 2], ['C5', 26, 2], ['B4', 28, 4],
+    ],
+    arpPattern: [0, 1, 2, 1, 0, 1, 2, 1],
+    arpOctave: 2,
+    padGain: 0.022,
+    bassGain: 0.05,
+    arpGain: 0.014,
+    leadType: 'sine',
+    leadGain: 0.058,
+    leadAttack: 0.08,
+    leadDecay: 1.8,
+    vibrato: true,
+  },
+};
+
+function makeReverb(context) {
+  const length = Math.floor(context.sampleRate * 1.8);
+  const impulse = context.createBuffer(2, length, context.sampleRate);
+  for (let channel = 0; channel < 2; channel += 1) {
+    const data = impulse.getChannelData(channel);
+    for (let i = 0; i < length; i += 1) {
+      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 3) * 0.32;
+    }
+  }
+  const convolver = context.createConvolver();
+  convolver.buffer = impulse;
+  return convolver;
+}
+
+function schedule(track, context, master, reverb) {
+  const beat = 60 / 60;
+  const bar = beat * 4;
+  const at = (seconds) => seconds;
+
+  const tone = (time, opts) => {
+    const {
+      frequency, type = 'sine', gain = 0.05, attack = 0.01, decay = 0.6,
+      filterFrequency = null, vibrato = false,
+    } = opts;
+    const osc = context.createOscillator();
+    osc.type = type;
+    osc.frequency.value = frequency;
+    const amp = context.createGain();
+    amp.gain.setValueAtTime(0.0001, time);
+    amp.gain.exponentialRampToValueAtTime(gain, time + attack);
+    amp.gain.exponentialRampToValueAtTime(0.0001, time + attack + decay);
+    let node = osc;
+    if (filterFrequency) {
+      const filter = context.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = filterFrequency;
+      node.connect(filter);
+      node = filter;
+    }
+    if (vibrato) {
+      const lfo = context.createOscillator();
+      lfo.frequency.value = 5.1;
+      const lfoGain = context.createGain();
+      lfoGain.gain.value = frequency * 0.006;
+      lfo.connect(lfoGain);
+      lfoGain.connect(osc.frequency);
+      lfo.start(time);
+      lfo.stop(time + attack + decay + 0.05);
+    }
+    node.connect(amp);
+    amp.connect(master);
+    amp.connect(reverb);
+    osc.start(time);
+    osc.stop(time + attack + decay + 0.05);
+  };
+
+  for (let barIndex = 0; barIndex < 8; barIndex += 1) {
+    const start = barIndex * bar;
+    const chord = track.chords[barIndex % track.chords.length];
+
+    chord.forEach((note, index) => {
+      const osc = context.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = freq(note) * (index === 0 ? 0.5 : 1);
+      const amp = context.createGain();
+      amp.gain.setValueAtTime(0.0001, start);
+      amp.gain.exponentialRampToValueAtTime(track.padGain, start + 0.9);
+      amp.gain.setValueAtTime(track.padGain, start + bar - 0.6);
+      amp.gain.exponentialRampToValueAtTime(0.0001, start + bar);
+      osc.connect(amp);
+      amp.connect(master);
+      amp.connect(reverb);
+      osc.start(start);
+      osc.stop(start + bar + 0.05);
+    });
+
+    [0, 2].forEach((offset) => {
+      tone(start + offset * beat, {
+        frequency: freq(chord[0]) / 2,
+        type: 'triangle',
+        gain: track.bassGain,
+        attack: 0.01,
+        decay: beat * 1.5,
+        filterFrequency: 300,
+      });
+    });
+
+    track.arpPattern.forEach((index, step) => {
+      const note = chord[index % chord.length];
+      const octave = step % 4 === 3 ? 2 : 1;
+      tone(start + step * (beat / 2), {
+        frequency: freq(note) * octave * track.arpOctave,
+        type: 'triangle',
+        gain: track.arpGain,
+        attack: 0.005,
+        decay: beat * 0.45,
+        filterFrequency: 2400,
+      });
+    });
+  }
+
+  track.melody.forEach(([note, startBeat, durationBeats]) => {
+    tone(startBeat * beat, {
+      frequency: freq(note),
+      type: track.leadType,
+      gain: track.leadGain,
+      attack: track.leadAttack,
+      decay: Math.min(durationBeats * beat * 0.95, track.leadDecay),
+      filterFrequency: track.leadFilter,
+      vibrato: track.vibrato,
+    });
+  });
+}
+
+function encodeWav(buffer) {
+  const channels = buffer.numberOfChannels;
+  const frames = buffer.length;
+  const blockAlign = channels * 2;
+  const dataSize = frames * blockAlign;
+  const view = new DataView(new ArrayBuffer(44 + dataSize));
+  const writeString = (offset, value) => { for (let i = 0; i < value.length; i += 1) view.setUint8(offset + i, value.charCodeAt(i)); };
+  writeString(0, 'RIFF');
+  view.setUint32(4, 36 + dataSize, true);
+  writeString(8, 'WAVE');
+  writeString(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, channels, true);
+  view.setUint32(24, buffer.sampleRate, true);
+  view.setUint32(28, buffer.sampleRate * blockAlign, true);
+  view.setUint16(32, blockAlign, true);
+  view.setUint16(34, 16, true);
+  writeString(36, 'data');
+  view.setUint32(40, dataSize, true);
+  const data = [];
+  for (let c = 0; c < channels; c += 1) data.push(buffer.getChannelData(c));
+  let offset = 44;
+  for (let f = 0; f < frames; f += 1) {
+    for (let c = 0; c < channels; c += 1) {
+      const sample = Math.max(-1, Math.min(1, data[c][f]));
+      view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7fff, true);
+      offset += 2;
+    }
+  }
+  const bytes = new Uint8Array(view.buffer);
+  let binary = '';
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+  return btoa(binary);
+}
+
+window.renderTrack = async function renderTrack(id) {
+  const track = TRACKS[id];
+  if (!track) throw new Error(`Unknown track: ${id}`);
+  const offline = new OfflineAudioContext(2, Math.ceil(SR * DURATION), SR);
+  const master = offline.createGain();
+  master.gain.setValueAtTime(0.0001, 0);
+  master.gain.exponentialRampToValueAtTime(0.85, 0.9);
+  master.gain.setValueAtTime(0.85, DURATION - 1.4);
+  master.gain.exponentialRampToValueAtTime(0.0001, DURATION);
+  master.connect(offline.destination);
+
+  const reverb = makeReverb(offline);
+  const wet = offline.createGain();
+  const wetLevel = track.reverb ?? 0.22;
+  wet.gain.setValueAtTime(0.0001, 0);
+  wet.gain.exponentialRampToValueAtTime(wetLevel, 0.9);
+  wet.gain.setValueAtTime(wetLevel, DURATION - 1.4);
+  wet.gain.exponentialRampToValueAtTime(0.0001, DURATION);
+  reverb.connect(wet);
+  wet.connect(offline.destination);
+
+  schedule(track, offline, master, reverb);
+  const buffer = await offline.startRendering();
+  return encodeWav(buffer);
+};
+
+window.__tracks = Object.keys(TRACKS);
+window.__ready = true;
+  </script>
+</body>
+</html>

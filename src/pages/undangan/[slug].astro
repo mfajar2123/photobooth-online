@@ -62,6 +62,15 @@ const themeStyle = `--inv-surface: ${template.surface}; --inv-accent: ${template
   extraSchema={eventSchema}
   noindex={true}
 >
+  <script is:inline>
+    document.documentElement.classList.add('inv-reveal-ready');
+    window.setTimeout(function () {
+      if (document.documentElement.dataset.invRevealReady === 'true') return;
+      document.querySelectorAll('.inv-section, .inv-closing').forEach(function (element) {
+        element.classList.add('is-visible');
+      });
+    }, 2500);
+  </script>
   <SiteHeader ctaLabel="Buat undangan" ctaHref="/undangan/custom/" />
 
   <div class="inv-page" data-theme={invitation.theme} style={themeStyle}>

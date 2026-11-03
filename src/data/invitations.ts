@@ -58,7 +58,19 @@ export interface Invitation {
   };
 }
 
-const MUSIC = { title: 'A Quiet Vow', artist: 'Ruang Kilas Studio', src: '/audio/undangan-theme.mp3' };
+const MUSIC_TRACKS = [
+  { title: 'Canon in D', artist: 'Pachelbel · Ruang Kilas arrangement', src: '/audio/undangan-canon.mp3' },
+  { title: 'Bridal Chorus', artist: 'Wagner · Ruang Kilas arrangement', src: '/audio/undangan-bridal.mp3' },
+  { title: 'Air on the G String', artist: 'Bach · Ruang Kilas arrangement', src: '/audio/undangan-air.mp3' },
+  { title: 'Clair de Lune', artist: 'Debussy · Ruang Kilas arrangement', src: '/audio/undangan-clair.mp3' },
+  { title: 'Ave Maria', artist: 'Schubert · Ruang Kilas arrangement', src: '/audio/undangan-ave.mp3' },
+];
+
+function musicForSlug(slug: string) {
+  let hash = 0;
+  for (const character of slug) hash = (hash * 37 + character.charCodeAt(0)) >>> 0;
+  return MUSIC_TRACKS[hash % MUSIC_TRACKS.length];
+}
 
 export const invitations: Invitation[] = [
   {
@@ -133,7 +145,7 @@ export const invitations: Invitation[] = [
       { src: '/images/invitations/inv-15.jpg', alt: 'Mempelai di depan bangunan', caption: 'Hari itu' },
       { src: '/images/invitations/inv-17.jpg', alt: 'Mempelai berpelukan', caption: 'Rumah' },
     ],
-    music: MUSIC,
+    music: musicForSlug('rifqi-aulya'),
     extras: {
       gift: { bank: 'BCA', number: '1234567890', holder: 'Aulya Rahmadani' },
       hashtag: '#RifqiAulyaForever',
@@ -211,7 +223,7 @@ export const invitations: Invitation[] = [
       { src: '/images/invitations/inv-01.jpg', alt: 'Detail cincin', caption: 'Cincin' },
       { src: '/images/invitations/inv-04.jpg', alt: 'Mempelai berjalan di lorong', caption: 'Lorong' },
     ],
-    music: MUSIC,
+    music: musicForSlug('dimas-nabila'),
     extras: {
       gift: { bank: 'Mandiri', number: '9876543210', holder: 'Nabila Putri Larasati' },
       hashtag: '#DimasNabila',
@@ -289,7 +301,7 @@ export const invitations: Invitation[] = [
       { src: '/images/invitations/inv-02.jpg', alt: 'Potret close up', caption: 'Salsa' },
       { src: '/images/invitations/inv-07.jpg', alt: 'Potret mempelai wanita', caption: 'Tenang' },
     ],
-    music: MUSIC,
+    music: musicForSlug('andi-salsa'),
     extras: {
       livestreamUrl: 'https://www.youtube.com/',
       gift: { bank: 'BNI', number: '1122334455', holder: 'Salsabila Ayu Kirana' },
@@ -303,7 +315,8 @@ for (const [theme, label, base] of [
   ['monokrom', 'Monokrom', 0], ['kertas', 'Kertas', 1], ['senja', 'Senja', 2],
   ['pita', 'Pita', 1], ['rimba', 'Rimba', 2], ['marmer', 'Marmer', 0],
 ] as const) {
-  invitations.push({ ...invitations[base], slug: 'demo-' + theme, theme, label });
+  const slug = 'demo-' + theme;
+  invitations.push({ ...invitations[base], slug, theme, label, music: musicForSlug(slug) });
 }
 
 export function getInvitation(slug: string): Invitation | undefined {

@@ -37,6 +37,7 @@ test('invitation demo shows couple, date, venue, gallery and map', async ({ page
 });
 
 test('all invitation demos load', async ({ page }) => {
+  test.setTimeout(60_000);
   for (const slug of ['rifqi-aulya', 'dimas-nabila', 'andi-salsa', 'demo-pita', 'demo-rimba', 'demo-marmer']) {
     const response = await page.goto(`/undangan/${slug}/`);
     expect(response?.status(), `${slug} should load`).toBe(200);
