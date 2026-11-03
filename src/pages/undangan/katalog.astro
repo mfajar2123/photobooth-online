@@ -43,7 +43,7 @@ const categories = ['Semua', ...invitationTemplates.map((item) => item.name)];
         ))}
       </div>
 
-      <p class="und-results" role="status" aria-live="polite" id="template-count">6 template untuk dijelajahi</p>
+      <p class="und-results" role="status" aria-live="polite" id="template-count">{invitationTemplates.length} template untuk dijelajahi</p>
       <div class="und-grid und-grid-3" id="template-grid">
         {invitationTemplates.map((template) => (
           <article class="und-card und-template" data-category={template.name}>

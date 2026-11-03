@@ -20,7 +20,7 @@ test('homepage balances two product photos without covering the hero text', asyn
   }
 });
 
-for (const route of ['undangan', 'undangan/katalog', 'undangan/portofolio']) {
+for (const route of ['undangan', 'undangan/katalog']) {
   for (const width of [390, 1440]) {
     test(`${route} is readable and has no clipped cards at ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 900 });
@@ -32,7 +32,7 @@ for (const route of ['undangan', 'undangan/katalog', 'undangan/portofolio']) {
           const grid = heading.nextElementSibling!;
           return grid.getBoundingClientRect().top - heading.getBoundingClientRect().bottom;
         }));
-        expect(gaps).toHaveLength(2);
+        expect(gaps).toHaveLength(1);
         for (const gap of gaps) expect(gap).toBeGreaterThanOrEqual(28);
       }
       for (const img of await page.locator('.und-card img').all()) {

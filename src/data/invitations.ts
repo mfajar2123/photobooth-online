@@ -1,4 +1,4 @@
-export type InvitationTheme = 'serat' | 'linen' | 'garden' | 'monokrom' | 'kertas' | 'senja';
+export type InvitationTheme = 'serat' | 'linen' | 'garden' | 'monokrom' | 'kertas' | 'senja' | 'pita' | 'rimba' | 'marmer';
 
 export interface InvitationPerson {
   name: string;
@@ -301,6 +301,7 @@ export const invitations: Invitation[] = [
 // Contoh tambahan menggunakan data demonstrasi yang sama agar setiap desain dapat dicoba.
 for (const [theme, label, base] of [
   ['monokrom', 'Monokrom', 0], ['kertas', 'Kertas', 1], ['senja', 'Senja', 2],
+  ['pita', 'Pita', 1], ['rimba', 'Rimba', 2], ['marmer', 'Marmer', 0],
 ] as const) {
   invitations.push({ ...invitations[base], slug: 'demo-' + theme, theme, label });
 }

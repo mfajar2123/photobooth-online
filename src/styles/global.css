@@ -913,8 +913,41 @@ h1, h2, h3, p { margin-top: 0; }
 }
 
 /* ------------------------------------------------------- undangan digital */
-.inv-page { background: var(--inv-surface, var(--cream)); color: var(--ink); }
-.inv-page main { overflow-x: clip; }
+.inv-page {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--inv-surface, var(--cream));
+  background-image:
+    radial-gradient(ellipse at 12% 0%, color-mix(in srgb, var(--inv-accent, var(--poppy)) 14%, transparent), transparent 44%),
+    radial-gradient(ellipse at 100% 100%, color-mix(in srgb, var(--inv-accent, var(--poppy)) 10%, transparent), transparent 48%),
+    repeating-linear-gradient(45deg, rgba(18, 18, 18, .018) 0 1px, transparent 1px 4px);
+  color: var(--ink);
+}
+.inv-page main { position: relative; z-index: 1; overflow-x: clip; }
+.inv-decor {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  color: var(--inv-accent, var(--poppy));
+  opacity: .34;
+  -webkit-mask-image: radial-gradient(ellipse at center, transparent 0 34%, #000 78%);
+  mask-image: radial-gradient(ellipse at center, transparent 0 34%, #000 78%);
+}
+.inv-decor-svg { display: block; width: 100%; height: 100%; }
+.inv-page[data-theme="garden"] .inv-decor,
+.inv-page[data-theme="monokrom"] .inv-decor,
+.inv-page[data-theme="kertas"] .inv-decor,
+.inv-page[data-theme="senja"] .inv-decor { opacity: .2; }
+.inv-page[data-theme="marmer"] .inv-decor { opacity: .42; }
+@media (max-width: 700px) {
+  .inv-decor {
+    opacity: .4;
+    -webkit-mask-image: linear-gradient(to bottom, #000 0 14%, transparent 24% 76%, #000 86% 100%);
+    mask-image: linear-gradient(to bottom, #000 0 14%, transparent 24% 76%, #000 86% 100%);
+  }
+}
 
 .inv-section { max-width: 1080px; margin: 0 auto; padding: clamp(56px, 8vw, 100px) clamp(20px, 6vw, 64px); }
 .inv-section + .inv-section { border-top: 1.5px solid rgba(18, 18, 18, .16); }
@@ -925,7 +958,20 @@ h1, h2, h3, p { margin-top: 0; }
 .inv-cover { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 22px; overflow: hidden; background: var(--ink); }
 .inv-cover-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .62; }
 .inv-cover-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(18,18,18,.5), rgba(18,18,18,.2) 45%, rgba(18,18,18,.78)); }
-.inv-cover-card { position: relative; z-index: 2; width: min(560px, 100%); padding: clamp(26px, 6vw, 44px); text-align: center; border: 2px solid var(--ink); background: var(--cream); box-shadow: 8px 8px 0 var(--ink); }
+.inv-cover-card { position: relative; z-index: 2; width: min(560px, 100%); padding: clamp(26px, 6vw, 44px); text-align: center; border: 2px solid var(--ink); background: var(--cream); box-shadow: 8px 8px 0 var(--ink); overflow: hidden; }
+.inv-cover-card::before { content: ""; position: absolute; inset: 10px; border: 1px solid var(--inv-accent, var(--poppy)); opacity: .35; pointer-events: none; }
+.inv-cover-card::after { content: "✦"; position: absolute; top: 5px; left: 50%; transform: translateX(-50%); color: var(--inv-accent, var(--poppy)); font-size: 12px; line-height: 1; opacity: .8; }
+.inv-cover-card > * { position: relative; z-index: 1; }
+.inv-page[data-theme="pita"] .inv-cover-card,
+.inv-page[data-theme="rimba"] .inv-cover-card,
+.inv-page[data-theme="marmer"] .inv-cover-card { background: var(--inv-surface); }
+.inv-page[data-theme="linen"] .inv-cover-card::after { content: "✿"; }
+.inv-page[data-theme="garden"] .inv-cover-card::after { content: "❀"; }
+.inv-page[data-theme="rimba"] .inv-cover-card::after { content: "❧"; }
+.inv-page[data-theme="monokrom"] .inv-cover-card::after { content: "◆"; }
+.inv-page[data-theme="kertas"] .inv-cover-card::after { content: "✎"; }
+.inv-page[data-theme="senja"] .inv-cover-card::after { content: "☀"; }
+.inv-page[data-theme="pita"] .inv-cover-card::after { content: "♡"; }
 .inv-cover-names { margin: 6px 0 10px; font: 800 clamp(40px, 10vw, 64px)/1 var(--display); letter-spacing: -.05em; }
 .inv-cover-date { margin: 0 0 4px; font: 600 12px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 .inv-cover-hashtag { margin: 0 0 18px; font: 600 11px var(--mono); letter-spacing: .08em; color: var(--poppy); }

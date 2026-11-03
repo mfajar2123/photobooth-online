@@ -23,7 +23,6 @@ export const productLinks: NavItem[] = [
 ];
 
 export const primaryLinks: NavItem[] = [
-  { label: 'Portofolio', href: '/undangan/portofolio/' },
   { label: 'Artikel', href: '/artikel/' },
   { label: 'Panduan', href: '/panduan/' },
   { label: 'Tentang', href: '/brand/' },
@@ -38,7 +37,6 @@ export const footerLinks = {
   ],
   informasi: [
     { label: 'Artikel', href: '/artikel/' },
-    { label: 'Portofolio', href: '/undangan/portofolio/' },
     { label: 'Panduan Studio', href: '/panduan/' },
     { label: 'Ketentuan Layanan', href: '/terms/' },
     { label: 'Panduan Brand', href: '/brand/' },

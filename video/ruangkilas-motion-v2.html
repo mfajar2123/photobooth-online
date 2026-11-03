@@ -1,0 +1,1399 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <title>Ruang Kilas — 16:9 motion v2 (20s)</title>
+  <style>
+    @font-face {
+      font-family: 'Montserrat V';
+      src: url('/node_modules/@fontsource-variable/montserrat/files/montserrat-latin-wght-normal.woff2') format('woff2');
+      font-weight: 100 900;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'Lora V';
+      src: url('/node_modules/@fontsource-variable/lora/files/lora-latin-wght-normal.woff2') format('woff2');
+      font-weight: 400 700;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'JetBrains Mono';
+      src: url('/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-500-normal.woff2') format('woff2');
+      font-weight: 500;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'JetBrains Mono';
+      src: url('/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-700-normal.woff2') format('woff2');
+      font-weight: 700;
+      font-display: block;
+    }
+    html, body { margin: 0; background: #121212; }
+    canvas { display: block; width: 100vw; height: auto; }
+  </style>
+</head>
+<body>
+  <canvas id="stage" width="1920" height="1080"></canvas>
+  <script>
+/**
+ * Ruang Kilas — 20s brand motion v2 (16:9, audio: synth score + SFX)
+ * Adds the two newest site pillars: undangan digital and artikel.
+ * Design system: butter #FFF3B0, cream #FFFDF5, sky #8ECAE6, poppy #E63946, ink #121212.
+ */
+const W = 1920;
+const H = 1080;
+const DURATION = 20;
+
+const C = {
+  ink: '#121212',
+  cream: '#FFFDF5',
+  butter: '#FFF3B0',
+  sky: '#8ECAE6',
+  poppy: '#E63946',
+  muted: '#4E493E',
+  paper: '#F1EAD9',
+  coquette: '#F8DFE8',
+  yearbook: '#E9E3D5',
+};
+
+const DISPLAY = '"Montserrat V", Arial, sans-serif';
+const BODY = '"Lora V", Georgia, serif';
+const MONO = '"JetBrains Mono", monospace';
+
+const canvas = document.getElementById('stage');
+const ctx = canvas.getContext('2d');
+
+const photos = {
+  friends: null,
+  wedding: null,
+  invitationHook: null,
+  invitationCover: null,
+  articleBirthday: null,
+};
+
+const clamp01 = (value) => Math.max(0, Math.min(1, value));
+const seg = (t, a, b) => (b === a ? (t >= b ? 1 : 0) : clamp01((t - a) / (b - a)));
+const easeOut = (t) => 1 - Math.pow(1 - clamp01(t), 3);
+const easeInOut = (t) => {
+  const x = clamp01(t);
+  return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+};
+const lerp = (a, b, t) => a + (b - a) * t;
+
+function roundRect(x, y, w, h, r = 0) {
+  const radius = Math.max(0, Math.min(r, w / 2, h / 2));
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + w - radius, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+  ctx.lineTo(x + w, y + h - radius);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+  ctx.lineTo(x + radius, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+}
+
+function text(value, x, y, opts = {}) {
+  const {
+    size = 32,
+    weight = 800,
+    family = DISPLAY,
+    color = C.ink,
+    align = 'left',
+    spacing = 0,
+    alpha = 1,
+  } = opts;
+  ctx.save();
+  ctx.globalAlpha *= alpha;
+  ctx.fillStyle = color;
+  ctx.font = `${weight} ${size}px ${family}`;
+  if ('letterSpacing' in ctx) ctx.letterSpacing = `${spacing}px`;
+  ctx.textAlign = align;
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText(value, x, y);
+  ctx.restore();
+}
+
+function measure(value, size, weight, family, spacing = 0) {
+  ctx.save();
+  ctx.font = `${weight} ${size}px ${family}`;
+  let width = ctx.measureText(value).width;
+  if (spacing) width += spacing * (value.length - 1);
+  ctx.restore();
+  return width;
+}
+
+function wrapText(value, x, y, maxWidth, opts = {}) {
+  const {
+    size = 18,
+    weight = 800,
+    family = DISPLAY,
+    color = C.ink,
+    spacing = 0,
+    lineHeight = 22,
+  } = opts;
+  const words = value.split(' ');
+  let line = '';
+  let lineY = y;
+  words.forEach((word) => {
+    const candidate = line ? `${line} ${word}` : word;
+    if (line && measure(candidate, size, weight, family, spacing) > maxWidth) {
+      text(line, x, lineY, { size, weight, family, color, spacing });
+      line = word;
+      lineY += lineHeight;
+    } else {
+      line = candidate;
+    }
+  });
+  if (line) text(line, x, lineY, { size, weight, family, color, spacing });
+}
+
+/** Word reveal with a rising mask: the strongest anti-slide move. */
+function maskedText(value, x, y, opts = {}) {
+  const {
+    size = 100,
+    weight = 800,
+    family = DISPLAY,
+    color = C.ink,
+    align = 'left',
+    spacing = 0,
+    progress = 1,
+    rise = 0.36,
+  } = opts;
+  const p = easeOut(progress);
+  if (p <= 0) return;
+  const width = measure(value, size, weight, family, spacing);
+  const left = align === 'right' ? x - width : align === 'center' ? x - width / 2 : x;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(left - size * 0.2, y - size * 1.05, width + size * 0.4, size * 1.28);
+  ctx.clip();
+  text(value, x, y + size * rise * (1 - p), { size, weight, family, color, align, spacing, alpha: p });
+  ctx.restore();
+}
+
+/** Line wipe used for supporting copy. */
+function wipeText(value, x, y, opts = {}) {
+  const {
+    size = 28,
+    weight = 400,
+    family = BODY,
+    color = C.muted,
+    align = 'left',
+    spacing = 0,
+    progress = 1,
+  } = opts;
+  const p = easeOut(progress);
+  if (p <= 0) return;
+  const width = measure(value, size, weight, family, spacing);
+  const left = align === 'right' ? x - width : align === 'center' ? x - width / 2 : x;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(left - 4, y - size * 1.1, (width + 8) * p, size * 1.5);
+  ctx.clip();
+  text(value, x, y, { size, weight, family, color, align, spacing });
+  ctx.restore();
+}
+
+function paper(x, y, w, h, opts = {}) {
+  const { fill = C.cream, shadow = 10, radius = 0, stroke = 2, alpha = 1, shadowColor = C.ink } = opts;
+  ctx.save();
+  ctx.globalAlpha *= alpha;
+  if (shadow) {
+    ctx.fillStyle = shadowColor;
+    roundRect(x + shadow, y + shadow, w, h, radius);
+    ctx.fill();
+  }
+  ctx.fillStyle = fill;
+  roundRect(x, y, w, h, radius);
+  ctx.fill();
+  if (stroke) {
+    ctx.lineWidth = stroke;
+    ctx.strokeStyle = C.ink;
+    roundRect(x, y, w, h, radius);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+const filterCache = new Map();
+
+function getFilteredImage(image, filter) {
+  const key = `${image.src}|${filter}`;
+  let cached = filterCache.get(key);
+  if (!cached) {
+    cached = document.createElement('canvas');
+    cached.width = 900;
+    cached.height = 1200;
+    const cacheCtx = cached.getContext('2d');
+    const ratio = Math.max(cached.width / image.width, cached.height / image.height);
+    const dw = image.width * ratio;
+    const dh = image.height * ratio;
+    cacheCtx.filter = filter;
+    cacheCtx.drawImage(image, (cached.width - dw) / 2, (cached.height - dh) / 2, dw, dh);
+    filterCache.set(key, cached);
+  }
+  return cached;
+}
+
+function photo(image, x, y, w, h, opts = {}) {
+  if (!image) return;
+  const { filter = 'none', radius = 0, focusX = 0.5, focusY = 0.5, alpha = 1, scale = 1 } = opts;
+  const filtered = filter === 'none' ? null : getFilteredImage(image, filter);
+  const source = filtered ?? image;
+  const sourceW = filtered ? filtered.width : image.width;
+  const sourceH = filtered ? filtered.height : image.height;
+  const ratio = Math.max(w / sourceW, h / sourceH) * scale;
+  const dw = sourceW * ratio;
+  const dh = sourceH * ratio;
+  ctx.save();
+  ctx.globalAlpha *= alpha;
+  roundRect(x, y, w, h, radius);
+  ctx.clip();
+  ctx.drawImage(source, x + (w - dw) * focusX, y + (h - dh) * focusY, dw, dh);
+  ctx.restore();
+}
+
+function chip(label, x, y, opts = {}) {
+  const { fill = 'transparent', color = C.ink, border = C.ink, size = 18, padX = 18, height = 44, alpha = 1 } = opts;
+  ctx.save();
+  ctx.globalAlpha *= alpha;
+  ctx.font = `700 ${size}px ${MONO}`;
+  if ('letterSpacing' in ctx) ctx.letterSpacing = '1px';
+  const width = ctx.measureText(label).width + padX * 2;
+  ctx.fillStyle = fill;
+  ctx.fillRect(x, y, width, height);
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = border;
+  ctx.strokeRect(x + 1, y + 1, width - 2, height - 2);
+  ctx.fillStyle = color;
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(label, x + padX, y + height / 2 + 1);
+  ctx.restore();
+  return width;
+}
+
+function strip(x, y, w, h, opts = {}) {
+  const {
+    rotate = 0,
+    paperColor = C.cream,
+    filters = ['none', 'none', 'none'],
+    caption = 'CORE MEMORY',
+    sub = 'RUANG KILAS · 2026',
+    image = photos.friends,
+    alpha = 1,
+    scale = 1,
+    livePulse = 0,
+    badge = '',
+    shadow = 10,
+  } = opts;
+
+  ctx.save();
+  ctx.globalAlpha *= alpha;
+  ctx.translate(x + w / 2, y + h / 2);
+  ctx.rotate((rotate * Math.PI) / 180);
+  ctx.scale(scale, scale);
+  ctx.translate(-w / 2, -h / 2);
+
+  paper(0, 0, w, h, { fill: paperColor, shadow, radius: 2 });
+
+  const pad = Math.round(w * 0.055);
+  const captionH = Math.round(h * 0.135);
+  const gap = Math.round(w * 0.04);
+  const cells = 3;
+  const cellW = w - pad * 2;
+  const cellH = Math.round((h - pad * 2 - captionH - gap * (cells - 1)) / cells);
+
+  for (let index = 0; index < cells; index += 1) {
+    const cellY = pad + index * (cellH + gap);
+    ctx.fillStyle = C.ink;
+    ctx.fillRect(pad - 2, cellY - 2, cellW + 4, cellH + 4);
+    photo(image, pad, cellY, cellW, cellH, {
+      filter: filters[index] || 'none',
+      scale: 1 + livePulse * 0.035,
+      focusY: index === 1 ? 0.42 : 0.55,
+    });
+  }
+
+  if (badge) {
+    const badgeW = 96;
+    ctx.fillStyle = C.poppy;
+    ctx.fillRect(w - pad - badgeW, pad - 30, badgeW, 30);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = C.ink;
+    ctx.strokeRect(w - pad - badgeW + 1, pad - 29, badgeW - 2, 28);
+    text(badge, w - pad - badgeW + 12, pad - 9, { size: 13, weight: 700, family: MONO, color: '#FFFFFF', spacing: 1 });
+  }
+
+  const captionY = h - captionH + Math.round(captionH * 0.45);
+  text(caption, w / 2, captionY, {
+    size: Math.max(16, Math.round(w * 0.085)),
+    weight: 800,
+    family: DISPLAY,
+    align: 'center',
+    color: C.ink,
+    spacing: -1,
+  });
+  text(sub, w / 2, captionY + Math.round(captionH * 0.42), {
+    size: Math.max(9, Math.round(w * 0.035)),
+    weight: 500,
+    family: MONO,
+    align: 'center',
+    color: C.muted,
+    spacing: 1,
+  });
+
+  ctx.restore();
+}
+
+/** Small invitation object used in the hook; the phone later expands this idea. */
+function inviteMini(x, y, w, h, opts = {}) {
+  const { rotate = 0, alpha = 1, scale = 1, image = photos.invitationHook } = opts;
+  ctx.save();
+  ctx.globalAlpha *= alpha;
+  ctx.translate(x + w / 2, y + h / 2);
+  ctx.rotate((rotate * Math.PI) / 180);
+  ctx.scale(scale, scale);
+  ctx.translate(-w / 2, -h / 2);
+
+  paper(0, 0, w, h, { fill: C.cream, shadow: 12, radius: 2 });
+
+  const pad = Math.round(w * 0.07);
+  const imageH = Math.round(h * 0.56);
+  photo(image, pad, pad, w - pad * 2, imageH, {
+    filter: 'saturate(.95) contrast(1.05)',
+    focusY: 0.45,
+  });
+
+  const tagW = Math.round(w * 0.42);
+  const tagY = pad + imageH - 30;
+  ctx.fillStyle = C.poppy;
+  ctx.fillRect(pad, tagY, tagW, 30);
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = C.ink;
+  ctx.strokeRect(pad + 1, tagY + 1, tagW - 2, 28);
+  text('UNDANGAN', pad + 11, tagY + 20, { size: 12, weight: 700, family: MONO, color: '#FFFFFF', spacing: 1 });
+
+  text('RIFQI', w / 2, pad + imageH + 58, {
+    size: Math.round(w * 0.135), weight: 800, family: DISPLAY, align: 'center', spacing: -1,
+  });
+  text('&', w / 2, pad + imageH + 92, {
+    size: Math.round(w * 0.1), weight: 700, family: BODY, align: 'center', color: C.poppy,
+  });
+  text('AULYA', w / 2, pad + imageH + 130, {
+    size: Math.round(w * 0.135), weight: 800, family: DISPLAY, align: 'center', spacing: -1,
+  });
+  text('14 · 02 · 2027', w / 2, h - 30, {
+    size: 13, weight: 500, family: MONO, align: 'center', color: C.muted, spacing: 2,
+  });
+
+  ctx.restore();
+}
+
+function wordmark(x, y, color = C.ink, size = 22, alpha = 1) {
+  text('✦', x, y, { size: size + 6, weight: 700, family: BODY, color: C.poppy, alpha });
+  text('RUANG KILAS', x + size + 2, y, { size, weight: 800, family: DISPLAY, color, spacing: 2, alpha });
+}
+
+/* ------------------------------------------------------------ camera rig */
+
+const CAMERA_KEYS = [
+  { t: 0.00, s: 1.52, x: 520, y: 400 },
+  { t: 0.52, s: 1.45, x: 520, y: 510 },
+  { t: 1.00, s: 1.30, x: 560, y: 650 },
+  { t: 1.50, s: 1.00, x: 960, y: 540 },
+  { t: 2.60, s: 1.02, x: 960, y: 540 },
+  { t: 2.80, s: 1.38, x: 350, y: 400 },
+  { t: 3.30, s: 1.30, x: 520, y: 520 },
+  { t: 3.70, s: 1.00, x: 960, y: 540 },
+  { t: 5.40, s: 1.02, x: 960, y: 540 },
+  { t: 5.60, s: 1.36, x: 1560, y: 360 },
+  { t: 6.05, s: 1.28, x: 1500, y: 480 },
+  { t: 6.50, s: 1.00, x: 960, y: 540 },
+  { t: 7.90, s: 1.02, x: 960, y: 540 },
+  { t: 8.10, s: 1.36, x: 410, y: 410 },
+  { t: 8.55, s: 1.28, x: 560, y: 540 },
+  { t: 8.95, s: 1.00, x: 960, y: 540 },
+  { t: 10.40, s: 1.02, x: 960, y: 540 },
+  { t: 10.60, s: 1.34, x: 410, y: 420 },
+  { t: 11.05, s: 1.26, x: 560, y: 540 },
+  { t: 11.50, s: 1.06, x: 960, y: 540 },
+  { t: 12.10, s: 1.18, x: 1260, y: 510 },
+  { t: 12.70, s: 1.24, x: 1340, y: 520 },
+  { t: 13.50, s: 1.02, x: 960, y: 540 },
+  { t: 13.80, s: 1.02, x: 960, y: 540 },
+  { t: 14.00, s: 1.30, x: 430, y: 430 },
+  { t: 14.45, s: 1.24, x: 560, y: 540 },
+  { t: 14.90, s: 1.04, x: 960, y: 540 },
+  { t: 15.40, s: 1.16, x: 1440, y: 450 },
+  { t: 15.90, s: 1.06, x: 960, y: 540 },
+  { t: 16.70, s: 1.02, x: 960, y: 540 },
+  { t: 17.10, s: 1.00, x: 960, y: 540 },
+  { t: 17.50, s: 1.10, x: 960, y: 520 },
+  { t: 17.95, s: 1.00, x: 960, y: 540 },
+  { t: 20.00, s: 1.03, x: 960, y: 548 },
+];
+
+function cameraFor(t) {
+  if (t <= CAMERA_KEYS[0].t) return { ...CAMERA_KEYS[0] };
+  for (let i = 0; i < CAMERA_KEYS.length - 1; i += 1) {
+    const a = CAMERA_KEYS[i];
+    const b = CAMERA_KEYS[i + 1];
+    if (t <= b.t) {
+      const p = easeInOut(seg(t, a.t, b.t));
+      return { s: lerp(a.s, b.s, p), x: lerp(a.x, b.x, p), y: lerp(a.y, b.y, p) };
+    }
+  }
+  return { ...CAMERA_KEYS[CAMERA_KEYS.length - 1] };
+}
+
+function applyCamera(camera) {
+  ctx.translate(W / 2 - camera.s * camera.x, H / 2 - camera.s * camera.y);
+  ctx.scale(camera.s, camera.s);
+}
+
+/* ----------------------------------------------------------------- beats */
+
+function beatAlpha(lt, dur) {
+  return easeOut(seg(lt, 0, 0.16)) * (1 - easeInOut(seg(lt, dur - 0.18, dur)));
+}
+
+function hookBeat(lt, dur) {
+  ctx.save();
+  ctx.globalAlpha = beatAlpha(lt, dur);
+
+  maskedText('RAYAKAN', 140, 470, { size: 150, spacing: -6, progress: seg(lt, 0.0, 0.28) });
+  maskedText('MOMENMU.', 140, 622, { size: 150, spacing: -6, progress: seg(lt, 0.28, 0.56) });
+  maskedText('SIMPAN CERITANYA.', 140, 782, { size: 88, spacing: -4, color: C.poppy, progress: seg(lt, 0.54, 0.88) });
+  wipeText('Photobooth & undangan digital, dalam satu tempat.', 146, 868, {
+    size: 29,
+    progress: seg(lt, 0.86, 1.16),
+  });
+
+  const cardIn = easeOut(seg(lt, 0.55, 1.25));
+  if (cardIn > 0) {
+    inviteMini(1048, 318 + 36 * (1 - cardIn), 312, 530, {
+      rotate: lerp(-13, -8, cardIn),
+      scale: lerp(1.1, 1, cardIn),
+      alpha: cardIn,
+    });
+  }
+
+  const stripIn = easeOut(seg(lt, 0.7, 1.4));
+  if (stripIn > 0) {
+    strip(1370, 152 + 44 * (1 - stripIn), 300, 670, {
+      rotate: lerp(12, 7, stripIn),
+      scale: lerp(1.1, 1, stripIn),
+      alpha: stripIn,
+      filters: ['sepia(.32) contrast(1.1) brightness(.97)', 'saturate(.75) contrast(1.12) sepia(.12)', 'grayscale(1) contrast(1.18)'],
+      shadow: 12,
+    });
+  }
+
+  ctx.restore();
+}
+
+const LENSES = [
+  { name: 'FISHEYE 360°', filter: 'saturate(1.18) contrast(1.06)' },
+  { name: 'LEICA 35MM', filter: 'sepia(.24) saturate(.85) contrast(1.16)' },
+  { name: 'DIGICAM 2004', filter: 'saturate(1.5) contrast(1.22)' },
+  { name: 'VHS GLITCH', filter: 'saturate(1.35) contrast(1.18) hue-rotate(-10deg)' },
+  { name: 'DREAMY PRISM', filter: 'brightness(1.06) saturate(1.1) contrast(0.95) blur(1px)' },
+];
+const LENS_SWITCHES = [3.45, 4.05, 4.6, 5.1];
+
+function lensIndexAt(t) {
+  let index = 0;
+  LENS_SWITCHES.forEach((time, i) => {
+    if (t >= time) index = i + 1;
+  });
+  return index;
+}
+
+function lensBeat(lt, dur, t) {
+  ctx.save();
+  ctx.globalAlpha = beatAlpha(lt, dur);
+
+  maskedText('LIMA LENSA', 140, 452, { size: 112, spacing: -5, progress: seg(lt, 0.02, 0.32) });
+  maskedText('VINTAGE.', 140, 580, { size: 112, spacing: -5, color: C.poppy, progress: seg(lt, 0.3, 0.6) });
+  wipeText('Tampilan kamera langsung di preview.', 144, 638, {
+    size: 26,
+    progress: seg(lt, 0.54, 0.82),
+  });
+
+  const active = lensIndexAt(t);
+  const rowTop = 704;
+  const rowH = 60;
+
+  LENSES.forEach((lens, index) => {
+    const appear = easeOut(seg(lt, 0.82 + index * 0.06, 1.06 + index * 0.06));
+    if (appear <= 0) return;
+    const y = rowTop + index * rowH;
+    const isActive = index === active;
+    ctx.save();
+    ctx.globalAlpha *= appear;
+    if (isActive) {
+      ctx.fillStyle = C.butter;
+      ctx.fillRect(118, y - 40, 700, rowH - 6);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = C.ink;
+      ctx.strokeRect(119, y - 39, 698, rowH - 8);
+    }
+    text(String(index + 1).padStart(2, '0'), 144, y, {
+      size: 13,
+      weight: 700,
+      family: MONO,
+      spacing: 1,
+      color: isActive ? C.poppy : 'rgba(18,18,18,0.38)',
+    });
+    text(lens.name, isActive ? 196 : 190, y, {
+      size: isActive ? 26 : 22,
+      weight: 700,
+      family: MONO,
+      spacing: 1,
+      color: isActive ? C.ink : 'rgba(18,18,18,0.55)',
+    });
+    if (isActive) text('→', 782, y, { size: 24, weight: 700, family: MONO, color: C.poppy });
+    ctx.restore();
+  });
+
+  const cardX = 1150;
+  const cardY = 132;
+  const cardW = 640;
+  const cardH = 830;
+  const cardIn = easeOut(seg(lt, 0.04, 0.42));
+
+  ctx.save();
+  ctx.translate(cardX + cardW / 2, cardY + cardH / 2);
+  ctx.rotate((-2 * Math.PI) / 180);
+  const cardScale = lerp(0.9, 1, cardIn);
+  ctx.scale(cardScale, cardScale);
+  ctx.translate(-cardW / 2, -cardH / 2);
+  paper(0, 0, cardW, cardH, { fill: C.cream, shadow: 12, radius: 2 });
+
+  const pad = 26;
+  const captionH = 104;
+  const photoW = cardW - pad * 2;
+  const photoH = cardH - pad * 2 - captionH;
+  const switchTime = LENS_SWITCHES[active - 1];
+  const blend = active === 0 ? 0 : seg(t, switchTime, switchTime + 0.26);
+
+  ctx.save();
+  roundRect(pad, pad, photoW, photoH, 0);
+  ctx.clip();
+  if (active > 0) {
+    photo(photos.friends, pad, pad, photoW, photoH, {
+      filter: LENSES[active - 1].filter, focusY: 0.5, scale: 1 + blend * 0.14, alpha: 1 - blend,
+    });
+    photo(photos.friends, pad, pad, photoW, photoH, {
+      filter: LENSES[active].filter, focusY: 0.5, scale: 0.88 + blend * 0.12, alpha: blend,
+    });
+  } else {
+    photo(photos.friends, pad, pad, photoW, photoH, { filter: LENSES[0].filter, focusY: 0.5 });
+  }
+  ctx.restore();
+
+  ctx.strokeStyle = C.ink;
+  ctx.lineWidth = 2;
+  ctx.strokeRect(pad - 1, pad - 1, photoW + 2, photoH + 2);
+
+  text(LENSES[active].name, pad + 4, pad + photoH + 62, { size: 30, weight: 700, family: MONO, spacing: 1 });
+  text(`${String(active + 1).padStart(2, '0')} / 05`, cardW - pad - 4, pad + photoH + 62, {
+    size: 16, weight: 500, family: MONO, align: 'right', color: C.muted, spacing: 1,
+  });
+
+  ctx.restore();
+  ctx.restore();
+}
+
+function framesBeat(lt, dur) {
+  ctx.save();
+  ctx.globalAlpha = beatAlpha(lt, dur);
+
+  const strips = [
+    { x: 120, y: 268, w: 300, h: 624, rotate: -7, paperColor: C.cream, caption: 'INSTANT CLUB', filters: ['sepia(.2) contrast(1.1)', 'saturate(.8) contrast(1.1)', 'grayscale(1) contrast(1.15)'] },
+    { x: 448, y: 238, w: 300, h: 624, rotate: 0, paperColor: C.coquette, caption: 'BESTIES', filters: ['saturate(1.2) contrast(1.05)', 'sepia(.18) saturate(.9)', 'saturate(1.35)'] },
+    { x: 776, y: 268, w: 300, h: 624, rotate: 7, paperColor: C.yearbook, caption: 'SUMMER VOL.04', filters: ['grayscale(1) contrast(1.2)', 'sepia(.3) contrast(1.1)', 'saturate(1.1)'] },
+  ];
+
+  strips.forEach((item, index) => {
+    const appear = easeOut(seg(lt, 0.02 + index * 0.09, 0.5 + index * 0.09));
+    if (appear <= 0) return;
+    strip(item.x, item.y + 60 * (1 - appear), item.w, item.h, {
+      rotate: lerp(item.rotate + (index - 1) * 7, item.rotate, appear),
+      paperColor: item.paperColor,
+      caption: item.caption,
+      filters: item.filters,
+      scale: lerp(1.12, 1, appear),
+      alpha: appear,
+      shadow: 12,
+    });
+  });
+
+  maskedText('BINGKAI', 1780, 440, { size: 96, spacing: -5, align: 'right', progress: seg(lt, 0.08, 0.36) });
+  maskedText('SESUAI VIBE.', 1780, 552, { size: 96, spacing: -5, align: 'right', color: C.poppy, progress: seg(lt, 0.34, 0.64) });
+  wipeText('Retro receipt sampai editorial minimalis.', 1780, 614, {
+    size: 26, align: 'right', color: '#163741', progress: seg(lt, 0.6, 0.88),
+  });
+
+  ctx.restore();
+}
+
+function liveBeat(lt, dur) {
+  ctx.save();
+  ctx.globalAlpha = beatAlpha(lt, dur);
+  const pulse = (Math.sin((lt / 0.72) * Math.PI * 2) + 1) / 2;
+
+  maskedText('BUKAN CUMA', 140, 452, { size: 104, spacing: -5, progress: seg(lt, 0.06, 0.36) });
+  maskedText('FOTO DIAM.', 140, 574, { size: 104, spacing: -5, color: C.poppy, progress: seg(lt, 0.34, 0.64) });
+  wipeText('Rekam ekspresi sebelum blitz.', 144, 652, { size: 28, progress: seg(lt, 0.56, 0.84) });
+  wipeText('Simpan JPG 300 DPI dan boomerang.', 144, 694, { size: 28, progress: seg(lt, 0.68, 0.96) });
+
+  const stripIn = easeOut(seg(lt, 0.04, 0.44));
+  if (stripIn > 0) {
+    strip(1260, 150 + 44 * (1 - stripIn), 420, 790, {
+      rotate: 3,
+      caption: 'BESTIES IN MOTION',
+      filters: ['saturate(1.15) contrast(1.05)', 'sepia(.2) contrast(1.12)', 'grayscale(1) contrast(1.15)'],
+      livePulse: pulse,
+      badge: '● LIVE',
+      scale: lerp(1.1, 1, stripIn),
+      alpha: stripIn,
+      shadow: 14,
+    });
+  }
+
+  ctx.restore();
+}
+
+/** Portrait invitation phone: cover, names, open button, and feature rows. */
+function invitationPhone(lt) {
+  const inP = easeOut(seg(lt, 0.02, 0.44));
+  if (inP <= 0) return;
+
+  const w = 560;
+  const h = 872;
+  const x = 1110;
+  const y = 100 + 60 * (1 - inP);
+  const bodyR = 44;
+  const pad = 13;
+  const sx = x + pad;
+  const sy = y + pad;
+  const sw = w - pad * 2;
+  const sh = h - pad * 2;
+
+  ctx.save();
+  ctx.globalAlpha *= inP;
+
+  ctx.save();
+  ctx.globalAlpha *= 0.22;
+  ctx.fillStyle = C.ink;
+  roundRect(x + 10, y + 14, w, h, bodyR);
+  ctx.fill();
+  ctx.restore();
+
+  ctx.fillStyle = C.ink;
+  roundRect(x, y, w, h, bodyR);
+  ctx.fill();
+
+  ctx.save();
+  roundRect(sx, sy, sw, sh, 32);
+  ctx.clip();
+  ctx.fillStyle = C.cream;
+  ctx.fillRect(sx, sy, sw, sh);
+
+  const coverH = 420;
+  photo(photos.invitationCover, sx, sy, sw, coverH, {
+    filter: 'saturate(.92) contrast(1.05) sepia(.05)',
+    focusY: 0.42,
+    scale: lerp(1.14, 1, inP),
+  });
+
+  const topGrad = ctx.createLinearGradient(0, sy, 0, sy + 150);
+  topGrad.addColorStop(0, 'rgba(18,18,18,0.62)');
+  topGrad.addColorStop(1, 'rgba(18,18,18,0)');
+  ctx.fillStyle = topGrad;
+  ctx.fillRect(sx, sy, sw, 150);
+
+  const grad = ctx.createLinearGradient(0, sy + coverH * 0.3, 0, sy + coverH);
+  grad.addColorStop(0, 'rgba(18,18,18,0)');
+  grad.addColorStop(1, 'rgba(18,18,18,0.78)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(sx, sy + coverH * 0.3, sw, coverH * 0.7);
+
+  text('THE WEDDING OF', sx + 30, sy + 42, {
+    size: 13, weight: 700, family: MONO, color: C.cream, spacing: 2, alpha: 0.92,
+  });
+  maskedText('RIFQI & AULYA', sx + 28, sy + 226, {
+    size: 42, weight: 800, family: DISPLAY, color: C.cream, spacing: -1, progress: seg(lt, 0.28, 0.52),
+  });
+  text('14 FEBRUARI 2027', sx + 30, sy + 264, {
+    size: 14, weight: 500, family: MONO, color: C.cream, spacing: 2, alpha: 0.85,
+  });
+  text('#RifqiAulyaForever', sx + 30, sy + 290, {
+    size: 12, weight: 500, family: MONO, color: C.cream, spacing: 1, alpha: 0.65,
+  });
+
+  const btnX = sx + 28;
+  const btnY = sy + coverH - 82;
+  const btnW = sw - 56;
+  const btnH = 52;
+  ctx.fillStyle = C.cream;
+  ctx.fillRect(btnX + 5, btnY + 5, btnW, btnH);
+  ctx.fillStyle = C.poppy;
+  ctx.fillRect(btnX, btnY, btnW, btnH);
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = C.ink;
+  ctx.strokeRect(btnX + 1, btnY + 1, btnW - 2, btnH - 2);
+  const btnLabel = 'BUKA UNDANGAN';
+  const btnLabelW = measure(btnLabel, 15, 700, MONO, 2);
+  const btnStart = btnX + (btnW - (btnLabelW + 24 + 18)) / 2;
+  text(btnLabel, btnStart, btnY + 33, { size: 15, weight: 700, family: MONO, color: '#FFFFFF', spacing: 2 });
+  text('→', btnStart + btnLabelW + 24, btnY + 34, { size: 17, weight: 700, family: MONO, color: '#FFFFFF' });
+
+  const rows = [
+    ['01', 'CERITA', 'Perjalanan kami'],
+    ['02', 'GALERI', 'Momen yang disimpan'],
+    ['03', 'PETA', 'Balai Kartini, Jakarta'],
+    ['04', 'RSVP', 'Konfirmasi kehadiran'],
+  ];
+  const rowTop = sy + coverH + 30;
+  const rowH = 68;
+  rows.forEach((row, index) => {
+    const ap = easeOut(seg(lt, 0.52 + index * 0.09, 0.82 + index * 0.09));
+    if (ap <= 0) return;
+    const ry = rowTop + index * rowH;
+    ctx.save();
+    ctx.globalAlpha *= ap;
+    ctx.strokeStyle = 'rgba(18,18,18,0.16)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(sx + 28, ry);
+    ctx.lineTo(sx + sw - 28, ry);
+    ctx.stroke();
+    text(row[0], sx + 30, ry + 34, { size: 12, weight: 700, family: MONO, color: C.poppy, spacing: 1 });
+    text(row[1], sx + 78, ry + 30, { size: 18, weight: 700, family: MONO, color: C.ink, spacing: 1.5 });
+    text(row[2], sx + 78, ry + 52, { size: 16, weight: 400, family: BODY, color: C.muted });
+    text('↗', sx + sw - 40, ry + 36, { size: 18, weight: 700, family: MONO, color: C.ink });
+    ctx.restore();
+  });
+
+  const musicAp = easeOut(seg(lt, 0.88, 1.18));
+  if (musicAp > 0) {
+    const musicY = rowTop + rows.length * rowH + 8;
+    ctx.save();
+    ctx.globalAlpha *= musicAp;
+    ctx.fillStyle = C.butter;
+    ctx.fillRect(sx + 28, musicY, sw - 56, 44);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = C.ink;
+    ctx.strokeRect(sx + 29, musicY + 1, sw - 58, 42);
+    text('▶', sx + 42, musicY + 29, { size: 14, weight: 700, family: MONO, color: C.ink });
+    text('A Quiet Vow', sx + 68, musicY + 28, { size: 14, weight: 700, family: MONO, color: C.ink, spacing: 0.5 });
+    text('Ruang Kilas Studio', sx + sw - 40, musicY + 28, {
+      size: 11, weight: 500, family: MONO, color: C.muted, align: 'right',
+    });
+    ctx.restore();
+  }
+
+  ctx.restore();
+
+  ctx.fillStyle = C.ink;
+  roundRect(x + w / 2 - 52, y + 14, 104, 12, 6);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function invitationBeat(lt, dur) {
+  ctx.save();
+  ctx.globalAlpha = beatAlpha(lt, dur);
+
+  maskedText('UNDANGAN', 140, 452, { size: 112, spacing: -5, progress: seg(lt, 0.04, 0.32) });
+  maskedText('YANG BERCERITA.', 140, 580, { size: 88, spacing: -4, color: C.poppy, progress: seg(lt, 0.3, 0.6) });
+  wipeText('Satu tautan: cerita, galeri, peta, RSVP.', 146, 654, { size: 28, progress: seg(lt, 0.52, 0.82) });
+  wipeText('Lengkap dengan musik dan hitung mundur.', 146, 696, { size: 28, progress: seg(lt, 0.64, 0.94) });
+
+  invitationPhone(lt);
+
+  ctx.restore();
+}
+
+/** Browser window with the article index: one reading surface, three topics. */
+function articleBrowser(lt) {
+  const inP = easeOut(seg(lt, 0.02, 0.44));
+  if (inP <= 0) return;
+
+  const x = 90;
+  const y = 200 + 50 * (1 - inP);
+  const w = 860;
+  const h = 690;
+  const radius = 8;
+
+  ctx.save();
+  ctx.globalAlpha *= inP;
+  ctx.translate(x + w / 2, y + h / 2);
+  ctx.rotate((lerp(-2, 0, inP) * Math.PI) / 180);
+  const scale = lerp(1.06, 1, inP);
+  ctx.scale(scale, scale);
+  ctx.translate(-w / 2, -h / 2);
+
+  paper(0, 0, w, h, { fill: C.cream, shadow: 14, radius });
+
+  ctx.save();
+  roundRect(0, 0, w, h, radius);
+  ctx.clip();
+
+  ctx.fillStyle = C.ink;
+  ctx.fillRect(0, 0, w, 46);
+  [C.poppy, C.butter, C.sky].forEach((color, index) => {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(24 + index * 20, 23, 6, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  text('ruangkilas.my.id/artikel', 100, 29, {
+    size: 13, weight: 500, family: MONO, color: 'rgba(255,253,245,0.72)', spacing: 0.5,
+  });
+
+  const pad = 34;
+  text('CERITA & INSPIRASI', pad, 86, { size: 12, weight: 700, family: MONO, color: C.poppy, spacing: 2 });
+  maskedText('Ide untuk momenmu,', pad, 142, {
+    size: 38, weight: 800, family: DISPLAY, spacing: -1.5, progress: seg(lt, 0.18, 0.44),
+  });
+  maskedText('cerita untuk dibagikan.', pad, 188, {
+    size: 38, weight: 800, family: DISPLAY, spacing: -1.5, color: C.poppy, progress: seg(lt, 0.32, 0.58),
+  });
+
+  const cards = [
+    { image: photos.friends, tag: 'PHOTOBOOTH', title: 'Cara Menggunakan Photobooth Online', filter: 'saturate(1.05) contrast(1.02)' },
+    { image: photos.invitationCover, tag: 'UNDANGAN DIGITAL', title: 'Panduan Undangan Pernikahan Digital', filter: 'saturate(.95) contrast(1.04)' },
+    { image: photos.articleBirthday, tag: 'INSPIRASI', title: 'Ide Tema Photobooth Ulang Tahun', filter: 'saturate(1.05) contrast(1.02)' },
+  ];
+  const gap = 18;
+  const cardW = (w - pad * 2 - gap * 2) / 3;
+  const cardH = 340;
+  const cardY = 230;
+
+  cards.forEach((card, index) => {
+    const ap = easeOut(seg(lt, 0.42 + index * 0.1, 0.72 + index * 0.1));
+    if (ap <= 0) return;
+    const cx = pad + index * (cardW + gap);
+    const cy = cardY + 26 * (1 - ap);
+    ctx.save();
+    ctx.globalAlpha *= ap;
+
+    ctx.fillStyle = C.ink;
+    ctx.fillRect(cx + 4, cy + 4, cardW, cardH);
+    ctx.fillStyle = C.cream;
+    ctx.fillRect(cx, cy, cardW, cardH);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = C.ink;
+    ctx.strokeRect(cx + 1, cy + 1, cardW - 2, cardH - 2);
+
+    photo(card.image, cx + 10, cy + 10, cardW - 20, 160, { filter: card.filter, focusY: 0.5 });
+
+    text(card.tag, cx + 12, cy + 194, { size: 10, weight: 700, family: MONO, color: C.poppy, spacing: 1 });
+    wrapText(card.title, cx + 12, cy + 220, cardW - 24, {
+      size: 17, weight: 800, family: DISPLAY, color: C.ink, lineHeight: 21,
+    });
+    text('Baca →', cx + 12, cy + cardH - 16, { size: 11, weight: 700, family: MONO, color: C.ink, spacing: 0.5 });
+
+    ctx.restore();
+  });
+
+  ctx.strokeStyle = 'rgba(18,18,18,0.18)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(pad, 604);
+  ctx.lineTo(w - pad, 604);
+  ctx.stroke();
+  text('Panduan photobooth, undangan, & ide acara.', pad, 628, {
+    size: 13, weight: 500, family: MONO, color: C.muted,
+  });
+  text('Lihat semua →', w - pad, 628, {
+    size: 13, weight: 700, family: MONO, color: C.ink, align: 'right',
+  });
+
+  ctx.restore();
+  ctx.restore();
+}
+
+function articleBeat(lt, dur) {
+  ctx.save();
+  ctx.globalAlpha = beatAlpha(lt, dur);
+
+  maskedText('IDE &', 1740, 470, { size: 112, spacing: -5, align: 'right', progress: seg(lt, 0.95, 1.22) });
+  maskedText('CERITA.', 1740, 598, { size: 112, spacing: -5, align: 'right', color: C.poppy, progress: seg(lt, 1.12, 1.4) });
+  wipeText('Panduan photobooth, undangan, dan acara.', 1740, 672, {
+    size: 28, align: 'right', progress: seg(lt, 1.3, 1.58),
+  });
+  wipeText('Dibaca sebelum momenmu datang.', 1740, 714, {
+    size: 28, align: 'right', progress: seg(lt, 1.42, 1.7),
+  });
+
+  articleBrowser(lt);
+
+  ctx.restore();
+}
+
+function ctaBeat(lt) {
+  ctx.save();
+  ctx.globalAlpha = easeOut(seg(lt, 0.02, 0.3));
+
+  maskedText('✦ RUANG KILAS', 960, 300, {
+    size: 24, align: 'center', color: C.cream, spacing: 3, progress: seg(lt, 0.04, 0.3),
+  });
+  maskedText('PHOTOBOOTH &', 960, 440, {
+    size: 104, spacing: -6, align: 'center', color: C.cream, progress: seg(lt, 0.06, 0.36),
+  });
+  maskedText('UNDANGAN DIGITAL.', 960, 556, {
+    size: 104, spacing: -6, align: 'center', color: C.poppy, progress: seg(lt, 0.3, 0.6),
+  });
+  wipeText('Photobooth · Undangan digital · Artikel', 960, 626, {
+    size: 16, weight: 600, family: MONO, color: C.cream, align: 'center', spacing: 2,
+    progress: seg(lt, 0.46, 0.72),
+  });
+
+  const button = easeOut(seg(lt, 0.36, 0.74));
+  const bouncePhase = seg(lt, 0.72, 1.04);
+  const bounce = bouncePhase > 0 && bouncePhase < 1 ? Math.sin(bouncePhase * Math.PI) * 0.028 : 0;
+
+  ctx.save();
+  ctx.globalAlpha *= button;
+  ctx.translate(960, 712);
+  const scale = lerp(0.88, 1, button) * (1 + bounce);
+  ctx.scale(scale, scale);
+  const bw = 560;
+  const bh = 96;
+  ctx.fillStyle = C.cream;
+  ctx.fillRect(-bw / 2 + 9, -bh / 2 + 9, bw, bh);
+  ctx.fillStyle = C.poppy;
+  ctx.fillRect(-bw / 2, -bh / 2, bw, bh);
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = C.ink;
+  ctx.strokeRect(-bw / 2 + 1, -bh / 2 + 1, bw - 2, bh - 2);
+
+  const label = 'BUKA RUANG KILAS';
+  const spacing = 2;
+  const labelWidth = measure(label, 24, 700, MONO, spacing);
+  const arrowGap = 26;
+  const arrowWidth = 26;
+  const startX = -(labelWidth + arrowGap + arrowWidth) / 2;
+  text(label, startX, 10, { size: 24, weight: 700, family: MONO, color: '#FFFFFF', spacing });
+  text('→', startX + labelWidth + arrowGap, 10, { size: 26, weight: 700, family: MONO, color: '#FFFFFF' });
+  ctx.restore();
+
+  wipeText('ruangkilas.my.id', 960, 862, {
+    size: 28, weight: 600, family: MONO, color: C.cream, align: 'center', spacing: 4,
+    progress: seg(lt, 0.54, 0.82),
+  });
+
+  ctx.restore();
+}
+
+/* ------------------------------------------------------------- timeline */
+
+const BEATS = [
+  { start: 0, end: 2.8, draw: hookBeat },
+  { start: 2.6, end: 5.6, draw: lensBeat },
+  { start: 5.4, end: 8.1, draw: framesBeat },
+  { start: 7.9, end: 10.6, draw: liveBeat },
+  { start: 10.4, end: 14.0, draw: invitationBeat },
+  { start: 13.8, end: 17.2, draw: articleBeat },
+  { start: 17.1, end: 20, draw: ctaBeat },
+];
+
+const BACKGROUNDS = [C.butter, C.cream, C.sky, C.cream, C.paper, C.butter, C.ink];
+
+function backgroundFor(t) {
+  let index = 0;
+  BEATS.forEach((beat, i) => {
+    if (t >= beat.start) index = i;
+  });
+  return { index, color: BACKGROUNDS[index] };
+}
+
+function renderFrame(t) {
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = C.ink;
+  ctx.fillRect(0, 0, W, H);
+  ctx.restore();
+
+  const { index, color } = backgroundFor(t);
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.fillRect(0, 0, W, H);
+  if (index > 0 && color !== C.ink) {
+    const beat = BEATS[index];
+    const p = easeOut(seg(t, beat.start, beat.start + 0.18));
+    if (p < 1) {
+      ctx.globalAlpha = 1 - p;
+      ctx.fillStyle = BACKGROUNDS[index - 1];
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalAlpha = 1;
+    }
+  }
+  ctx.restore();
+
+  ctx.save();
+  applyCamera(cameraFor(t));
+  BEATS.forEach((beat) => {
+    if (t < beat.start || t > beat.end) return;
+    beat.draw(t - beat.start, beat.end - beat.start, t);
+  });
+  ctx.restore();
+
+  if (index < 6) wordmark(104, 96, C.ink, 20, 0.85);
+}
+
+/* ---------------------------------------------------------------- audio */
+
+function makeNoiseBuffer(context) {
+  const buffer = context.createBuffer(1, Math.floor(context.sampleRate * 2), context.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < data.length; i += 1) data[i] = Math.random() * 2 - 1;
+  return buffer;
+}
+
+function scheduleScore(context, master, noiseBuffer, startAt = 0) {
+  const at = (seconds) => startAt + seconds;
+  const BEAT = 0.5; // 120 BPM
+  const BAR = BEAT * 4;
+
+  const chords = [
+    { root: 130.81, notes: [261.63, 329.63, 392.0] },
+    { root: 98.0, notes: [246.94, 293.66, 392.0] },
+    { root: 110.0, notes: [261.63, 329.63, 440.0] },
+    { root: 87.31, notes: [220.0, 261.63, 349.23] },
+  ];
+
+  const tone = (time, opts) => {
+    const {
+      frequency = 440, type = 'sine', gain = 0.1, attack = 0.004, decay = 0.2,
+      endFrequency = null, filterFrequency = null, harmonic = 0,
+    } = opts;
+    const osc = context.createOscillator();
+    osc.type = type;
+    osc.frequency.setValueAtTime(frequency, time);
+    if (harmonic) osc.detune.value = harmonic;
+    if (endFrequency) osc.frequency.exponentialRampToValueAtTime(Math.max(20, endFrequency), time + decay);
+    const amp = context.createGain();
+    amp.gain.setValueAtTime(0.0001, time);
+    amp.gain.exponentialRampToValueAtTime(gain, time + attack);
+    amp.gain.exponentialRampToValueAtTime(0.0001, time + attack + decay);
+    let node = osc;
+    if (filterFrequency) {
+      const filter = context.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = filterFrequency;
+      node.connect(filter);
+      node = filter;
+    }
+    node.connect(amp);
+    amp.connect(master);
+    osc.start(time);
+    osc.stop(time + attack + decay + 0.05);
+  };
+
+  const noise = (time, opts) => {
+    const {
+      gain = 0.12, decay = 0.12, type = 'bandpass', frequency = 1600,
+      endFrequency = null, q = 1, attack = 0.008,
+    } = opts;
+    const source = context.createBufferSource();
+    source.buffer = noiseBuffer;
+    const filter = context.createBiquadFilter();
+    filter.type = type;
+    filter.frequency.setValueAtTime(frequency, time);
+    filter.Q.value = q;
+    if (endFrequency) filter.frequency.exponentialRampToValueAtTime(Math.max(40, endFrequency), time + decay);
+    const amp = context.createGain();
+    amp.gain.setValueAtTime(0.0001, time);
+    amp.gain.exponentialRampToValueAtTime(gain, time + attack);
+    amp.gain.exponentialRampToValueAtTime(0.0001, time + decay);
+    source.connect(filter);
+    filter.connect(amp);
+    amp.connect(master);
+    source.start(time);
+    source.stop(time + decay + 0.05);
+  };
+
+  const kick = (time, gain = 0.55) => {
+    tone(time, { frequency: 128, endFrequency: 44, type: 'sine', gain, attack: 0.003, decay: 0.22 });
+    noise(time, { gain: 0.05, decay: 0.03, type: 'highpass', frequency: 3000, q: 0.7 });
+  };
+  const clap = (time) => {
+    noise(time, { gain: 0.13, decay: 0.13, type: 'bandpass', frequency: 1700, q: 1.1 });
+    noise(time + 0.012, { gain: 0.06, decay: 0.09, type: 'bandpass', frequency: 2400, q: 1.4 });
+  };
+  const hat = (time, gain = 0.035, decay = 0.05) => {
+    noise(time, { gain, decay, type: 'highpass', frequency: 7800, q: 0.6 });
+  };
+
+  // --- pad with sidechain pump
+  for (let bar = 0; bar < 10; bar += 1) {
+    const barStart = bar * BAR;
+    if (barStart >= 19.4) break;
+    const chord = chords[bar % 4];
+    const padEnd = Math.min(barStart + BAR, 20);
+    chord.notes.forEach((frequency, index) => {
+      const osc = context.createOscillator();
+      osc.type = 'sawtooth';
+      osc.frequency.value = frequency;
+      osc.detune.value = index === 1 ? 7 : -7;
+      const filter = context.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(900, at(barStart));
+      filter.frequency.linearRampToValueAtTime(1500, at(barStart + BAR * 0.6));
+      filter.Q.value = 0.8;
+      const amp = context.createGain();
+      amp.gain.setValueAtTime(0.0001, at(barStart));
+      amp.gain.exponentialRampToValueAtTime(0.03, at(barStart + 0.12));
+      for (let beat = 0; beat < 4; beat += 1) {
+        const t = barStart + beat * BEAT;
+        if (t >= padEnd - 0.05) break;
+        amp.gain.setValueAtTime(0.03, at(t));
+        amp.gain.exponentialRampToValueAtTime(0.012, at(t + 0.08));
+        amp.gain.exponentialRampToValueAtTime(0.03, at(t + 0.3));
+      }
+      amp.gain.setValueAtTime(0.03, at(Math.max(barStart, padEnd - 0.18)));
+      amp.gain.exponentialRampToValueAtTime(0.0001, at(padEnd));
+      osc.connect(filter);
+      filter.connect(amp);
+      amp.connect(master);
+      osc.start(at(barStart));
+      osc.stop(at(padEnd) + 0.05);
+    });
+  }
+
+  // --- drums
+  for (let beat = 0; beat < 40; beat += 1) {
+    const time = beat * BEAT;
+    if (time > 19.6) break;
+    kick(at(time), beat % 4 === 0 ? 0.6 : 0.5);
+    hat(at(time + BEAT / 2), beat % 2 === 0 ? 0.045 : 0.03, 0.06);
+    if (beat % 4 === 1 || beat % 4 === 3) clap(at(time));
+  }
+  for (let eighth = 0; eighth < 80; eighth += 1) {
+    const time = eighth * (BEAT / 2);
+    if (time > 19.6) break;
+    if (eighth % 2 === 1) continue;
+    hat(at(time), 0.022, 0.035);
+  }
+
+  // --- bass line
+  const bassPattern = [0, 0, 12, 0, 0, 7, 12, 7];
+  for (let bar = 0; bar < 10; bar += 1) {
+    const chord = chords[bar % 4];
+    for (let step = 0; step < 8; step += 1) {
+      const time = bar * BAR + step * (BEAT / 2);
+      if (time >= 19.6) break;
+      const semis = bassPattern[step];
+      tone(at(time), {
+        frequency: chord.root * Math.pow(2, semis / 12),
+        type: 'triangle',
+        gain: 0.14,
+        attack: 0.006,
+        decay: 0.2,
+        filterFrequency: 420,
+      });
+    }
+  }
+
+  // --- earworm motif on alternate bars
+  const motif = [523.25, 659.25, 783.99, 659.25];
+  [1, 3, 5, 7, 9].forEach((bar, index) => {
+    const start = bar * BAR + BEAT * 1.5;
+    motif.forEach((frequency, step) => {
+      tone(at(start + step * (BEAT / 2)), {
+        frequency: frequency * (index === 3 ? 1.5 : 1),
+        type: 'triangle',
+        gain: 0.055,
+        attack: 0.004,
+        decay: 0.22,
+        filterFrequency: 3200,
+      });
+    });
+  });
+
+  // --- SFX
+  const whoosh = (time, up = true) => {
+    noise(at(time), {
+      gain: 0.12, decay: 0.5, frequency: up ? 320 : 2800, endFrequency: up ? 3000 : 420, q: 0.9,
+    });
+  };
+  const shutter = (time) => {
+    noise(at(time), { gain: 0.17, decay: 0.05, type: 'highpass', frequency: 2000, q: 0.7 });
+    tone(at(time + 0.02), { frequency: 2000, endFrequency: 800, type: 'square', gain: 0.05, attack: 0.002, decay: 0.05 });
+  };
+  const page = (time, gain = 0.075) => {
+    noise(at(time), { gain, decay: 0.28, type: 'bandpass', frequency: 1100, endFrequency: 720, q: 0.8, attack: 0.01 });
+  };
+  const flick = (time) => {
+    noise(at(time), { gain: 0.06, decay: 0.09, type: 'highpass', frequency: 2800, q: 0.7 });
+    noise(at(time + 0.035), { gain: 0.03, decay: 0.06, type: 'highpass', frequency: 4200, q: 0.8 });
+  };
+  const tap = (time) => {
+    noise(at(time), { gain: 0.05, decay: 0.03, type: 'bandpass', frequency: 2200, q: 1.4 });
+    tone(at(time + 0.005), { frequency: 1200, endFrequency: 700, type: 'sine', gain: 0.03, attack: 0.002, decay: 0.06 });
+  };
+
+  whoosh(2.56);
+  whoosh(5.36);
+  whoosh(7.86);
+  whoosh(10.36);
+  whoosh(13.76);
+  whoosh(17.06);
+
+  shutter(1.2);
+  shutter(3.55);
+  shutter(4.15);
+  shutter(4.7);
+
+  page(10.46, 0.09);
+  page(10.9, 0.06);
+  tap(11.9);
+
+  flick(13.86);
+  flick(14.16);
+  flick(14.46);
+
+  // riser into the CTA hit
+  noise(at(15.3), { gain: 0.07, decay: 1.7, frequency: 400, endFrequency: 5600, q: 1.5 });
+  kick(at(17.1), 0.75);
+  noise(at(17.1), { gain: 0.14, decay: 0.35, type: 'lowpass', frequency: 900, q: 0.6 });
+  [659.25, 987.77].forEach((frequency, index) => {
+    tone(at(17.35 + index * 0.09), { frequency, type: 'sine', gain: 0.04, attack: 0.01, decay: 1.0 });
+  });
+}
+
+function encodeWav(buffer) {
+  const channels = buffer.numberOfChannels;
+  const frames = buffer.length;
+  const blockAlign = channels * 2;
+  const dataSize = frames * blockAlign;
+  const view = new DataView(new ArrayBuffer(44 + dataSize));
+  const writeString = (offset, value) => {
+    for (let i = 0; i < value.length; i += 1) view.setUint8(offset + i, value.charCodeAt(i));
+  };
+  writeString(0, 'RIFF');
+  view.setUint32(4, 36 + dataSize, true);
+  writeString(8, 'WAVE');
+  writeString(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, channels, true);
+  view.setUint32(24, buffer.sampleRate, true);
+  view.setUint32(28, buffer.sampleRate * blockAlign, true);
+  view.setUint16(32, blockAlign, true);
+  view.setUint16(34, 16, true);
+  writeString(36, 'data');
+  view.setUint32(40, dataSize, true);
+
+  const data = [];
+  for (let channel = 0; channel < channels; channel += 1) data.push(buffer.getChannelData(channel));
+  let offset = 44;
+  for (let frame = 0; frame < frames; frame += 1) {
+    for (let channel = 0; channel < channels; channel += 1) {
+      const sample = Math.max(-1, Math.min(1, data[channel][frame]));
+      view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7fff, true);
+      offset += 2;
+    }
+  }
+
+  const bytes = new Uint8Array(view.buffer);
+  let binary = '';
+  const chunkSize = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+  }
+  return btoa(binary);
+}
+
+async function renderAudioWav(seconds = DURATION) {
+  const sampleRate = 48000;
+  const offline = new OfflineAudioContext(2, Math.ceil(sampleRate * seconds), sampleRate);
+  const master = offline.createGain();
+  master.gain.value = 0.9;
+  master.connect(offline.destination);
+  scheduleScore(offline, master, makeNoiseBuffer(offline), 0);
+  const buffer = await offline.startRendering();
+  return encodeWav(buffer);
+}
+
+/* ------------------------------------------------------------ bootstrap */
+
+async function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error(`Image failed: ${src}`));
+    image.src = src;
+  });
+}
+
+async function boot() {
+  await document.fonts.load('800 120px "Montserrat V"');
+  await document.fonts.load('400 30px "Lora V"');
+  await document.fonts.load('500 20px "JetBrains Mono"');
+  await document.fonts.load('700 20px "JetBrains Mono"');
+  await document.fonts.ready;
+
+  photos.friends = await loadImage('/public/images/friends-photo-booth.jpg');
+  photos.wedding = await loadImage('/public/images/wedding-ripki-hero.jpg');
+  photos.invitationHook = await loadImage('/public/images/invitations/inv-13.jpg');
+  photos.invitationCover = await loadImage('/public/images/invitations/inv-11.jpg');
+  photos.articleBirthday = await loadImage('/public/images/articles/article-1530103862676.jpg');
+
+  [
+    'sepia(.32) contrast(1.1) brightness(.97)',
+    'saturate(.75) contrast(1.12) sepia(.12)',
+    'grayscale(1) contrast(1.18)',
+    'saturate(1.18) contrast(1.06)',
+    'sepia(.24) saturate(.85) contrast(1.16)',
+    'saturate(1.5) contrast(1.22)',
+    'saturate(1.35) contrast(1.18) hue-rotate(-10deg)',
+    'brightness(1.06) saturate(1.1) contrast(0.95) blur(1px)',
+    'sepia(.2) contrast(1.1)',
+    'saturate(.8) contrast(1.1)',
+    'grayscale(1) contrast(1.15)',
+    'saturate(1.2) contrast(1.05)',
+    'sepia(.18) saturate(.9)',
+    'saturate(1.35)',
+    'grayscale(1) contrast(1.2)',
+    'sepia(.3) contrast(1.1)',
+    'saturate(1.1)',
+    'saturate(1.15) contrast(1.05)',
+    'sepia(.2) contrast(1.12)',
+  ].forEach((filter) => getFilteredImage(photos.friends, filter));
+  ['saturate(.95) contrast(1.05)', 'saturate(.95) contrast(1.04)', 'saturate(1.05) contrast(1.02)', 'saturate(.92) contrast(1.05) sepia(.05)'].forEach((filter) => {
+    getFilteredImage(photos.invitationHook, filter);
+    getFilteredImage(photos.invitationCover, filter);
+    getFilteredImage(photos.articleBirthday, filter);
+  });
+  getFilteredImage(photos.wedding, 'saturate(.95) contrast(1.05)');
+
+  renderFrame(0);
+  window.__ready = true;
+}
+
+/* Deterministic export: one JPEG per authored timestamp, no real-time capture. */
+window.renderFrameDataUrl = (t) => {
+  renderFrame(t);
+  return canvas.toDataURL('image/jpeg', 0.95);
+};
+
+window.renderFrames = (times) => times.map((t) => window.renderFrameDataUrl(t));
+
+window.renderAudio = () => renderAudioWav(DURATION);
+
+boot();
+  </script>
+</body>
+</html>

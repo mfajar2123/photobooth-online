@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const pages = ['/undangan/', '/undangan/katalog/', '/undangan/portofolio/', '/undangan/custom/'];
+const pages = ['/undangan/', '/undangan/katalog/', '/undangan/custom/'];
 
 test('undangan marketing pages render without console errors', async ({ page }) => {
   const errors: string[] = [];
@@ -17,11 +17,11 @@ test('undangan marketing pages render without console errors', async ({ page }) 
 
 test('katalog filters templates', async ({ page }) => {
   await page.goto('/undangan/katalog/');
-  await expect(page.locator('.und-template')).toHaveCount(6);
+  await expect(page.locator('.und-template')).toHaveCount(9);
   await page.getByRole('button', { name: 'Garden', exact: true }).click();
   await expect(page.locator('.und-template:visible')).toHaveCount(1);
   await page.getByRole('button', { name: 'Semua', exact: true }).click();
-  await expect(page.locator('.und-template:visible')).toHaveCount(6);
+  await expect(page.locator('.und-template:visible')).toHaveCount(9);
 });
 
 test('invitation demo shows couple, date, venue, gallery and map', async ({ page }) => {
@@ -36,8 +36,8 @@ test('invitation demo shows couple, date, venue, gallery and map', async ({ page
   await expect(page.getByRole('link', { name: /Buka peta lokasi/i })).toHaveAttribute('href', /google\.com\/maps/);
 });
 
-test('all three invitation demos load', async ({ page }) => {
-  for (const slug of ['rifqi-aulya', 'dimas-nabila', 'andi-salsa']) {
+test('all invitation demos load', async ({ page }) => {
+  for (const slug of ['rifqi-aulya', 'dimas-nabila', 'andi-salsa', 'demo-pita', 'demo-rimba', 'demo-marmer']) {
     const response = await page.goto(`/undangan/${slug}/`);
     expect(response?.status(), `${slug} should load`).toBe(200);
     await expect(page.getByRole('button', { name: /Buka undangan/i })).toBeVisible();

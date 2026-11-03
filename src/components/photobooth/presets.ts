@@ -30,16 +30,19 @@ export const frames: FramePreset[] = [
   { id: 'signature', name: 'Kilas Butter', category: 'Signature', background: '#FFF3B0', foreground: '#121212', accent: '#E63946', motif: 'star', caption: 'CORE MEMORY' },
   { id: 'atelier', name: 'Atelier Noir', category: 'Signature', background: '#121212', foreground: '#F5EBE1', accent: '#D4AF37', motif: 'atelier', caption: 'HAUTE PHOTOGRAPHIE' },
   { id: 'swiss', name: 'Swiss Modernist', category: 'Signature', background: '#FAFAFA', foreground: '#0D0D0D', accent: '#E63946', motif: 'swiss', caption: 'ARCHIVE · 1968' },
+  { id: 'tarot', name: 'Cosmic Tarot', category: 'Signature', background: '#1E1A2B', foreground: '#F0E6C8', accent: '#D4AF37', motif: 'tarot', caption: 'XVII · THE STAR' },
 
   // --- RETRO ---
   { id: 'receipt', name: 'Struk Belanja', category: 'Retro', background: '#F5F0E2', foreground: '#20211D', accent: '#CB322C', motif: 'receipt', caption: 'KETAWA NGAKAK · RP 0' },
   { id: 'film', name: '35mm Film Roll', category: 'Retro', background: '#181818', foreground: '#F8F1DB', accent: '#EAAE35', motif: 'film', caption: '24A · 25A · 26A' },
   { id: 'gigs', name: 'Festival Pass', category: 'Retro', background: '#F3B94D', foreground: '#241C19', accent: '#D74B34', motif: 'ticket', caption: 'ALL ACCESS' },
+  { id: 'news', name: 'Koran Pagi', category: 'Retro', background: '#F2EBDD', foreground: '#1E1B16', accent: '#8C2F24', motif: 'news', caption: 'BREAKING · DUA SAHABAT TERLALU KEREN' },
 
   // --- CUTE & POP ---
   { id: 'purikura', name: 'Tokyo Purikura', category: 'Cute & Pop', background: '#FFE0EC', foreground: '#5A2341', accent: '#FF73AA', motif: 'sparkle', caption: 'KAWAII BESTIE' },
   { id: 'y2k', name: 'Y2K Cyber', category: 'Cute & Pop', background: '#B7E9FA', foreground: '#121212', accent: '#E63946', motif: 'chrome', caption: 'BESTIES.EXE' },
   { id: 'coquette', name: 'Coquette Ribbon', category: 'Cute & Pop', background: '#F8DDE5', foreground: '#7B3047', accent: '#A9D9EC', motif: 'ribbon', caption: 'XOXO BESTIE' },
+  { id: 'matcha', name: 'Matcha Cafe', category: 'Cute & Pop', background: '#E8EDD9', foreground: '#2F3A22', accent: '#7C8B5A', motif: 'matcha', caption: 'SLOW MORNING · MATCHA' },
 
   // --- CUSTOM ---
   { id: 'custom', name: 'Custom Warna', category: 'Custom', background: '#FFF3B0', foreground: '#121212', accent: '#E63946', motif: 'custom', caption: 'MADE BY US' },

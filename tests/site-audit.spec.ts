@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const routes = ['/', '/studio/', '/panduan/', '/request-event/', '/brand/', '/terms/', '/share/', '/undangan/', '/undangan/katalog/', '/undangan/portofolio/', '/undangan/custom/', '/undangan/rifqi-aulya/', '/undangan/dimas-nabila/', '/undangan/andi-salsa/', '/undangan/demo-monokrom/', '/undangan/demo-kertas/', '/undangan/demo-senja/', '/wedding-ripki/', '/wedding-ripki-aura/'];
+const routes = ['/', '/studio/', '/panduan/', '/request-event/', '/brand/', '/terms/', '/share/', '/undangan/', '/undangan/katalog/', '/undangan/custom/', '/undangan/rifqi-aulya/', '/undangan/dimas-nabila/', '/undangan/andi-salsa/', '/undangan/demo-monokrom/', '/undangan/demo-kertas/', '/undangan/demo-senja/', '/undangan/demo-pita/', '/undangan/demo-rimba/', '/undangan/demo-marmer/', '/wedding-ripki/', '/wedding-ripki-aura/'];
 
 test('all pages have usable layouts, valid metadata and loaded images', async ({ page }) => {
   test.setTimeout(180_000);
@@ -36,7 +36,7 @@ test('navigation aligns and mobile exposes all primary destinations', async ({ p
   await expect(page.locator('.nav-menu')).toBeHidden();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.locator('.nav-toggle').click();
-  for (const label of ['Portofolio', 'Panduan', 'Tentang']) await expect(page.locator('.site-nav').getByRole('link', { name: label, exact: true })).toBeVisible();
+  for (const label of ['Panduan', 'Tentang']) await expect(page.locator('.site-nav').getByRole('link', { name: label, exact: true })).toBeVisible();
   await page.screenshot({ path: '.impeccable/review/navbar-mobile.png' });
 });
 

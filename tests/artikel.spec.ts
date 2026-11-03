@@ -78,7 +78,7 @@ test.describe('article listing', () => {
     await clear.click();
 
     await expect(category).toHaveValue('');
-    await expect(page.locator('.article-results')).toHaveText('Menampilkan 1–12 dari 50 artikel');
+    await expect(page.locator('.article-results')).toHaveText('Menampilkan 1–12 dari 65 artikel');
     await expect(page.locator('.article-result-item:not([hidden])')).toHaveCount(12);
     await expect(page.locator('.article-pagination')).toBeVisible();
   });
@@ -121,7 +121,7 @@ test.describe('article listing', () => {
     await page.goBack();
     await expect(page).not.toHaveURL(/[?&]page=2/);
     await page.locator('.article-filters .article-clear-filters').click();
-    await expect(page.locator('.article-results')).toHaveText('Menampilkan 1–12 dari 50 artikel');
+    await expect(page.locator('.article-results')).toHaveText('Menampilkan 1–12 dari 65 artikel');
 
     expect(errors).toEqual([]);
   });

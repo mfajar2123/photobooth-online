@@ -3,7 +3,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import SiteHeader from '../../components/layout/SiteHeader.astro';
 import SiteFooter from '../../components/layout/SiteFooter.astro';
 import { invitationTemplates } from '../../data/templates';
-import { assetUrl } from '../../lib/paths';
 
 const breadcrumbs = [
   { name: 'Beranda', item: '/' },
@@ -91,9 +90,6 @@ const whatsappBase = 'https://wa.me/6282143863319';
           <li><span>03</span><div><b>Nama & detail acara</b>Mempelai, tanggal, lokasi, dan rundown lengkap.</div></li>
           <li><span>04</span><div><b>RSVP & save the date</b>Tamu bisa konfirmasi dan menyimpan tanggal.</div></li>
         </ul>
-        <p class="request-portfolio-note">
-          Lihat contohnya: <a href={assetUrl('/undangan/portofolio/')}>portofolio undangan digital ↗</a>
-        </p>
       </aside>
     </section>
   </main>

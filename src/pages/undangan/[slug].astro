@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import SiteHeader from '../../components/layout/SiteHeader.astro';
 import SiteFooter from '../../components/layout/SiteFooter.astro';
 import InvitationCover from '../../components/invitation/InvitationCover';
+import InvitationDecor from '../../components/invitation/InvitationDecor.astro';
 import Countdown from '../../components/invitation/Countdown';
 import Gallery from '../../components/invitation/Gallery';
 import InvitationTools from '../../components/invitation/InvitationTools';
@@ -45,6 +46,7 @@ const eventSchema = {
 
 const orders: Record<string, number[]> = {
   serat: [0,1,2,3,4,5,6,7], linen: [1,0,4,2,3,5,6,7], garden: [0,2,3,1,5,4,6,7], monokrom: [1,5,0,3,2,4,6,7], kertas: [4,1,5,0,2,3,6,7], senja: [5,0,1,4,3,2,6,7],
+  pita: [1,0,4,2,3,5,6,7], rimba: [0,2,3,1,5,4,6,7], marmer: [4,1,5,0,2,3,6,7],
 };
 const sectionOrder = orders[invitation.theme];
 const themeStyle = `--inv-surface: ${template.surface}; --inv-accent: ${template.accent};`;
@@ -63,6 +65,7 @@ const themeStyle = `--inv-surface: ${template.surface}; --inv-accent: ${template
   <SiteHeader ctaLabel="Buat undangan" ctaHref="/undangan/custom/" />
 
   <div class="inv-page" data-theme={invitation.theme} style={themeStyle}>
+    <InvitationDecor theme={invitation.theme} />
     <InvitationCover
       client:load
       names={names}

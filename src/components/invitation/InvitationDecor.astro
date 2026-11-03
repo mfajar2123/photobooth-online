@@ -1,0 +1,196 @@
+---
+import type { InvitationTheme } from '../../data/invitations';
+
+interface Props {
+  theme: InvitationTheme;
+}
+
+const { theme } = Astro.props;
+const variants: Record<InvitationTheme, string> = {
+  serat: 'botanical',
+  linen: 'botanical',
+  garden: 'botanical',
+  rimba: 'botanical',
+  monokrom: 'deco',
+  marmer: 'deco',
+  kertas: 'paper',
+  senja: 'sunset',
+  pita: 'romantic',
+};
+const variant = variants[theme] ?? 'botanical';
+---
+
+<div class="inv-decor" data-variant={variant} aria-hidden="true">
+  <svg class="inv-decor-svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" focusable="false">
+    <defs>
+      <path id="inv-leaf" d="M0 0C-15-17-15-44 0-60C15-44 15-17 0 0Z" />
+      <g id="inv-flower">
+        <circle cx="0" cy="0" r="4" />
+        <ellipse cx="0" cy="-14" rx="6" ry="11" />
+        <ellipse cx="0" cy="14" rx="6" ry="11" />
+        <ellipse cx="-14" cy="0" rx="11" ry="6" />
+        <ellipse cx="14" cy="0" rx="11" ry="6" />
+        <ellipse cx="-10" cy="-10" rx="6" ry="10" transform="rotate(45 -10 -10)" />
+        <ellipse cx="10" cy="-10" rx="6" ry="10" transform="rotate(-45 10 -10)" />
+        <ellipse cx="-10" cy="10" rx="6" ry="10" transform="rotate(-45 -10 10)" />
+        <ellipse cx="10" cy="10" rx="6" ry="10" transform="rotate(45 10 10)" />
+      </g>
+      <g id="inv-bow">
+        <path d="M0 0C-30-24-56-8-48 16C-42 35-17 30 0 9C17 30 42 35 48 16C56-8 30-24 0 0Z" />
+        <path d="M0 9C-11 33-19 50-8 58C0 64 8 51 0 9C-8 51 0 64 8 58C19 50 11 33 0 9Z" />
+      </g>
+      <pattern id="inv-grid" width="36" height="36" patternUnits="userSpaceOnUse">
+        <path d="M36 0H0V36" fill="none" stroke="currentColor" stroke-width="1" />
+      </pattern>
+      <pattern id="inv-lace" width="40" height="18" patternUnits="userSpaceOnUse">
+        <path d="M0 18Q20-12 40 18" fill="none" stroke="currentColor" stroke-width="1.4" />
+      </pattern>
+    </defs>
+
+    {variant === 'botanical' && (
+      <>
+        <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <rect x="28" y="28" width="1384" height="844" />
+          <rect x="38" y="38" width="1364" height="824" opacity=".55" />
+          <path d="M560 210C600 120 660 78 720 78S840 120 880 210" />
+          <path d="M590 210C630 140 675 105 720 105S810 140 850 210" opacity=".6" />
+          <path d="M28 300C100 220 190 190 290 200C340 205 380 225 410 260" />
+          <path d="M28 310C110 240 190 215 280 225" opacity=".6" />
+          <path d="M1412 300C1340 220 1250 190 1150 200C1100 205 1060 225 1030 260" />
+          <path d="M1412 310C1330 240 1250 215 1160 225" opacity=".6" />
+          <path d="M520 740C600 790 660 810 720 810S840 790 920 740" />
+          <path d="M560 760C630 800 675 820 720 820S810 800 880 760" opacity=".55" />
+        </g>
+        <g fill="currentColor" opacity=".55">
+          <use href="#inv-leaf" transform="translate(110 235) rotate(-55) scale(.9)" />
+          <use href="#inv-leaf" transform="translate(155 205) rotate(-42) scale(.82)" />
+          <use href="#inv-leaf" transform="translate(205 195) rotate(-30) scale(.9)" />
+          <use href="#inv-leaf" transform="translate(255 200) rotate(-18) scale(.78)" />
+          <use href="#inv-leaf" transform="translate(305 215) rotate(-8) scale(.9)" />
+          <use href="#inv-leaf" transform="translate(345 235) rotate(4) scale(.8)" />
+          <use href="#inv-leaf" transform="translate(380 250) rotate(16) scale(.9)" />
+          <use href="#inv-leaf" transform="translate(1330 235) rotate(55) scale(.9)" />
+          <use href="#inv-leaf" transform="translate(1285 205) rotate(42) scale(.82)" />
+          <use href="#inv-leaf" transform="translate(1235 195) rotate(30) scale(.9)" />
+          <use href="#inv-leaf" transform="translate(1185 200) rotate(18) scale(.78)" />
+          <use href="#inv-leaf" transform="translate(1135 215) rotate(8) scale(.9)" />
+          <use href="#inv-leaf" transform="translate(1095 235) rotate(-4) scale(.8)" />
+          <use href="#inv-leaf" transform="translate(1060 250) rotate(-16) scale(.9)" />
+          <use href="#inv-leaf" transform="translate(560 760) rotate(-28) scale(.85)" />
+          <use href="#inv-leaf" transform="translate(620 785) rotate(-14) scale(.9)" />
+          <use href="#inv-leaf" transform="translate(680 800) rotate(-4) scale(.8)" />
+          <use href="#inv-leaf" transform="translate(760 800) rotate(4) scale(.8)" />
+          <use href="#inv-leaf" transform="translate(820 785) rotate(14) scale(.9)" />
+          <use href="#inv-leaf" transform="translate(880 760) rotate(28) scale(.85)" />
+          <use href="#inv-flower" transform="translate(720 92) scale(1.15)" />
+          <use href="#inv-flower" transform="translate(600 160) scale(.7)" />
+          <use href="#inv-flower" transform="translate(840 160) scale(.7)" />
+          <use href="#inv-flower" transform="translate(560 780) scale(.62)" />
+          <use href="#inv-flower" transform="translate(880 780) scale(.62)" />
+        </g>
+      </>
+    )}
+
+    {variant === 'deco' && (
+      <>
+        <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square">
+          <rect x="28" y="28" width="1384" height="844" />
+          <rect x="40" y="40" width="1360" height="820" opacity=".55" />
+          <path d="M600 200L720 40L840 200" />
+          <path d="M630 200L720 70L810 200" opacity=".7" />
+          <path d="M660 200L720 100L780 200" opacity=".5" />
+          <path d="M520 180C600 80 660 45 720 45S840 80 920 180" opacity=".65" />
+          <path d="M80 200V80H200" />
+          <path d="M1360 200V80H1240" />
+          <path d="M80 700V820H200" />
+          <path d="M1360 700V820H1240" />
+          <path d="M120 260V640" opacity=".5" />
+          <path d="M1320 260V640" opacity=".5" />
+          <path d="M720 760L760 800L720 840L680 800Z" />
+          <path d="M720 780L740 800L720 820L700 800Z" opacity=".55" />
+        </g>
+        <g fill="currentColor" opacity=".45">
+          <circle cx="80" cy="80" r="3.5" />
+          <circle cx="1360" cy="80" r="3.5" />
+          <circle cx="80" cy="820" r="3.5" />
+          <circle cx="1360" cy="820" r="3.5" />
+          <circle cx="720" cy="200" r="4" />
+        </g>
+      </>
+    )}
+
+    {variant === 'paper' && (
+      <>
+        <rect x="0" y="0" width="1440" height="900" fill="url(#inv-grid)" opacity=".3" />
+        <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+          <rect x="28" y="28" width="1384" height="844" stroke-dasharray="8 8" opacity=".5" />
+          <rect x="1120" y="70" width="120" height="150" />
+          <rect x="1132" y="82" width="96" height="126" stroke-dasharray="4 4" opacity=".7" />
+          <path d="M600 120C640 80 680 80 720 110C760 80 800 80 840 120" />
+          <path d="M520 780C600 740 660 760 720 790C780 760 840 740 920 780" />
+          <path d="M470 150C500 130 530 130 560 150" opacity=".6" />
+          <path d="M880 750C910 730 940 730 970 750" opacity=".6" />
+        </g>
+        <g fill="currentColor" opacity=".18">
+          <rect x="80" y="60" width="180" height="54" transform="rotate(-6 80 60)" />
+          <rect x="1180" y="760" width="180" height="54" transform="rotate(5 1180 760)" />
+        </g>
+        <g fill="currentColor" opacity=".38">
+          <path d="M240 300l6 16 16 6-16 6-6 16-6-16-16-6 16-6z" />
+          <path d="M1180 300l5 13 13 5-13 5-5 13-5-13-13-5 13-5z" />
+          <path d="M300 690l5 13 13 5-13 5-5 13-5-13-13-5 13-5z" />
+          <path d="M1040 680l6 16 16 6-16 6-6 16-6-16-16-6 16-6z" />
+        </g>
+      </>
+    )}
+
+    {variant === 'sunset' && (
+      <>
+        <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <rect x="28" y="28" width="1384" height="844" opacity=".45" />
+          <circle cx="720" cy="250" r="150" fill="currentColor" opacity=".12" stroke="none" />
+          <circle cx="720" cy="250" r="170" opacity=".35" />
+          <path d="M0 620C240 590 480 610 720 620S1200 600 1440 620" opacity=".55" />
+          <path d="M0 650C240 630 480 645 720 650S1200 635 1440 650" opacity=".4" />
+          <path d="M0 680C240 665 480 675 720 680S1200 670 1440 680" opacity=".25" />
+          <path d="M540 180C550 170 560 170 570 180C580 170 590 170 600 180" opacity=".6" />
+          <path d="M840 150C850 140 860 140 870 150C880 140 890 140 900 150" opacity=".5" />
+          <path d="M120 820C180 740 260 720 340 760" />
+          <path d="M120 820C170 760 250 750 310 790" opacity=".6" />
+          <path d="M1320 820C1260 740 1180 720 1100 760" />
+          <path d="M1320 820C1270 760 1190 750 1130 790" opacity=".6" />
+        </g>
+        <g fill="currentColor" opacity=".4">
+          <use href="#inv-leaf" transform="translate(220 770) rotate(-50) scale(1.1)" />
+          <use href="#inv-leaf" transform="translate(270 780) rotate(-32) scale(.9)" />
+          <use href="#inv-leaf" transform="translate(1220 770) rotate(50) scale(1.1)" />
+          <use href="#inv-leaf" transform="translate(1170 780) rotate(32) scale(.9)" />
+        </g>
+      </>
+    )}
+
+    {variant === 'romantic' && (
+      <>
+        <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <rect x="28" y="28" width="1384" height="844" stroke-dasharray="2 6" opacity=".45" />
+          <path d="M640 120C580 60 520 80 540 130C555 165 620 150 680 110" />
+          <path d="M800 120C860 60 920 80 900 130C885 165 820 150 760 110" />
+          <path d="M680 110C680 170 700 210 720 230C740 210 760 170 760 110" />
+          <path d="M120 250C220 180 320 180 420 250S620 320 720 250" opacity=".5" />
+          <path d="M720 650C820 580 920 580 1020 650S1220 720 1320 650" opacity=".5" />
+          <rect x="0" y="48" width="1440" height="18" fill="url(#inv-lace)" opacity=".55" />
+          <rect x="0" y="834" width="1440" height="18" fill="url(#inv-lace)" opacity=".55" />
+        </g>
+        <g fill="currentColor" opacity=".45">
+          <use href="#inv-bow" transform="translate(720 120) scale(1.5)" />
+          <use href="#inv-flower" transform="translate(520 180) scale(.8)" />
+          <use href="#inv-flower" transform="translate(920 180) scale(.8)" />
+          <circle cx="80" cy="140" r="4" />
+          <circle cx="1360" cy="140" r="4" />
+          <circle cx="80" cy="760" r="4" />
+          <circle cx="1360" cy="760" r="4" />
+        </g>
+      </>
+    )}
+  </svg>
+</div>
