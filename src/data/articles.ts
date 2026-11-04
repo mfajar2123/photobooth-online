@@ -1,8 +1,39 @@
+export interface ArticleImage {
+  src: string;
+  alt: string;
+  caption?: string;
+}
+
+export interface ArticleSection {
+  heading: string;
+  paragraphs: string[];
+  list?: string[];
+  image?: ArticleImage;
+  tip?: string;
+}
+
+export interface ArticleDeviceNote {
+  platform: string;
+  notes: string[];
+}
+
+export interface ArticleFaq {
+  question: string;
+  answer: string;
+}
+
 export interface Article {
   slug: string; title: string; description: string; category: string; image: string; imageAlt: string;
-  sections: { heading: string; paragraphs: string[] }[]; source?: { label: string; url: string };
+  sections: ArticleSection[];
+  takeaways?: string[];
+  devices?: ArticleDeviceNote[];
+  faq?: ArticleFaq[];
+  author?: string;
+  reviewer?: string;
+  updated?: string;
+  source?: { label: string; url: string };
 }
-export const articleDate = '2026-11-02';
+export const articleDate = '2026-11-04';
 export const articles: Article[] = [
   {
     slug: 'cara-menggunakan-photobooth-online', title: 'Cara Menggunakan Photobooth Online Langsung dari HP', description: 'Buat photostrip sendiri lewat browser, dari menyiapkan cahaya hingga menyimpan hasil foto.', category: 'Photobooth', image: '/images/friends-photo-booth.jpg', imageAlt: 'Teman-teman berpose bersama di photobooth',
@@ -511,4 +542,703 @@ export const articles: Article[] = [
       { heading: 'Bekali dengan panduan singkat', paragraphs: ['Siapkan satu halaman berisi tautan, cara mengizinkan kamera, langkah mengambil foto, dan kontak bantuan. Simpan panduan di tempat yang mudah diakses tim.', 'Lakukan uji singkat sebelum acara dan catat kendala yang muncul. Setelah acara, kumpulkan masukan tim agar pengalaman tamu berikutnya lebih lancar.'] },
     ],
   },
-].filter((_, index) => index < 25 || index >= 32);
+  {
+    slug: 'fitur-ruang-kilas-vs-photobooth-online-lain',
+    title: 'Fitur Ruang Kilas yang Membedakannya dari Photobooth Online Lain',
+    description: 'Kenali apa yang membuat Ruang Kilas berbeda: pengolahan lokal, lensa vintage, bingkai custom, Boomerang, dan alur tanpa akun.',
+    category: 'Photobooth',
+    image: '/images/friends-photo-booth.jpg',
+    imageAlt: 'Sekelompok teman berfoto bersama di photobooth',
+    author: 'Tim Ruang Kilas',
+    reviewer: 'Tim Produk Ruang Kilas',
+    updated: '2026-11-04',
+    takeaways: [
+      'Seluruh pengambilan dan pengolahan foto berjalan di browser; tidak ada unggahan ke server.',
+      'Ada lima efek lensa real-time, enam filter warna, dan tiga belas tema bingkai termasuk Custom Warna.',
+      'Hasil bisa diunduh sebagai JPG, direkam sebagai Boomerang, atau dibagikan lewat fitur berbagi perangkat.',
+      'Tidak perlu akun, langganan, atau pemasangan aplikasi untuk menyelesaikan satu sesi.',
+    ],
+    sections: [
+      {
+        heading: 'Pemrosesan lokal yang bisa dijelaskan',
+        paragraphs: [
+          'Banyak photobooth online meminta pengguna mengunggah foto ke server untuk diproses. Ruang Kilas melakukan pengambilan, penggabungan bingkai, penerapan filter, dan ekspor langsung di canvas browser. Artinya, foto asli tidak dikirim ke backend untuk disimpan.',
+          'Konsekuensinya, privasi tidak hanya bergantung pada janji kebijakan, tetapi pada alur teknis: kamera memberi aliran gambar ke halaman, halaman menggambar hasilnya di perangkat, lalu pengguna mengunduhnya sendiri. Browser juga menghentikan akses kamera saat sesi ditutup atau kamera dimatikan.',
+        ],
+        list: [
+          'Tidak ada unggahan foto ke server Ruang Kilas.',
+          'Tidak ada akun atau basis data pengguna untuk menyimpan hasil.',
+          'File akhir tersimpan di perangkat setelah diunduh.',
+        ],
+      },
+      {
+        heading: 'Lensa vintage yang diproses di pratinjau',
+        paragraphs: [
+          'Ruang Kilas menyediakan efek Original, Fisheye 360, Leica 35mm, Digicam 2004, VHS Camcorder, dan Dreamy Soft Prism. Efek diterapkan pada pratinjau kamera, sehingga pengguna bisa melihat karakter lensa sebelum menekan tombol jepret. Ini berbeda dari layanan yang baru menampilkan efek setelah foto diunggah.',
+          'Setiap lensa punya karakter berbeda: Fisheye mendistorsi ruang, Leica memberi grain dan tone hangat, Digicam menambahkan kontras flash dan timestamp, VHS memunculkan scanline serta pergeseran warna, dan Dreamy memberi glow lembut. Efek ini bisa dikombinasikan dengan filter warna terpisah.',
+        ],
+        image: { src: '/images/studio-steps/studio-step1-camera.png', alt: 'Pemilihan efek lensa di studio Ruang Kilas', caption: 'Efek lensa dipilih sebelum memotret dan langsung terlihat di pratinjau.' },
+      },
+      {
+        heading: 'Bingkai bertema dan warna custom',
+        paragraphs: [
+          'Tiga belas tema bingkai dibagi ke dalam kategori Signature, Retro, Cute & Pop, dan Custom. Contohnya Kilas Butter, Atelier Noir, Swiss Modernist, Struk Belanja, 35mm Film Roll, Festival Pass, Tokyo Purikura, Y2K Cyber, Coquette Ribbon, dan Matcha Cafe. Pengguna juga bisa membuat warna bingkai sendiri lewat palet atau kode hex serta memilih motif polos, dots, lines, atau grid.',
+          'Fleksibilitas ini berguna untuk acara yang punya identitas visual kuat. Panitia bisa menyamakan warna bingkai dengan undangan atau dekorasi tanpa menunggu desainer eksternal. Caption hingga 40 karakter dan stiker digital bisa ditempel serta digeser sesuai kebutuhan.',
+        ],
+        image: { src: '/images/studio-steps/studio-step2-frame.png', alt: 'Kategori bingkai di studio Ruang Kilas', caption: 'Kategori bingkai membantu mempersempit pilihan saat waktu sesi terbatas.' },
+      },
+      {
+        heading: 'Satu sesi, beberapa format keluaran',
+        paragraphs: [
+          'Setelah foto selesai, pengguna dapat mengunduh JPG, merekam Boomerang berdurasi 3 atau 4 detik, atau memakai tombol berbagi perangkat. Format video mengikuti dukungan browser: sebagian browser menghasilkan MP4, sebagian WebM. Tombol berbagi memakai Web Share API bila tersedia, sehingga file bisa langsung dikirim ke aplikasi lain.',
+          'Karena semua berjalan lokal, tidak ada antrean server yang membuat pengguna menunggu. Namun kualitas dan ketersediaan format tetap bergantung pada perangkat. Pengguna perlu memeriksa hasil unduhan sebelum menutup tab.',
+        ],
+        image: { src: '/images/studio-steps/studio-step4-export.png', alt: 'Tahap simpan dan bagikan di Ruang Kilas', caption: 'Tahap akhir menyediakan unduhan JPG, Boomerang, dan berbagi dari perangkat.' },
+        tip: 'Jika tombol Boomerang tidak tersedia di browser tertentu, unduh foto JPG sebagai hasil utama. Dukungan perekaman video memang berbeda antar-browser.',
+      },
+      {
+        heading: 'Yang tetap perlu dipertimbangkan',
+        paragraphs: [
+          'Ruang Kilas bukan pengganti fotografer profesional atau booth fisik dengan cetak instan. Tidak ada galeri cloud otomatis, tidak ada penyimpanan jangka panjang, dan hasil tidak otomatis terkirim ke tamu. Semua file harus diunduh atau dibagikan sendiri.',
+          'Karena itu, Ruang Kilas paling cocok untuk sesi cepat, konten media sosial, suvenir digital, dan acara yang ingin mengurangi antrean fisik. Untuk cetak dalam jumlah besar atau dokumentasi resmi, tetap siapkan vendor dan alur kerja terpisah.',
+        ],
+      },
+    ],
+    faq: [
+      { question: 'Apakah foto saya diunggah ke server?', answer: 'Tidak. Pengambilan dan penggabungan foto dilakukan di browser. File baru berpindah perangkat jika kamu mengunduh atau membagikannya sendiri.' },
+      { question: 'Apakah perlu membuat akun?', answer: 'Tidak. Studio bisa dibuka langsung dari tautan dan digunakan tanpa login.' },
+      { question: 'Apakah Boomerang selalu tersedia?', answer: 'Tidak selalu. Perekaman video bergantung pada dukungan MediaRecorder dan codec di browser. Jika tidak tersedia, gunakan unduhan foto.' },
+    ],
+  },
+  {
+    slug: 'photobooth-online-di-android',
+    title: 'Photobooth Online di Android: Izin Kamera, Timer, dan Hasil Foto',
+    description: 'Panduan khusus Android untuk membuka Ruang Kilas, mengizinkan kamera, memilih kamera depan, dan menyimpan photostrip ke galeri.',
+    category: 'Photobooth',
+    image: '/images/referensi-kamera.jpeg',
+    imageAlt: 'Kamera dan perlengkapan untuk sesi photobooth di Android',
+    author: 'Tim Ruang Kilas',
+    reviewer: 'Tim Produk Ruang Kilas',
+    updated: '2026-11-04',
+    takeaways: [
+      'Gunakan Chrome versi terbaru dan buka tautan HTTPS.',
+      'Jika izin pernah ditolak, ubah lewat ikon gembok di bilah alamat, bukan hanya menutup tab.',
+      'Tutup aplikasi lain yang memakai kamera sebelum menyalakan studio.',
+      'File JPG biasanya masuk ke folder Download; gunakan menu bagikan untuk menyimpannya ke galeri atau Google Photos.',
+    ],
+    sections: [
+      {
+        heading: 'Membuka studio di Chrome Android',
+        paragraphs: [
+          'Buka tautan Ruang Kilas di Chrome. Pastikan alamat diawali HTTPS dan tidak ada peringatan koneksi. Jika kamu membuka dari tautan di aplikasi pesan, pilih opsi buka di browser agar izin kamera dan unduhan berjalan normal.',
+          'Perbarui Chrome melalui Play Store jika halaman tidak menampilkan tombol kamera. Versi browser yang sangat lama mungkin tidak mendukung sebagian API kamera atau perekaman video yang dipakai studio.',
+        ],
+      },
+      {
+        heading: 'Memberi izin kamera yang benar',
+        paragraphs: [
+          'Saat menekan tombol nyalakan kamera, Chrome akan menampilkan permintaan izin. Pilih izinkan. Jika tidak muncul, ketuk ikon gembok atau ikon pengaturan di kiri bilah alamat, buka izin situs, lalu ubah kamera menjadi izinkan. Muat ulang halaman setelah mengubah izin.',
+          'Jika izin sudah diizinkan tetapi kamera tetap gelap, tutup aplikasi panggilan video, kamera, atau aplikasi lain yang mungkin memakai kamera. Pada sebagian perangkat, kamera hanya bisa dipakai satu aplikasi dalam satu waktu.',
+        ],
+        list: [
+          'Ketuk ikon gembok di bilah alamat.',
+          'Pilih Izin atau Pengaturan situs.',
+          'Ubah Kamera menjadi Izinkan.',
+          'Muat ulang halaman studio.',
+          'Tutup aplikasi lain yang memakai kamera.',
+        ],
+        image: { src: '/images/studio-steps/studio-step1-camera.png', alt: 'Tombol nyalakan kamera pada studio', caption: 'Tombol nyalakan kamera memicu permintaan izin browser; pastikan kamu memilih izinkan.' },
+      },
+      {
+        heading: 'Mengatur timer, kamera depan, dan retake',
+        paragraphs: [
+          'Gunakan tombol Balik untuk berpindah antara kamera depan dan belakang jika perangkat mendukung. Untuk berfoto sendiri, kamera depan lebih mudah karena layar berfungsi sebagai cermin. Aktifkan Mirror bila kamu ingin hasil mengikuti gerakan di layar.',
+          'Pilih timer 3 detik untuk pose santai atau 5–10 detik untuk kelompok. Setelah semua slot terisi, periksa thumbnail. Ketuk slot tertentu untuk retake tanpa mengulang foto lain. Ini menghemat waktu saat satu ekspresi kurang pas.',
+        ],
+      },
+      {
+        heading: 'Menyimpan hasil ke galeri',
+        paragraphs: [
+          'Setelah menekan Unduh foto JPG, Chrome biasanya menampilkan notifikasi unduhan. File tersimpan di folder Download. Buka file tersebut, lalu gunakan menu bagikan atau opsi simpan untuk memindahkannya ke Google Photos atau galeri.',
+          'Jika unduhan gagal, periksa ruang penyimpanan dan izin penyimpanan Chrome. Untuk Boomerang, file disimpan dengan ekstensi sesuai dukungan browser. Jika video tidak bisa diputar di galeri, coba buka dengan pemutar video yang mendukung format tersebut.',
+        ],
+        image: { src: '/images/studio-steps/studio-step4-export.png', alt: 'Tombol unduh foto dan Boomerang di Android', caption: 'Gunakan unduhan JPG sebagai hasil utama; Boomerang bergantung pada dukungan perekaman browser.' },
+      },
+      {
+        heading: 'Jika kamera Android tidak muncul',
+        paragraphs: [
+          'Coba urutan berikut: tutup aplikasi kamera lain, periksa izin situs, muat ulang halaman, lalu coba browser lain. Jika masih gagal, restart perangkat. Beberapa ponsel membatasi akses kamera untuk situs yang dibuka di mode hemat daya atau browser bawaan tertentu.',
+          'Periksa juga apakah halaman dibuka di dalam aplikasi pesan atau media sosial, bukan browser penuh. WebView di dalam aplikasi sering memiliki izin kamera berbeda. Salin tautan ke Chrome untuk hasil yang lebih konsisten.',
+        ],
+      },
+    ],
+    devices: [
+      { platform: 'Android · Chrome', notes: ['Izin kamera diatur per situs lewat ikon gembok.', 'Unduhan JPG masuk ke folder Download.', 'Gunakan tombol Balik untuk kamera depan.'] },
+      { platform: 'Android · browser bawaan', notes: ['Dukungan API kamera dan unduhan bisa berbeda.', 'Jika tombol kamera tidak muncul, buka tautan di Chrome.'] },
+    ],
+    faq: [
+      { question: 'Kenapa kamera hanya menampilkan layar hitam?', answer: 'Biasanya karena izin belum diberikan atau kamera sedang dipakai aplikasi lain. Periksa izin situs dan tutup aplikasi kamera atau panggilan video.' },
+      { question: 'Di mana file photostrip tersimpan?', answer: 'Umumnya di folder Download. Buka file lalu simpan ke galeri atau Google Photos jika ingin muncul di aplikasi foto.' },
+      { question: 'Apakah bisa memakai kamera belakang?', answer: 'Bisa, jika perangkat dan browser menyediakan pilihan kamera. Gunakan tombol Balik untuk berpindah kamera.' },
+    ],
+  },
+  {
+    slug: 'photobooth-online-di-iphone',
+    title: 'Photobooth Online di iPhone: Panduan Safari dari Izin Kamera sampai Simpan',
+    description: 'Cara memakai Ruang Kilas di iPhone dan iPad, termasuk izin kamera Safari, kamera depan, unduh JPG, dan menyimpan hasil ke Photos.',
+    category: 'Photobooth',
+    image: '/images/referensi-kamera.jpeg',
+    imageAlt: 'Perlengkapan foto untuk sesi photobooth di iPhone',
+    author: 'Tim Ruang Kilas',
+    reviewer: 'Tim Produk Ruang Kilas',
+    updated: '2026-11-04',
+    takeaways: [
+      'Gunakan Safari versi terbaru dan buka tautan HTTPS.',
+      'Izin kamera bisa diatur lewat menu aA atau Settings Safari.',
+      'File unduhan masuk ke aplikasi Files, lalu bisa disimpan ke Photos.',
+      'Dukungan Boomerang dan berbagi file bergantung pada versi iOS serta browser.',
+    ],
+    sections: [
+      {
+        heading: 'Membuka studio di Safari iPhone',
+        paragraphs: [
+          'Buka tautan Ruang Kilas di Safari. Hindari membuka dari dalam aplikasi lain karena tampilan dan izin kamera bisa berbeda. Jika kamu membuka dari pesan, pilih opsi buka di Safari.',
+          'Pastikan iOS dan Safari sudah diperbarui. Versi lama mungkin belum mendukung sebagian API kamera atau berbagi file. Jika halaman terasa berat, tutup tab lain sebelum memulai sesi.',
+        ],
+      },
+      {
+        heading: 'Mengizinkan kamera di Safari',
+        paragraphs: [
+          'Saat kamera dinyalakan, Safari akan meminta izin. Pilih Izinkan. Jika kamu pernah menolak, ketuk ikon aA di bilah alamat, pilih Pengaturan Situs Web, lalu ubah Kamera menjadi Izinkan. Muat ulang halaman setelahnya.',
+          'Pada iOS yang lebih baru, pengaturan per situs juga bisa diakses dari Settings > Safari > Camera. Jika izin sudah benar tetapi kamera tetap tidak muncul, tutup aplikasi yang sedang memakai kamera dan coba lagi.',
+        ],
+        list: [
+          'Ketuk ikon aA di bilah alamat.',
+          'Pilih Pengaturan Situs Web.',
+          'Ubah Kamera menjadi Izinkan.',
+          'Muat ulang halaman studio.',
+          'Tutup aplikasi kamera atau panggilan video lain.',
+        ],
+      },
+      {
+        heading: 'Mengatur pose dan kamera depan',
+        paragraphs: [
+          'Gunakan tombol Balik untuk memilih kamera depan. Di iPhone, kamera depan biasanya membuat wajah terlihat lebih dekat; mundurkan perangkat sedikit agar bahu dan tangan masuk ke bingkai. Letakkan ponsel pada penyangga agar stabil.',
+          'Pilih timer yang cukup panjang untuk kelompok. Setelah semua foto diambil, periksa thumbnail dan gunakan retake pada slot yang kurang pas. Perhatikan apakah teks bingkai tertutup tangan atau rambut.',
+        ],
+      },
+      {
+        heading: 'Menyimpan hasil ke Photos',
+        paragraphs: [
+          'Setelah menekan unduh, Safari menyimpan file ke aplikasi Files, biasanya di folder Downloads. Buka file tersebut, ketuk ikon bagikan, lalu pilih Simpan Gambar untuk memasukkannya ke Photos. Kamu juga bisa menekan lama gambar dan memilih opsi simpan.',
+          'Untuk Boomerang, format file mengikuti dukungan browser. Jika video tidak bisa diputar atau dibagikan, gunakan hasil JPG. Jangan menutup tab sebelum unduhan selesai dan file benar-benar tersimpan.',
+        ],
+        image: { src: '/images/studio-steps/studio-step4-export.png', alt: 'Tombol unduh dan bagikan di iPhone', caption: 'Di iPhone, unduhan masuk ke Files terlebih dahulu; simpan ke Photos lewat menu bagikan.' },
+      },
+      {
+        heading: 'Jika hasil terlihat gelap atau terpotong',
+        paragraphs: [
+          'Wajah yang gelap sering disebabkan jendela terang di belakang. Putar tubuh menghadap jendela atau pindah ke area dengan cahaya lebih merata. Jika wajah terpotong, mundurkan ponsel atau pilih layout yang memberi ruang lebih lebar.',
+          'Periksa juga apakah zoom kamera tidak sengaja aktif. Di Safari, cubit layar dapat mengubah tampilan halaman; pastikan kamu tidak memperbesar antarmuka hingga tombol sulit dijangkau. Kembalikan zoom ke normal sebelum memotret.',
+        ],
+      },
+    ],
+    devices: [
+      { platform: 'iPhone · Safari', notes: ['Izin kamera diatur lewat menu aA atau Settings Safari.', 'Unduhan JPG masuk ke Files, lalu disimpan ke Photos.', 'Boomerang mengikuti dukungan codec Safari dan versi iOS.'] },
+      { platform: 'iPad · Safari', notes: ['Tata letak lebih lebar cocok untuk sesi kelompok.', 'Pastikan orientasi perangkat tidak terkunci saat berpindah layout.'] },
+    ],
+    faq: [
+      { question: 'Kenapa tombol kamera tidak muncul di iPhone?', answer: 'Pastikan halaman dibuka di Safari, bukan di dalam aplikasi lain, dan izin kamera situs sudah diizinkan.' },
+      { question: 'Bagaimana menyimpan hasil ke Photos?', answer: 'Buka file di aplikasi Files, ketuk bagikan, lalu pilih Simpan Gambar.' },
+      { question: 'Apakah Boomerang bisa dibagikan ke Instagram?', answer: 'Bisa jika browser dan aplikasi mendukung format video yang dihasilkan. Jika tidak, gunakan foto JPG atau konversi video terlebih dahulu.' },
+    ],
+  },
+  {
+    slug: 'photobooth-online-di-laptop',
+    title: 'Photobooth Online di Laptop: Webcam, Layar Penuh, dan Unduhan',
+    description: 'Siapkan sesi photobooth di laptop atau PC dengan webcam, posisi kamera, mode fullscreen, dan penyimpanan file yang rapi.',
+    category: 'Photobooth',
+    image: '/images/referensi-kamera.jpeg',
+    imageAlt: 'Webcam dan perlengkapan untuk photobooth di laptop',
+    author: 'Tim Ruang Kilas',
+    reviewer: 'Tim Produk Ruang Kilas',
+    updated: '2026-11-04',
+    takeaways: [
+      'Gunakan Chrome, Edge, atau browser modern lain dan izinkan webcam.',
+      'Atur sudut layar agar kamera setinggi mata, bukan menunduk.',
+      'Manfaatkan tombol Fullscreen untuk menghilangkan gangguan tab.',
+      'Simpan file di folder khusus dan ganti namanya agar mudah dicari.',
+    ],
+    sections: [
+      {
+        heading: 'Menyiapkan browser dan webcam',
+        paragraphs: [
+          'Buka studio di browser modern dan tekan tombol nyalakan kamera. Browser akan meminta izin webcam. Jika pernah diblokir, buka pengaturan situs lewat ikon gembok di bilah alamat dan ubah izin kamera.',
+          'Tutup aplikasi konferensi video yang mungkin masih memakai webcam. Pada Windows, periksa juga pengaturan privasi kamera agar browser diizinkan mengakses kamera. Di macOS, periksa System Settings > Privacy & Security > Camera.',
+        ],
+        list: [
+          'Chrome atau Edge versi terbaru.',
+          'Izin kamera untuk situs sudah diberikan.',
+          'Tidak ada aplikasi lain yang memakai webcam.',
+          'Webcam tidak tertutup penutup fisik.',
+        ],
+      },
+      {
+        heading: 'Mengatur posisi dan sudut layar',
+        paragraphs: [
+          'Webcam laptop biasanya berada di bezel atas layar. Atur sudut layar agar kamera mendekati ketinggian mata. Jika layar terlalu rendah, wajah akan terlihat menunduk dan dagu menonjol. Letakkan laptop di atas tumpukan buku jika perlu.',
+          'Beri jarak sekitar 50–80 cm dari kamera. Untuk foto berdua, salah satu orang bisa duduk lebih dekat ke kamera. Pastikan latar di belakang tidak terlalu ramai dan tidak ada sumber cahaya terang tepat di belakang kepala.',
+        ],
+        image: { src: '/images/studio-steps/studio-step1-camera.png', alt: 'Tampilan kamera studio di laptop', caption: 'Di laptop, sudut layar menentukan tinggi kamera. Sesuaikan sebelum memulai sesi.' },
+      },
+      {
+        heading: 'Memakai mode layar penuh',
+        paragraphs: [
+          'Tombol Fullscreen di kanan atas studio menyembunyikan elemen browser dan memberi ruang lebih besar untuk pratinjau. Ini membantu saat berfoto kelompok karena semua orang bisa melihat hitung mundur. Tekan Esc untuk keluar dari layar penuh.',
+          'Jika kamu memakai laptop eksternal, pilih layar yang menghadap subjek. Jangan menaruh jendela studio di layar yang tidak terlihat oleh peserta. Pastikan kursor tidak menutupi tombol saat sesi berlangsung.',
+        ],
+      },
+      {
+        heading: 'Menyimpan dan menamai file',
+        paragraphs: [
+          'File JPG biasanya masuk ke folder Downloads. Buat folder khusus untuk acara dan pindahkan file ke sana. Ganti nama file dengan tanggal dan nama acara agar mudah dicari, misalnya photostrip-acara-2026-11-04.jpg.',
+          'Jika mengunduh Boomerang, periksa ekstensi file. Format video mengikuti dukungan browser. Simpan salinan di drive eksternal atau cloud jika file akan dipakai untuk konten acara. Jangan hanya mengandalkan folder Download.',
+        ],
+        image: { src: '/images/studio-steps/studio-step4-export.png', alt: 'Tombol unduh di laptop', caption: 'Setelah mengunduh, pindahkan file ke folder acara dan ganti namanya agar mudah ditemukan.' },
+        tip: 'Gunakan webcam eksternal jika ingin hasil lebih tajam dan posisi kamera lebih fleksibel. Banyak webcam eksternal bisa dipasang setinggi mata dengan tripod kecil.',
+      },
+      {
+        heading: 'Jika webcam tidak terdeteksi',
+        paragraphs: [
+          'Periksa apakah webcam terbaca di aplikasi lain. Jika tidak, masalahnya ada di perangkat atau driver, bukan di studio. Cabut dan sambungkan ulang webcam eksternal, lalu muat ulang browser.',
+          'Pada Windows, buka Device Manager dan periksa kamera. Pada macOS, periksa izin kamera browser di System Settings. Jika memakai laptop kantor, kebijakan perusahaan mungkin memblokir akses kamera untuk situs tertentu.',
+        ],
+      },
+    ],
+    devices: [
+      { platform: 'Windows · Chrome/Edge', notes: ['Periksa Settings > Privacy > Camera.', 'File unduhan masuk ke folder Downloads.', 'Tekan Esc untuk keluar dari fullscreen.'] },
+      { platform: 'macOS · Safari/Chrome', notes: ['Periksa System Settings > Privacy & Security > Camera.', 'Safari meminta izin per situs.', 'Gunakan tombol Fullscreen untuk tampilan tanpa gangguan.'] },
+    ],
+    faq: [
+      { question: 'Kenapa webcam laptop tidak muncul di browser?', answer: 'Bisa karena izin situs, pengaturan privasi sistem, atau webcam sedang dipakai aplikasi lain. Periksa ketiganya sebelum mencoba browser lain.' },
+      { question: 'Apakah bisa memakai webcam eksternal?', answer: 'Bisa, jika browser dan sistem mengenali perangkat tersebut. Pilih kamera yang aktif di pengaturan situs bila ada beberapa pilihan.' },
+      { question: 'Di mana file tersimpan?', answer: 'Umumnya di folder Downloads. Pindahkan ke folder acara dan ganti namanya agar mudah dicari.' },
+    ],
+  },
+  {
+    slug: 'cara-membuat-boomerang-photobooth',
+    title: 'Cara Membuat Boomerang Photobooth dan Membagikannya ke Media Sosial',
+    description: 'Rekam Boomerang 3 atau 4 detik di Ruang Kilas, pilih format yang didukung perangkat, lalu bagikan ke Instagram Story atau TikTok.',
+    category: 'Photobooth',
+    image: '/images/friends-photo-booth.jpg',
+    imageAlt: 'Teman-teman berpose untuk klip Boomerang',
+    author: 'Tim Ruang Kilas',
+    reviewer: 'Tim Produk Ruang Kilas',
+    updated: '2026-11-04',
+    takeaways: [
+      'Boomerang direkam dari sesi foto dan tersedia dalam durasi 3 atau 4 detik.',
+      'Format file mengikuti dukungan browser, umumnya MP4 atau WebM.',
+      'Gerakan kecil yang berulang lebih mudah dibaca daripada gerakan besar.',
+      'Jika video gagal, unduh JPG dan gunakan sebagai hasil utama.',
+    ],
+    sections: [
+      {
+        heading: 'Apa yang dimaksud Boomerang di Ruang Kilas',
+        paragraphs: [
+          'Boomerang adalah klip pendek yang menangkap gerakan di sekitar sesi foto. Di tahap simpan, pilih opsi Boomerang, tentukan durasi 3 atau 4 detik, lalu tekan tombol unduh. Studio merekam hasil dari canvas dan menyimpannya sebagai file video.',
+          'Karena perekaman dilakukan di browser, dukungan format bergantung pada MediaRecorder dan codec yang tersedia. Sebagian browser menghasilkan MP4, sebagian WebM. Perbedaan ini wajar dan bukan berarti sesi gagal.',
+        ],
+      },
+      {
+        heading: 'Menyiapkan gerakan yang mudah dibaca',
+        paragraphs: [
+          'Pilih gerakan sederhana yang bisa diulang, misalnya melambaikan tangan, mengangguk, atau berpose lalu kembali ke posisi awal. Gerakan besar dan cepat sering terlihat kabur karena durasi klip sangat pendek. Beri jeda satu detik sebelum bergerak.',
+          'Letakkan kamera stabil. Jika kamera ikut bergoyang, seluruh klip akan terasa bergetar. Untuk kelompok, tentukan satu gerakan bersama agar hasilnya tidak saling bertabrakan. Ulangi dua atau tiga kali dan pilih yang paling rapi.',
+        ],
+        list: [
+          'Gerakan kecil dan berulang.',
+          'Kamera stabil di penyangga.',
+          'Satu gerakan utama per kelompok.',
+          'Cahaya cukup agar noise berkurang.',
+        ],
+      },
+      {
+        heading: 'Memilih durasi 3 atau 4 detik',
+        paragraphs: [
+          'Durasi 3 detik cocok untuk gerakan cepat dan konten yang perlu langsung kembali ke awal. Durasi 4 detik memberi sedikit ruang untuk gerakan yang lebih santai. Sesuaikan dengan tempo gerakan dan durasi Story yang kamu rencanakan.',
+          'Jika hasil terasa terlalu cepat, ulangi dengan gerakan lebih lambat daripada menambah durasi terus-menerus. Boomerang yang baik terasa seperti satu tarikan napas, bukan video panjang yang dipotong.',
+        ],
+        image: { src: '/images/studio-steps/studio-step4-export.png', alt: 'Pilihan durasi Boomerang di studio', caption: 'Pilih durasi 3 atau 4 detik sebelum mengunduh; durasi memengaruhi tempo gerakan.' },
+      },
+      {
+        heading: 'Menyimpan dan membagikan',
+        paragraphs: [
+          'Tekan tombol unduh Boomerang dan tunggu proses selesai. Periksa file di galeri atau pemutar video. Jika ingin membagikan langsung, gunakan tombol bagikan dari perangkat. Fitur ini memakai Web Share API dan ketersediaannya berbeda di setiap browser.',
+          'Untuk Instagram Story atau TikTok, unggah file dari galeri. Jika aplikasi tidak menerima format video tertentu, konversi terlebih dahulu atau gunakan hasil JPG. Jangan mengunggah dari folder Download jika aplikasi tidak memiliki izin akses folder tersebut.',
+        ],
+        image: { src: '/images/studio-steps/wedding-result-mobile.png', alt: 'Contoh hasil yang dibagikan dari ponsel', caption: 'Contoh tampilan hasil di ponsel dengan tombol bagikan, unduh JPG, dan ulangi foto.' },
+      },
+      {
+        heading: 'Jika Boomerang tidak bisa diunduh',
+        paragraphs: [
+          'Periksa apakah browser mendukung MediaRecorder. Jika tombol tidak aktif atau proses gagal, coba browser lain yang lebih baru. Beberapa browser di dalam aplikasi pesan membatasi perekaman video.',
+          'Pastikan penyimpanan perangkat cukup dan kamu tidak menutup tab saat proses berlangsung. Jika tetap gagal, unduh foto JPG. Untuk kebutuhan konten, kamu bisa membuat animasi sederhana dari beberapa foto memakai aplikasi edit video.',
+        ],
+      },
+    ],
+    faq: [
+      { question: 'Kenapa Boomerang saya berformat WebM?', answer: 'Browser memilih format yang didukung. Jika MP4 tidak tersedia, WebM digunakan. Dukungan format berbeda antar-browser dan perangkat.' },
+      { question: 'Bisakah Boomerang diunggah ke Instagram?', answer: 'Bisa jika aplikasi mendukung format file yang dihasilkan. Jika tidak, konversi video terlebih dahulu atau gunakan foto JPG.' },
+      { question: 'Apakah Boomerang bisa direkam ulang tanpa mengulang foto?', answer: 'Kamu bisa kembali ke tahap sebelumnya dan menyesuaikan pengaturan, tetapi perekaman mengikuti sesi yang sedang aktif. Mengulang foto memberi hasil gerakan yang baru.' },
+    ],
+  },
+  {
+    slug: 'panduan-efek-lensa-ruang-kilas',
+    title: 'Panduan 5 Efek Lensa Ruang Kilas dan Waktu yang Tepat Memakainya',
+    description: 'Pahami karakter Fisheye 360, Leica 35mm, Digicam 2004, VHS Camcorder, dan Dreamy Soft Prism agar tidak salah pilih lensa.',
+    category: 'Tips foto',
+    image: '/images/referensi-kamera.jpeg',
+    imageAlt: 'Lensa kamera sebagai inspirasi efek photobooth',
+    author: 'Tim Ruang Kilas',
+    reviewer: 'Tim Produk Ruang Kilas',
+    updated: '2026-11-04',
+    takeaways: [
+      'Setiap lensa punya karakter berbeda; pilih berdasarkan suasana yang ingin dibangun.',
+      'Efek lensa dan filter warna adalah dua lapisan terpisah.',
+      'Uji kombinasi lensa, filter, dan bingkai di pratinjau sebelum memotret.',
+      'Untuk kelompok, hindari lensa yang terlalu banyak mendistorsi tepi bingkai.',
+    ],
+    sections: [
+      {
+        heading: 'Fisheye 360 dan Leica 35mm',
+        paragraphs: [
+          'Fisheye 360 memberi distorsi cembung yang kuat, seperti kamera aksi era 90-an. Lensa ini cocok untuk foto kelompok yang ingin terasa lucu dan berenergi. Namun wajah di tepi bingkai bisa terlihat melengkung, jadi atur posisi agar wajah utama tetap di tengah.',
+          'Leica 35mm memberi tone hangat, grain halus, dan aksen light leak tipis. Karakternya cocok untuk potret santai, foto berdua, dan suasana nostalgia. Karena warnanya sudah hangat, hindari filter Warm tambahan jika kulit terlihat terlalu kuning.',
+        ],
+        image: { src: '/images/studio-steps/studio-step1-camera.png', alt: 'Pilihan lensa Fisheye dan Leica di studio', caption: 'Fisheye dan Leica memberi karakter yang sangat berbeda; uji keduanya dengan pose yang sama.' },
+      },
+      {
+        heading: 'Digicam 2004 dan VHS Camcorder',
+        paragraphs: [
+          'Digicam Cybershot 2004 menambahkan kontras digital flash dan timestamp berwarna oranye. Lensa ini cocok untuk foto bergaya kamera saku awal 2000-an, terutama saat memakai bingkai Retro. Pastikan cahaya cukup karena kontras tinggi bisa membuat bayangan wajah lebih tegas.',
+          'VHS Camcorder menambahkan scanline dan pergeseran warna RGB. Efeknya kuat, jadi gunakan untuk foto yang memang ingin terasa seperti cuplikan kaset lama. Untuk teks bingkai yang kecil, pergeseran warna bisa membuatnya sulit dibaca; pilih bingkai dengan teks besar.',
+        ],
+      },
+      {
+        heading: 'Dreamy Soft Prism dan Original',
+        paragraphs: [
+          'Dreamy Soft Prism memberi glow lembut pada area terang, mirip potret editorial. Lensa ini cocok untuk foto satu orang atau pasangan dengan cahaya lembut. Hindari memakainya di ruangan yang sangat terang karena highlight bisa terlalu memutih.',
+          'Original tidak menambahkan efek apa pun. Gunakan Original jika kamu ingin warna bingkai dan filter menjadi fokus, atau jika ingin hasil yang paling netral untuk dicetak. Original juga aman untuk kelompok besar karena tidak ada distorsi tepi.',
+        ],
+        list: [
+          'Fisheye: kelompok lucu dan energi tinggi.',
+          'Leica: potret hangat dan nostalgia.',
+          'Digicam: gaya kamera saku awal 2000-an.',
+          'VHS: suasana kaset dan glitch.',
+          'Dreamy: potret lembut dan editorial.',
+          'Original: netral dan aman untuk semua pose.',
+        ],
+      },
+      {
+        heading: 'Mengombinasikan lensa, filter, dan bingkai',
+        paragraphs: [
+          'Mulai dari lensa, lalu pilih filter yang tidak bertabrakan. Lensa Leica yang hangat biasanya cukup dengan No Filter atau Classic. Lensa Digicam bisa dipadukan dengan B&W untuk kesan koran lama, sedangkan VHS cocok dengan bingkai Retro.',
+          'Uji kombinasi di pratinjau dengan pose sebenarnya. Nama efek tidak selalu menggambarkan hasil akhir di pencahayaan ruanganmu. Jika wajah menjadi terlalu terang atau tekstur berlebihan, kurangi satu lapisan efek.',
+        ],
+        tip: 'Ambil satu foto uji untuk setiap kombinasi yang ingin dicoba. Membandingkan hasil berdampingan lebih mudah daripada mengingat tampilan sebelumnya.',
+      },
+      {
+        heading: 'Kesalahan umum dalam memilih lensa',
+        paragraphs: [
+          'Kesalahan pertama adalah memakai efek terlalu banyak sekaligus: lensa kuat, filter pekat, dan bingkai ramai. Hasilnya wajah tenggelam. Kesalahan kedua adalah memilih lensa hanya dari nama tanpa melihat pratinjau di cahaya ruangan.',
+          'Kesalahan ketiga adalah memakai Fisheye untuk kelompok besar tanpa mengatur posisi. Wajah di tepi bisa terdistorsi. Jika ingin efek tetap terasa, letakkan wajah utama di tengah dan biarkan tepi bingkai menangkap distorsi.',
+        ],
+      },
+    ],
+    faq: [
+      { question: 'Apakah efek lensa bisa diganti setelah foto diambil?', answer: 'Lensa dipilih saat tahap kamera. Untuk mengganti, kembali ke tahap kamera dan ambil ulang atau sesuaikan pengaturan sebelum melanjutkan.' },
+      { question: 'Lensa mana yang paling aman untuk cetak?', answer: 'Original atau Leica dengan filter ringan biasanya paling aman karena tidak terlalu banyak mengubah warna dan kontras.' },
+      { question: 'Bisakah lensa digabung dengan filter warna?', answer: 'Bisa. Keduanya lapisan berbeda, tetapi uji hasilnya agar warna tidak berlebihan.' },
+    ],
+  },
+  {
+    slug: 'panduan-frame-custom-warna-motif',
+    title: 'Cara Memakai Frame Custom Warna dan Motif di Ruang Kilas',
+    description: 'Atur warna bingkai lewat palet atau kode hex, pilih motif, dan pastikan caption tetap terbaca di layar ponsel.',
+    category: 'Photobooth',
+    image: '/images/wedding-ripki-hero.jpg',
+    imageAlt: 'Inspirasi warna bingkai untuk acara pernikahan',
+    author: 'Tim Ruang Kilas',
+    reviewer: 'Tim Produk Ruang Kilas',
+    updated: '2026-11-04',
+    takeaways: [
+      'Custom Warna berguna saat bingkai harus mengikuti identitas acara.',
+      'Gunakan satu warna utama dan satu aksen agar tidak ramai.',
+      'Motif Polos paling aman untuk teks kecil; Dots, Lines, dan Grid perlu diuji.',
+      'Caption maksimal 40 karakter dan harus terbaca di layar ponsel.',
+    ],
+    sections: [
+      {
+        heading: 'Kapan sebaiknya memakai Custom Warna',
+        paragraphs: [
+          'Custom Warna cocok untuk acara yang sudah memiliki palet tetap, misalnya pernikahan dengan undangan berwarna tertentu, acara kantor dengan warna brand, atau ulang tahun dengan tema khusus. Bingkai custom membuat hasil foto terasa menyatu dengan materi acara lain.',
+          'Jika acara tidak memiliki palet yang jelas, tema bawaan seperti Kilas Butter atau Swiss Modernist biasanya lebih cepat dipakai. Custom Warna membutuhkan keputusan warna yang konsisten, terutama jika beberapa orang akan memakai studio yang sama.',
+        ],
+      },
+      {
+        heading: 'Memilih warna utama dan aksen',
+        paragraphs: [
+          'Tentukan satu warna latar dan satu warna teks. Warna aksen bisa dipakai untuk garis, bintang, atau detail kecil. Pastikan kontras teks dan latar cukup; teks gelap di latar terang lebih mudah dibaca daripada teks abu-abu di latar pastel.',
+          'Ambil warna dari undangan atau dekorasi, lalu uji di layar ponsel. Warna yang terlihat lembut di monitor bisa menjadi terlalu pucat setelah dicetak. Jika ragu, pilih latar netral dan gunakan warna acara sebagai aksen.',
+        ],
+        image: { src: '/images/studio-steps/studio-step2-frame.png', alt: 'Contoh bingkai dengan warna custom', caption: 'Custom Warna memungkinkan bingkai mengikuti palet undangan atau dekorasi.' },
+      },
+      {
+        heading: 'Memilih motif yang tidak mengganggu wajah',
+        paragraphs: [
+          'Motif Polos paling aman karena tidak bersaing dengan foto. Dots dan Lines memberi tekstur ringan, tetapi bisa mengganggu jika terlalu rapat. Grid cocok untuk kesan teknis atau editorial, asalkan teks tetap terbaca.',
+          'Uji motif dengan foto asli, bukan bidang kosong. Pola yang tampak halus di layar desain bisa terlihat ramai di belakang wajah. Jika motif berada di area foto, kurangi kepadatannya atau pindahkan ke tepi bingkai.',
+        ],
+        list: [
+          'Polos: aman untuk semua jenis teks.',
+          'Dots: tekstur ringan, hindari kepadatan tinggi.',
+          'Lines: cocok untuk kesan editorial.',
+          'Grid: kuat untuk tema teknis, tetapi periksa keterbacaan.',
+        ],
+      },
+      {
+        heading: 'Mengatur caption dan stiker',
+        paragraphs: [
+          'Caption maksimal 40 karakter dan tercetak langsung di bingkai. Gunakan nama acara, tanggal, atau kalimat singkat. Hindari kalimat panjang karena akan mengecil dan sulit dibaca pada hasil akhir.',
+          'Stiker bisa digeser dan dihapus dengan dobel klik. Tempatkan stiker di area yang tidak menutupi wajah atau teks utama. Untuk kelompok, kurangi jumlah stiker agar foto tetap rapi.',
+        ],
+        image: { src: '/images/studio-steps/studio-step3-filters.png', alt: 'Pengaturan caption dan filter pada bingkai custom', caption: 'Caption dan filter sebaiknya diuji bersama karena keduanya memengaruhi keterbacaan.' },
+      },
+      {
+        heading: 'Uji sebelum dibagikan ke tamu',
+        paragraphs: [
+          'Buka hasil di ponsel dengan kecerahan normal. Periksa apakah nama acara, tanggal, dan caption terbaca tanpa memperbesar layar. Jika tidak, perbesar teks atau sederhanakan latar.',
+          'Cetak satu contoh jika hasil akan dicetak. Perbedaan warna dan ukuran teks baru terlihat setelah cetak. Setelah cocok, simpan pengaturan dan bagikan tautan studio ke tamu atau panitia.',
+        ],
+        tip: 'Simpan kode hex warna acara di catatan panitia. Ini memastikan semua orang memakai warna yang sama saat mengatur ulang bingkai.',
+      },
+      {
+        heading: 'Kesalahan yang sering terjadi',
+        paragraphs: [
+          'Warna teks dan latar terlalu dekat membuat caption hilang. Motif terlalu rapat membuat wajah sulit terlihat. Caption terlalu panjang membuat teks mengecil. Stiker terlalu banyak menutupi ekspresi tamu.',
+          'Perbaiki dengan mengurangi satu elemen pada satu waktu. Mulai dari kontras teks, lalu kepadatan motif, lalu jumlah stiker. Perubahan kecil biasanya lebih efektif daripada mengganti seluruh desain.',
+        ],
+      },
+    ],
+    faq: [
+      { question: 'Apakah warna bisa memakai kode hex?', answer: 'Bisa. Custom Warna menyediakan palet dan input warna, termasuk kode hex, untuk menyesuaikan bingkai.' },
+      { question: 'Berapa panjang caption yang disarankan?', answer: 'Maksimal 40 karakter. Untuk keterbacaan terbaik, gunakan 15–25 karakter.' },
+      { question: 'Apakah motif bisa dipakai di area foto?', answer: 'Bisa, tetapi uji dengan foto asli agar tidak mengganggu wajah dan teks.' },
+    ],
+  },
+  {
+    slug: 'photobooth-online-vs-photobooth-fisik',
+    title: 'Photobooth Online vs Photobooth Fisik: Mana yang Cocok untuk Acaramu?',
+    description: 'Bandingkan biaya, antrean, kualitas cetak, privasi, dan pengalaman tamu sebelum memilih photobooth online atau booth fisik.',
+    category: 'Persiapan acara',
+    image: '/images/wedding-ripki-hero.jpg',
+    imageAlt: 'Suasana acara pernikahan dengan area foto',
+    author: 'Tim Ruang Kilas',
+    reviewer: 'Tim Produk Ruang Kilas',
+    updated: '2026-11-04',
+    takeaways: [
+      'Photobooth online unggul untuk jangkauan luas, biaya per tamu rendah, dan antrean singkat.',
+      'Booth fisik unggul untuk cetak instan, properti nyata, dan pengalaman yang dipandu operator.',
+      'Keduanya bisa dikombinasikan: online untuk semua tamu, fisik untuk area utama.',
+      'Pilih berdasarkan tujuan acara, bukan hanya harga.',
+    ],
+    sections: [
+      {
+        heading: 'Perbedaan alur tamu',
+        paragraphs: [
+          'Photobooth online membuka tautan di perangkat tamu. Tidak ada antrean fisik, tetapi tamu harus memberi izin kamera dan mengunduh hasil sendiri. Booth fisik menyediakan perangkat, properti, dan operator; tamu datang, berpose, lalu menerima cetakan.',
+          'Untuk tamu yang tidak nyaman memakai ponsel, booth fisik lebih ramah. Untuk tamu yang ingin langsung membagikan foto ke media sosial, photobooth online lebih cepat karena file sudah ada di perangkat mereka.',
+        ],
+      },
+      {
+        heading: 'Biaya dan perangkat',
+        paragraphs: [
+          'Photobooth online tidak memerlukan kamera khusus, printer, atau operator per area. Biaya utama ada pada desain bingkai, penyiapan tautan, dan pendampingan. Booth fisik membutuhkan perangkat, cetak, staf, transportasi, dan listrik.',
+          'Namun photobooth online bergantung pada perangkat tamu dan koneksi internet. Jika banyak tamu membawa ponsel lama atau sinyal buruk, pengalaman bisa tidak merata. Booth fisik lebih terkontrol karena perangkat dan jaringan disiapkan penyelenggara.',
+        ],
+        list: [
+          'Online: biaya per tamu rendah, jangkauan luas.',
+          'Fisik: biaya lebih tinggi, pengalaman terkontrol.',
+          'Online: tidak ada cetak instan.',
+          'Fisik: membutuhkan ruang dan operator.',
+        ],
+      },
+      {
+        heading: 'Kualitas hasil dan cetak',
+        paragraphs: [
+          'Photobooth online menghasilkan file digital yang bisa diunduh dan dicetak kemudian. Kualitas bergantung pada kamera perangkat, cahaya, dan pengaturan bingkai. Booth fisik biasanya memakai kamera dan lampu khusus sehingga hasil lebih konsisten.',
+          'Jika cetak instan penting, booth fisik lebih praktis. Jika hasil digital dan konten media sosial lebih penting, photobooth online sudah cukup. Untuk cetak berkualitas, file JPG dari photobooth online tetap bisa dicetak setelah diuji terlebih dahulu.',
+        ],
+        image: { src: '/images/studio-steps/wedding-result.jpg', alt: 'Contoh hasil digital yang bisa dicetak', caption: 'Hasil digital bisa dicetak, tetapi perlu uji cetak untuk memastikan warna dan ketajaman.' },
+      },
+      {
+        heading: 'Antrean dan kapasitas',
+        paragraphs: [
+          'Booth fisik memiliki kapasitas terbatas karena satu perangkat melayani satu kelompok pada satu waktu. Photobooth online memungkinkan banyak tamu berfoto bersamaan dari perangkat masing-masing. Ini mengurangi antrean, terutama saat jam ramai.',
+          'Namun photobooth online memindahkan beban teknis ke tamu. Siapkan petunjuk yang jelas dan satu petugas bantuan. Jika tamu kesulitan, antrean bantuan bisa tetap terbentuk di sekitar area QR.',
+        ],
+      },
+      {
+        heading: 'Rekomendasi kombinasi',
+        paragraphs: [
+          'Untuk pernikahan, gunakan photobooth online sebagai pelengkap dokumentasi dan suvenir digital, sementara fotografer resmi menangani momen utama. Jika anggaran memungkinkan, sediakan booth fisik kecil di area resepsi untuk tamu yang ingin cetak instan.',
+          'Untuk acara kantor atau sekolah, photobooth online sering lebih hemat dan mudah disebarkan. Untuk acara dengan banyak tamu yang tidak membawa ponsel, booth fisik lebih aman. Pilih berdasarkan kebutuhan tamu, bukan tren.',
+        ],
+      },
+    ],
+    faq: [
+      { question: 'Mana yang lebih murah?', answer: 'Photobooth online umumnya lebih murah karena tidak memerlukan perangkat, cetak, dan operator di lokasi. Namun biaya desain dan pendampingan tetap ada.' },
+      { question: 'Bisakah keduanya dipakai bersamaan?', answer: 'Bisa. Photobooth online untuk jangkauan luas dan booth fisik untuk pengalaman cetak instan di area utama.' },
+      { question: 'Mana yang lebih baik untuk privasi?', answer: 'Photobooth online yang memproses foto lokal menjaga foto tetap di perangkat tamu. Booth fisik menyimpan file di perangkat penyelenggara, jadi perlu kesepakatan penggunaan.' },
+    ],
+  },
+  {
+    slug: 'solusi-kamera-gelap-buram-photobooth',
+    title: 'Kamera Gelap atau Buram saat Photobooth? Solusi per Perangkat',
+    description: 'Perbaiki hasil foto yang gelap, buram, atau terbalik di Android, iPhone, dan laptop dengan langkah yang bisa dicoba langsung.',
+    category: 'Tips foto',
+    image: '/images/referensi-kamera.jpeg',
+    imageAlt: 'Kamera untuk mengatasi hasil foto gelap atau buram',
+    author: 'Tim Ruang Kilas',
+    reviewer: 'Tim Produk Ruang Kilas',
+    updated: '2026-11-04',
+    takeaways: [
+      'Periksa cahaya dan kebersihan lensa sebelum menyalahkan kamera.',
+      'Gunakan penyangga agar perangkat tidak bergoyang saat hitung mundur.',
+      'Izin kamera dan aplikasi lain adalah penyebab umum layar hitam.',
+      'Solusi berbeda antara Android, iPhone, dan laptop.',
+    ],
+    sections: [
+      {
+        heading: 'Cek cahaya, lensa, dan stabilitas',
+        paragraphs: [
+          'Foto gelap sering terjadi karena sumber cahaya berada di belakang subjek. Putar tubuh menghadap jendela atau lampu, lalu ambil satu foto uji. Jika wajah masih gelap, tambahkan pantulan dari dinding putih atau pindahkan lampu lebih dekat ke depan.',
+          'Lensa yang berminyak membuat foto terlihat berkabut dan kurang tajam. Bersihkan dengan kain microfiber. Letakkan perangkat pada penyangga atau tumpukan buku agar tidak bergoyang saat hitung mundur.',
+        ],
+        list: [
+          'Wajah menghadap cahaya, bukan membelakangi.',
+          'Lensa bersih dan tidak berembun.',
+          'Perangkat stabil di penyangga.',
+          'Latar tidak lebih terang daripada wajah.',
+        ],
+      },
+      {
+        heading: 'Android: izin dan aplikasi lain',
+        paragraphs: [
+          'Jika layar kamera hitam, periksa izin kamera situs lewat ikon gembok. Tutup aplikasi panggilan video atau kamera yang mungkin masih berjalan. Muat ulang halaman setelah izin diubah.',
+          'Jika hasil buram, periksa apakah kamera sedang memakai mode zoom digital atau fokus macro. Ketuk pratinjau untuk memicu fokus, lalu tahan perangkat diam. Pada sebagian ponsel, mode hemat daya membatasi kinerja kamera; coba matikan sementara.',
+        ],
+      },
+      {
+        heading: 'iPhone: Safari dan pengaturan privasi',
+        paragraphs: [
+          'Pastikan halaman dibuka di Safari, bukan di dalam aplikasi pesan. Periksa izin kamera lewat menu aA > Pengaturan Situs Web, atau Settings > Safari > Camera. Jika izin sudah benar, tutup aplikasi kamera lain dan muat ulang halaman.',
+          'Foto buram di iPhone sering disebabkan gerakan tangan saat menekan tombol. Gunakan timer dan letakkan ponsel di penyangga. Bersihkan lensa karena sidik jari sangat terlihat pada kamera kecil.',
+        ],
+        image: { src: '/images/studio-steps/studio-step4-export.png', alt: 'Pemeriksaan hasil sebelum menyimpan', caption: 'Periksa hasil di tahap simpan; jika gelap atau buram, kembali ke tahap kamera dan ulangi.' },
+      },
+      {
+        heading: 'Laptop: webcam dan sudut layar',
+        paragraphs: [
+          'Webcam laptop sering menghasilkan gambar grain di ruangan minim cahaya. Tambahkan lampu di depan wajah dan hindari jendela terang di belakang. Atur sudut layar agar kamera setinggi mata dan wajah tidak terlihat menunduk.',
+          'Jika gambar terlihat gelap padahal ruangan terang, periksa apakah penutup privasi webcam terbuka. Di Windows atau macOS, periksa izin kamera browser dan pastikan tidak ada aplikasi konferensi yang masih memakai webcam.',
+        ],
+      },
+      {
+        heading: 'Jika foto terbalik atau tidak sesuai posisi',
+        paragraphs: [
+          'Gunakan tombol Mirror untuk mengubah orientasi pratinjau. Jika hasil terbalik setelah diunduh, periksa pengaturan orientasi perangkat dan pastikan layar tidak terkunci pada orientasi yang salah. Muat ulang halaman setelah mengubah orientasi.',
+          'Untuk kelompok, periksa pratinjau dari tepi ke tepi. Jika wajah terpotong, mundurkan kamera atau pilih layout yang lebih lebar. Jangan mengandalkan hasil setelah foto diambil karena bingkai sudah ditentukan di awal.',
+        ],
+      },
+    ],
+    devices: [
+      { platform: 'Android', notes: ['Periksa izin kamera per situs.', 'Tutup aplikasi kamera atau panggilan video lain.', 'Gunakan timer dan penyangga untuk mengurangi blur.'] },
+      { platform: 'iPhone', notes: ['Buka di Safari, bukan WebView aplikasi pesan.', 'Atur izin lewat aA > Pengaturan Situs Web.', 'Simpan hasil ke Photos lewat menu bagikan.'] },
+      { platform: 'Laptop', notes: ['Periksa penutup privasi webcam.', 'Atur sudut layar agar kamera setinggi mata.', 'Tambahkan lampu di depan wajah.'] },
+    ],
+    faq: [
+      { question: 'Kenapa hasil foto saya buram?', answer: 'Biasanya karena gerakan tangan, lensa kotor, atau cahaya kurang. Gunakan timer, bersihkan lensa, dan stabilkan perangkat.' },
+      { question: 'Kenapa wajah gelap padahal ruangan terang?', answer: 'Kamera mungkin menyesuaikan exposure ke sumber cahaya di belakang. Hadapkan wajah ke cahaya atau pindah posisi.' },
+      { question: 'Apakah kamera bisa dipakai dua aplikasi sekaligus?', answer: 'Umumnya tidak. Tutup aplikasi lain yang memakai kamera sebelum menyalakan studio.' },
+    ],
+  },
+  {
+    slug: 'photobooth-untuk-acara-sekolah-kampus',
+    title: 'Ide Photobooth Online untuk Acara Sekolah dan Kampus',
+    description: 'Rencanakan photobooth yang aman, hemat, dan mudah diikuti untuk ospek, class meeting, reuni, atau wisuda.',
+    category: 'Inspirasi',
+    image: '/images/friends-photo-booth.jpg',
+    imageAlt: 'Sekelompok teman berfoto untuk acara sekolah',
+    author: 'Tim Ruang Kilas',
+    reviewer: 'Tim Produk Ruang Kilas',
+    updated: '2026-11-04',
+    takeaways: [
+      'Photobooth online cocok untuk acara dengan banyak peserta dan perangkat sendiri.',
+      'Gunakan bingkai yang mencerminkan identitas sekolah atau angkatan.',
+      'Tetapkan aturan privasi dan izin foto sejak awal.',
+      'Siapkan petugas dan alur antrean untuk jam ramai.',
+    ],
+    sections: [
+      {
+        heading: 'Tema dan bingkai yang relevan',
+        paragraphs: [
+          'Untuk ospek, gunakan warna dan nama angkatan yang jelas. Untuk wisuda, tambahkan tahun lulus dan nama fakultas. Untuk reuni, buat bingkai per angkatan agar peserta mudah mengenali fotonya. Hindari terlalu banyak elemen agar wajah tetap terlihat.',
+          'Bingkai dengan teks besar lebih mudah dibaca di layar ponsel. Jika acara memiliki logo sekolah, letakkan secara proporsional dan jangan menutupi area foto. Uji bingkai dengan foto kelompok karena acara sekolah sering melibatkan banyak orang.',
+        ],
+        image: { src: '/images/studio-steps/studio-step2-frame.png', alt: 'Pemilihan bingkai untuk acara sekolah', caption: 'Gunakan bingkai dengan nama angkatan atau tahun lulus agar hasil mudah dikenali.' },
+      },
+      {
+        heading: 'Akses lewat QR dan pengawasan',
+        paragraphs: [
+          'Tempatkan QR di area registrasi atau papan informasi. Sertakan instruksi singkat: pindai, izinkan kamera, lalu ikuti hitung mundur. Siapkan tautan tertulis untuk peserta yang kamera pemindainya bermasalah.',
+          'Untuk peserta di bawah umur, sediakan pengawasan guru atau panitia. Jelaskan bahwa foto diproses di perangkat dan tidak otomatis diunggah. Minta izin orang tua jika foto akan dipublikasikan di akun sekolah.',
+        ],
+      },
+      {
+        heading: 'Privasi dan izin siswa',
+        paragraphs: [
+          'Beri tahu peserta bahwa mereka dapat memilih untuk tidak berfoto. Jangan memaksa atau mempermalukan yang menolak. Sediakan area foto yang tidak menghalangi jalur dan tidak membuat peserta merasa diperhatikan.',
+          'Jika foto akan dipakai untuk publikasi sekolah, mintalah persetujuan terpisah. Untuk album bersama, batasi akses hanya untuk peserta acara. Hapus foto yang diminta dihapus dan jangan mengunggah ulang ke grup lain.',
+        ],
+        list: [
+          'Partisipasi bersifat sukarela.',
+          'Album hanya untuk peserta acara.',
+          'Izin terpisah untuk publikasi.',
+          'Kontak untuk permintaan penghapusan.',
+        ],
+      },
+      {
+        heading: 'Alur antrean saat jam ramai',
+        paragraphs: [
+          'Acara sekolah sering memiliki jam istirahat yang sama, sehingga antrean bisa melonjak. Sediakan dua titik QR atau dua area foto jika ruang memungkinkan. Minta peserta menyiapkan ponsel sebelum sampai di depan QR.',
+          'Batasi durasi sesi dan jelaskan jumlah foto sejak awal. Sediakan petugas yang mengarahkan giliran dan membantu izin kamera. Untuk kelompok besar, ambil foto per kelas atau per angkatan agar tidak menumpuk.',
+        ],
+        image: { src: '/images/studio-steps/studio-step1-camera.png', alt: 'Tampilan kamera yang perlu dipahami peserta', caption: 'Semakin sedikit langkah di layar, semakin cepat antrean peserta berjalan.' },
+      },
+      {
+        heading: 'Checklist panitia sekolah',
+        paragraphs: [
+          'Uji tautan dan QR dari beberapa ponsel sebelum acara. Pastikan jaringan di area acara cukup. Siapkan petunjuk cetak dan tautan cadangan. Tentukan petugas yang membantu peserta dan mengelola antrean.',
+          'Setelah acara, kumpulkan foto yang disetujui untuk album sekolah. Minta izin sebelum mengunggah ke akun resmi. Simpan catatan kendala agar acara berikutnya lebih lancar.',
+        ],
+        tip: 'Buat bingkai khusus per angkatan dan satu bingkai netral. Peserta dari angkatan lain tetap bisa berfoto tanpa merasa dikecualikan.',
+      },
+    ],
+    faq: [
+      { question: 'Apakah aman untuk siswa di bawah umur?', answer: 'Aman jika ada pengawasan dan izin yang jelas. Foto diproses di perangkat, tetapi publikasi tetap memerlukan persetujuan.' },
+      { question: 'Berapa banyak QR yang sebaiknya disediakan?', answer: 'Satu QR utama dan satu cadangan di area berbeda sudah cukup untuk mengurangi kerumunan.' },
+      { question: 'Bagaimana jika jaringan sekolah buruk?', answer: 'Siapkan tautan cadangan dan minta peserta membuka halaman sebelum masuk area acara. Jika perlu, gunakan hotspot panitia yang disetujui.' },
+    ],
+  },
+];

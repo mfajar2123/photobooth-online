@@ -3,12 +3,19 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import SiteHeader from '../../components/layout/SiteHeader.astro';
 import SiteFooter from '../../components/layout/SiteFooter.astro';
 import ArticleCard from '../../components/articles/ArticleCard.astro';
+import ArticleSection from '../../components/articles/ArticleSection.astro';
 import { articles, articleDate } from '../../data/articles';
 import { articleExtras } from '../../data/article-extras';
 import { assetUrl } from '../../lib/paths';
 export function getStaticPaths() { return articles.map((article) => ({ params: { slug: article.slug }, props: { article } })); }
 const { article } = Astro.props;
-const extras = articleExtras[article.slug] ?? [];
+const extra = articleExtras[article.slug];
+const extras = extra?.sections ?? [];
+const takeaways = article.takeaways ?? extra?.takeaways ?? [];
+const updatedDate = article.updated ?? articleDate;
+const formatDate = (value: string) => new Date(`${value}T00:00:00`).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+const author = article.author ?? 'Tim Ruang Kilas';
+const reviewer = article.reviewer ?? 'Tim Produk Ruang Kilas';
 const invitationTopic = article.category === 'Undangan digital';
 const eventTopic = ['photobooth-virtual-untuk-pernikahan', 'rencana-anggaran-photobooth-pernikahan', 'checklist-persiapan-photobooth-event'].includes(article.slug);
 const nextLink = invitationTopic ? '/undangan/katalog/' : eventTopic ? '/request-event/' : '/studio/';
@@ -18,7 +25,7 @@ const path = `/artikel/${article.slug}/`;
 const breadcrumbs = [{ name: 'Beranda', item: '/' }, { name: 'Artikel', item: '/artikel/' }, { name: article.title, item: path }];
 const site = Astro.site || new URL('https://ruangkilas.my.id');
 const imageUrl = article.image.startsWith('http') ? article.image : new URL(assetUrl(article.image), site).toString();
-const schema = { '@type': 'Article', headline: article.title, description: article.description, image: imageUrl, datePublished: articleDate, dateModified: articleDate, author: { '@type': 'Organization', name: 'Ruang Kilas' }, publisher: { '@type': 'Organization', name: 'Ruang Kilas' }, mainEntityOfPage: new URL(assetUrl(path), site).toString() };
+const schema = { '@type': 'Article', headline: article.title, description: article.description, image: imageUrl, datePublished: articleDate, dateModified: updatedDate, author: { '@type': 'Organization', name: 'Ruang Kilas' }, publisher: { '@type': 'Organization', name: 'Ruang Kilas' }, mainEntityOfPage: new URL(assetUrl(path), site).toString() };
 ---
 <BaseLayout title={`${article.title} | Ruang Kilas`} description={article.description} ogImage={article.image} ogImageAlt={article.imageAlt} ogType="article" breadcrumbs={breadcrumbs} extraSchema={schema}>
   <SiteHeader active="/artikel/" />
@@ -27,7 +34,7 @@ const schema = { '@type': 'Article', headline: article.title, description: artic
       <header class="article-header">
         <div class="article-header-inner">
           <nav class="article-breadcrumb" aria-label="Breadcrumb"><a href={assetUrl('/')}>Beranda</a><span aria-hidden="true">/</span><a href={assetUrl('/artikel/')}>Artikel</a><span aria-hidden="true">/</span><span aria-current="page">{article.title}</span></nav>
-          <p class="article-category">{article.category} · <time datetime={articleDate}>2 November 2026</time></p>
+          <p class="article-category">{article.category} · <time datetime={updatedDate}>{formatDate(updatedDate)}</time></p>
           <h1>{article.title}</h1>
           <p class="article-lede">{article.description}</p>
         </div>
@@ -35,11 +42,49 @@ const schema = { '@type': 'Article', headline: article.title, description: artic
       <div class="article-content-wrap">
           <img class="article-cover" src={imageUrl} alt={article.imageAlt} decoding="async" />
         {article.image.startsWith('https://images.unsplash.com/') && <p class="article-image-credit">Foto ilustrasi dari <a href="https://unsplash.com/license" target="_blank" rel="noopener noreferrer">Unsplash</a>.</p>}
+        <p class="article-byline">
+          <span>Ditulis oleh <strong>{author}</strong></span>
+          <span>Ditinjau oleh <strong>{reviewer}</strong></span>
+          <span>Diperbarui <time datetime={updatedDate}>{formatDate(updatedDate)}</time></span>
+        </p>
         <div class="article-content">
-          {article.sections.map((section) => <section><h2>{section.heading}</h2>{section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}</section>)}
-          {extras.map((section) => <section><h2>{section.heading}</h2>{section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}</section>)}
+          {takeaways.length > 0 && (
+            <aside class="article-takeaways" aria-labelledby="takeaways-heading">
+              <p class="article-takeaways-kicker" id="takeaways-heading">Ringkasan cepat</p>
+              <ul>{takeaways.map((item) => <li>{item}</li>)}</ul>
+            </aside>
+          )}
+          {article.sections.map((section) => <ArticleSection section={section} />)}
+          {extras.map((section) => <ArticleSection section={section} />)}
+          {article.devices && (
+            <section>
+              <h2>Catatan per perangkat</h2>
+              <div class="article-device-grid">
+                {article.devices.map((device) => (
+                  <div class="article-device">
+                    <h3>{device.platform}</h3>
+                    <ul>{device.notes.map((note) => <li>{note}</li>)}</ul>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+          {article.faq && (
+            <section>
+              <h2>Pertanyaan yang sering muncul</h2>
+              <div class="article-faq">
+                {article.faq.map((item) => (
+                  <details>
+                    <summary>{item.question}</summary>
+                    <p>{item.answer}</p>
+                  </details>
+                ))}
+              </div>
+            </section>
+          )}
           {article.slug === 'photobooth-virtual-untuk-pernikahan' && <p><a href={assetUrl('/wedding-ripki-aura/')}>Lihat contoh photobooth Ripki &amp; Aura ↗</a></p>}
           {article.source && <p class="article-source">Bacaan terkait: <a href={article.source.url} target="_blank" rel="noopener noreferrer">{article.source.label} ↗</a></p>}
+          <p class="article-methodology">Panduan ini disusun dari dokumentasi fitur Ruang Kilas, pengujian alur studio di browser Chromium, dan pemeriksaan perilaku izin kamera pada Chrome Android, Safari iPhone, serta Chrome desktop. Hasil dapat berbeda tergantung versi browser, perangkat, dan pengaturan privasi.</p>
           <p class="article-next"><a href={assetUrl(nextLink)}>{nextTitle} ↗</a></p>
         </div>
       </div>

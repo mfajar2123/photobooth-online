@@ -1,0 +1,35 @@
+---
+import type { ArticleSection } from '../../data/articles';
+import { assetUrl } from '../../lib/paths';
+
+interface Props {
+  section: ArticleSection;
+}
+
+const { section } = Astro.props;
+const imageSrc = section.image
+  ? section.image.src.startsWith('http') ? section.image.src : assetUrl(section.image.src)
+  : null;
+---
+
+<section>
+  <h2>{section.heading}</h2>
+  {section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+  {section.list && (
+    <ul class="article-points">
+      {section.list.map((item) => <li>{item}</li>)}
+    </ul>
+  )}
+  {section.image && imageSrc && (
+    <figure class="article-figure">
+      <img src={imageSrc} alt={section.image.alt} loading="lazy" decoding="async" />
+      {section.image.caption && <figcaption>{section.image.caption}</figcaption>}
+    </figure>
+  )}
+  {section.tip && (
+    <aside class="article-tip">
+      <strong>Catatan praktis</strong>
+      <p>{section.tip}</p>
+    </aside>
+  )}
+</section>

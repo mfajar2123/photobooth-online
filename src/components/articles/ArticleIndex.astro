@@ -4,6 +4,7 @@ import SiteHeader from '../../components/layout/SiteHeader.astro';
 import SiteFooter from '../../components/layout/SiteFooter.astro';
 import ArticleCard from '../../components/articles/ArticleCard.astro';
 import type { Article } from '../../data/articles';
+import { articleExtras } from '../../data/article-extras';
 import { assetUrl } from '../../lib/paths';
 
 interface Props {
@@ -72,7 +73,7 @@ const categories = [...new Set(allArticles.map((article) => article.category))].
           <div
             class="article-result-item"
             data-category={article.category}
-            data-search={`${article.title} ${article.category} ${article.description} ${article.sections.map((section) => section.heading).join(' ')}`}
+            data-search={`${article.title} ${article.category} ${article.description} ${article.sections.map((section) => section.heading).join(' ')} ${(articleExtras[article.slug]?.sections ?? []).map((section) => section.heading).join(' ')}`}
             data-page={Math.ceil((index + 1) / pageSize)}
             hidden={Math.ceil((index + 1) / pageSize) !== page}
           >
