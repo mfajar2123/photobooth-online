@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
+import SiteFooter from '../components/layout/SiteFooter.astro';
+import { brand } from '../data/brand';
+import { assetUrl } from '../lib/paths';
+
+const breadcrumbs = [
+  { name: 'Beranda', item: '/' },
+  { name: 'Kontak', item: '/kontak' },
+];
+
+const whatsappUrl = `https://wa.me/${brand.whatsapp}`;
+
+const contactSchema = {
+  '@type': 'ContactPage',
+  name: 'Hubungi Ruang Kilas',
+  description: 'Kontak resmi Ruang Kilas untuk pertanyaan layanan photobooth online, undangan digital, bingkai custom, dan privasi.',
+  mainEntity: {
+    '@type': 'Organization',
+    name: brand.name,
+    url: 'https://ruangkilas.my.id/',
+    telephone: brand.phone,
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'customer support',
+      telephone: brand.phone,
+      availableLanguage: ['id'],
+      areaServed: 'ID',
+    },
+  },
+};
+---
+
+<BaseLayout
+  title="Hubungi Kami | Kontak Ruang Kilas"
+  description="Hubungi Ruang Kilas lewat WhatsApp untuk pertanyaan photobooth online, undangan digital, bingkai custom, masalah teknis, dan permintaan terkait privasi."
+  breadcrumbs={breadcrumbs}
+  extraSchema={contactSchema}
+>
+  <SiteHeader active="/kontak/" />
+
+  <main class="legal-page">
+    <article>
+      <p class="section-kicker">HUBUNGI RUANG KILAS</p>
+      <h1>Ada yang bisa kami bantu?</h1>
+      <p class="legal-updated">Senin–Minggu, 09.00–21.00 WIB</p>
+      <p>Punya pertanyaan tentang photobooth online, undangan digital, atau bingkai custom untuk acara? Kirim pesan lewat WhatsApp dan tim Ruang Kilas akan membalas pada jam operasional.</p>
+
+      <h2>WhatsApp</h2>
+      <p>Nomor resmi kami adalah <strong>{brand.phone}</strong>. Klik <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">chat WhatsApp Ruang Kilas</a> untuk mulai percakapan.</p>
+
+      <h2>Waktu respons</h2>
+      <p>Pesan yang masuk pada hari dan jam operasional biasanya dibalas pada hari yang sama. Pesan di luar jam tersebut akan ditangani pada hari kerja berikutnya.</p>
+
+      <h2>Topik yang bisa ditanyakan</h2>
+      <p>Cara memakai studio photobooth, kendala izin kamera atau hasil unduhan, pemilihan dan pembuatan bingkai custom untuk acara, permintaan undangan digital, kerja sama dan aktivasi brand, serta pertanyaan tentang data dan privasi.</p>
+
+      <h2>Sebelum menghubungi</h2>
+      <p>Untuk kendala teknis, sertakan jenis perangkat, browser yang dipakai, dan tautan halaman yang bermasalah agar kami bisa membantu lebih cepat. Panduan pemakaian studio tersedia di <a href={assetUrl('/panduan/')}>halaman panduan</a>.</p>
+
+      <h2>Permintaan bingkai acara</h2>
+      <p>Untuk photobooth event, wedding, atau gathering kantor, isi detail acara melalui <a href={assetUrl('/request-event/')}>formulir request event</a> supaya kami dapat menyiapkan konsep bingkai dan estimasi pengerjaan.</p>
+
+      <h2>Privasi dan data</h2>
+      <p>Foto dan video dari studio diproses sepenuhnya di perangkat Anda dan tidak diunggah ke server kami. Penjelasan lengkap ada di <a href={assetUrl('/terms/')}>kebijakan privasi dan ketentuan layanan</a>.</p>
+
+      <h2>Tentang Ruang Kilas</h2>
+      <p>Kenali layanan dan nilai yang kami bawa di <a href={assetUrl('/brand/')}>halaman tentang Ruang Kilas</a>.</p>
+
+      <p style="margin-top:28px"><a class="button-primary" href={whatsappUrl} target="_blank" rel="noopener noreferrer">Chat lewat WhatsApp <span aria-hidden="true">↗</span></a></p>
+      <p style="margin-top:22px"><a class="text-link" href={assetUrl('/')}>Kembali ke Ruang Kilas ↗</a></p>
+    </article>
+  </main>
+
+  <SiteFooter />
+</BaseLayout>
