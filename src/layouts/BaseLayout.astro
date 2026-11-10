@@ -11,6 +11,7 @@ export interface BreadcrumbItem {
 interface Props {
   title?: string;
   description?: string;
+  /** Kept for backwards compatibility; Google Search ignores meta keywords. */
   keywords?: string;
   ogImage?: string;
   ogImageType?: string;
@@ -20,12 +21,12 @@ interface Props {
   noindex?: boolean;
   breadcrumbs?: BreadcrumbItem[];
   extraSchema?: Record<string, any> | Array<Record<string, any>>;
+  includeWebApplication?: boolean;
 }
 
 const {
-  title = 'Photobooth & Undangan Digital | Ruang Kilas',
-  description = 'Rayakan momen bersama Ruang Kilas: photobooth online, photobooth acara, dan undangan digital personal yang mudah dibagikan.',
-  keywords = 'photobooth online, photobooth online gratis, photo booth online indonesia, photo strip online, photobooth browser, vintage photo booth, cetak photostrip, photobooth webcam, efek lensa vintage, fisheye camera online, frame photobooth estetik, ruang kilas, aplikasi photobooth gratis',
+  title = 'Ruang Kilas | Photobooth Online & Undangan Digital',
+  description = 'Ruang Kilas menyediakan photobooth online di browser, photobooth virtual untuk acara, dan undangan digital pernikahan yang mudah dibagikan.',
   ogImage = '/images/og-share.png',
   ogImageType = Astro.props.ogImage?.match(/\.jpe?g$/i) ? 'image/jpeg' : 'image/png',
   ogImageAlt = 'Ruang Kilas ? Photobooth dan Undangan Digital',
@@ -34,6 +35,7 @@ const {
   noindex = false,
   breadcrumbs,
   extraSchema,
+  includeWebApplication = false,
 } = Astro.props;
 
 const siteUrl = Astro.site ? Astro.site.toString().replace(/\/$/, '') : 'https://ruangkilas.my.id';
@@ -111,6 +113,8 @@ const schemaGraph: any[] = [
       '@id': logoId,
     },
     telephone: brand.phone,
+    email: brand.email,
+    sameAs: [brand.social.instagram, brand.social.threads, brand.social.tiktok],
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer support',
@@ -119,7 +123,10 @@ const schemaGraph: any[] = [
       areaServed: 'ID',
     },
   },
-  {
+];
+
+if (includeWebApplication) {
+  schemaGraph.push({
     '@type': 'WebApplication',
     '@id': webApplicationId,
     name: `${brand.name} Photobooth Online`,
@@ -149,8 +156,8 @@ const schemaGraph: any[] = [
       'Unduh photostrip JPG dan Boomerang pada browser yang mendukung',
       '100% privasi aman diproses lokal di browser perangkat Anda',
     ],
-  },
-];
+  });
+}
 
 if (breadcrumbs && breadcrumbs.length > 0) {
   const breadcrumbId = `${canonical}#breadcrumb`;
@@ -188,7 +195,6 @@ const fullSchema = {
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="keywords" content={keywords} />
     <meta name="author" content="Ruang Kilas" />
     <meta name="publisher" content="Ruang Kilas" />
     <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />

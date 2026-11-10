@@ -112,7 +112,7 @@ export const invitations: Invitation[] = [
         address: 'Jl. Gatot Subroto Kav. 37, Jakarta Selatan',
       },
       mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Balai+Kartini+Jakarta',
-      rsvpUrl: 'https://wa.me/6282143863319?text=Halo%2C%20saya%20ingin%20konfirmasi%20kehadiran%20di%20pernikahan%20Rifqi%20%26%20Aulya',
+      rsvpUrl: 'https://wa.me/6282143863318?text=Halo%2C%20saya%20ingin%20konfirmasi%20kehadiran%20di%20pernikahan%20Rifqi%20%26%20Aulya',
       dressCode: 'Sage, ivory, dan earth tone',
     },
     story: [
@@ -190,7 +190,7 @@ export const invitations: Invitation[] = [
         address: 'Jl. Gatot Subroto No. 289, Bandung',
       },
       mapsUrl: 'https://www.google.com/maps/search/?api=1&query=The+Trans+Luxury+Hotel+Bandung',
-      rsvpUrl: 'https://wa.me/6282143863319?text=Halo%2C%20saya%20ingin%20konfirmasi%20kehadiran%20di%20pernikahan%20Dimas%20%26%20Nabila',
+      rsvpUrl: 'https://wa.me/6282143863318?text=Halo%2C%20saya%20ingin%20konfirmasi%20kehadiran%20di%20pernikahan%20Dimas%20%26%20Nabila',
       dressCode: 'Sand, cream, dan sage',
     },
     story: [
@@ -268,7 +268,7 @@ export const invitations: Invitation[] = [
         address: 'Jl. Laksda Adisucipto No. 81, Yogyakarta',
       },
       mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Royal+Ambarrukmo+Yogyakarta',
-      rsvpUrl: 'https://wa.me/6282143863319?text=Halo%2C%20saya%20ingin%20konfirmasi%20kehadiran%20di%20pernikahan%20Andi%20%26%20Salsa',
+      rsvpUrl: 'https://wa.me/6282143863318?text=Halo%2C%20saya%20ingin%20konfirmasi%20kehadiran%20di%20pernikahan%20Andi%20%26%20Salsa',
       dressCode: 'Sage, putih, dan sentuhan emas',
     },
     story: [

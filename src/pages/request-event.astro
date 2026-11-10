@@ -9,13 +9,12 @@ const breadcrumbs = [
   { name: 'Request Photobooth Event', item: '/request-event' },
 ];
 
-const whatsappBase = 'https://wa.me/6282143863319';
+const whatsappBase = 'https://wa.me/6282143863318';
 ---
 
 <BaseLayout
-  title="Request Photobooth Event & Wedding | Ruang Kilas"
-  description="Request virtual photobooth untuk wedding, ulang tahun, gathering kantor, atau festival. Bingkai custom, tamu foto dari HP sendiri, tanpa aplikasi."
-  keywords="request photobooth event, photobooth wedding, virtual photobooth acara, sewa photobooth online, custom frame photobooth"
+  title="Photobooth Virtual untuk Event & Wedding | Ruang Kilas"
+  description="Request photobooth virtual untuk wedding, ulang tahun, gathering kantor, dan aktivasi brand. Bingkai custom, tamu foto dari HP, tanpa aplikasi."
   breadcrumbs={breadcrumbs}
 >
     <SiteHeader ctaLabel="Buka photobooth" />
@@ -100,7 +99,7 @@ const whatsappBase = 'https://wa.me/6282143863319';
     const form = document.querySelector<HTMLFormElement>('#event-request-form');
     const submitLink = document.querySelector<HTMLAnchorElement>('#request-submit');
     if (form && submitLink) {
-      const whatsappNumber = '6282143863319';
+      const whatsappNumber = '6282143863318';
 
       const syncRequestLinks = () => {
         const data = new FormData(form);

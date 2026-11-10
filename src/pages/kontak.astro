@@ -11,6 +11,11 @@ const breadcrumbs = [
 ];
 
 const whatsappUrl = `https://wa.me/${brand.whatsapp}`;
+const socialLinks = [
+  { name: 'Instagram', href: brand.social.instagram, icon: 'instagram' },
+  { name: 'Threads', href: brand.social.threads, icon: 'threads' },
+  { name: 'TikTok', href: brand.social.tiktok, icon: 'tiktok' },
+] as const;
 
 const contactSchema = {
   '@type': 'ContactPage',
@@ -21,6 +26,8 @@ const contactSchema = {
     name: brand.name,
     url: 'https://ruangkilas.my.id/',
     telephone: brand.phone,
+    email: brand.email,
+    sameAs: [brand.social.instagram, brand.social.threads, brand.social.tiktok],
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer support',
@@ -33,8 +40,8 @@ const contactSchema = {
 ---
 
 <BaseLayout
-  title="Hubungi Kami | Kontak Ruang Kilas"
-  description="Hubungi Ruang Kilas lewat WhatsApp untuk pertanyaan photobooth online, undangan digital, bingkai custom, masalah teknis, dan permintaan terkait privasi."
+  title="Kontak Ruang Kilas | Photobooth & Undangan Digital"
+  description="Hubungi Ruang Kilas lewat WhatsApp, email, Instagram, Threads, atau TikTok untuk photobooth online, event, undangan digital, dan bantuan teknis."
   breadcrumbs={breadcrumbs}
   extraSchema={contactSchema}
 >
@@ -49,6 +56,22 @@ const contactSchema = {
 
       <h2>WhatsApp</h2>
       <p>Nomor resmi kami adalah <strong>{brand.phone}</strong>. Klik <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">chat WhatsApp Ruang Kilas</a> untuk mulai percakapan.</p>
+
+      <h2>Email</h2>
+      <p>Untuk pertanyaan yang lebih rinci, kirim email ke <a href={`mailto:${brand.email}`}>{brand.email}</a>.</p>
+
+      <h2>Media sosial</h2>
+      <p>Ikuti Ruang Kilas di {brand.social.handle}.</p>
+      <div class="contact-social" aria-label="Media sosial Ruang Kilas">
+        {socialLinks.map((social) => (
+          <a href={social.href} target="_blank" rel="noopener noreferrer" aria-label={`${social.name} Ruang Kilas`}>
+            {social.icon === 'instagram' && <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.7" r="1"/></svg>}
+            {social.icon === 'threads' && <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5c-4.7 0-7.5 3-7.5 8.3 0 5.5 3.3 8.7 7.7 8.7 3.6 0 6.3-2 6.3-5.2 0-2.8-2-4.5-5.5-4.5-2.3 0-4 1.1-4 3.2 0 1.7 1.3 2.8 3.2 2.8 2.4 0 3.6-1.9 3.4-4.5-.4-5-3.1-7.5-7.1-7.5"/><path d="M8.6 8.3c1-.8 2.1-1.1 3.4-1.1 2.9 0 4.5 1.5 4.5 4.4"/></svg>}
+            {social.icon === 'tiktok' && <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4v9.1a3.7 3.7 0 1 1-3.1-3.7V7.1A6.1 6.1 0 1 0 17 13.1V9.5c1.1 1 2.6 1.6 4 1.6V8.5c-2.1 0-4-1.7-4-4.5h-2.5Z"/></svg>}
+            <span>{social.name}</span>
+          </a>
+        ))}
+      </div>
 
       <h2>Waktu respons</h2>
       <p>Pesan yang masuk pada hari dan jam operasional biasanya dibalas pada hari yang sama. Pesan di luar jam tersebut akan ditangani pada hari kerja berikutnya.</p>

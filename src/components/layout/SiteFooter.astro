@@ -19,6 +19,20 @@ const {
     <div class="footer-brand">
       <a class="wordmark" href={assetUrl('/')}><span>✦</span> RUANG <i>KILAS</i></a>
       <p>{tagline}</p>
+      <div class="footer-social" aria-label="Media sosial Ruang Kilas">
+        <a href={brand.social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram Ruang Kilas">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.7" r="1"/></svg>
+          <span>Instagram</span>
+        </a>
+        <a href={brand.social.threads} target="_blank" rel="noopener noreferrer" aria-label="Threads Ruang Kilas">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5c-4.7 0-7.5 3-7.5 8.3 0 5.5 3.3 8.7 7.7 8.7 3.6 0 6.3-2 6.3-5.2 0-2.8-2-4.5-5.5-4.5-2.3 0-4 1.1-4 3.2 0 1.7 1.3 2.8 3.2 2.8 2.4 0 3.6-1.9 3.4-4.5-.4-5-3.1-7.5-7.1-7.5"/><path d="M8.6 8.3c1-.8 2.1-1.1 3.4-1.1 2.9 0 4.5 1.5 4.5 4.4"/></svg>
+          <span>Threads</span>
+        </a>
+        <a href={brand.social.tiktok} target="_blank" rel="noopener noreferrer" aria-label="TikTok Ruang Kilas">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4v9.1a3.7 3.7 0 1 1-3.1-3.7V7.1A6.1 6.1 0 1 0 17 13.1V9.5c1.1 1 2.6 1.6 4 1.6V8.5c-2.1 0-4-1.7-4-4.5h-2.5Z"/></svg>
+          <span>TikTok</span>
+        </a>
+      </div>
     </div>
 
     <div class="footer-col">
@@ -30,6 +44,7 @@ const {
       <h3>Kontak</h3>
       <a href={assetUrl('/kontak/')}>Hubungi Kami</a>
       <a href={`https://wa.me/${brand.whatsapp}`} target="_blank" rel="noopener noreferrer">WhatsApp {brand.phone}</a>
+      <a href={`mailto:${brand.email}`}>{brand.email}</a>
       <small>Senin–Minggu, 09.00–21.00 WIB</small>
     </div>
 

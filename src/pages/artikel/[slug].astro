@@ -4,7 +4,7 @@ import SiteHeader from '../../components/layout/SiteHeader.astro';
 import SiteFooter from '../../components/layout/SiteFooter.astro';
 import ArticleCard from '../../components/articles/ArticleCard.astro';
 import ArticleSection from '../../components/articles/ArticleSection.astro';
-import { articles, articleRedirects } from '../../data/articles';
+import { articles, articleDate, articleRedirects } from '../../data/articles';
 import { articleExtras } from '../../data/article-extras';
 import { practicalFollowups, practicalSections } from '../../data/article-depth/practical';
 import { assetUrl } from '../../lib/paths';
@@ -30,7 +30,20 @@ const path = `/artikel/${article.slug}/`;
 const breadcrumbs = [{ name: 'Beranda', item: '/' }, { name: 'Artikel', item: '/artikel/' }, { name: article.title, item: path }];
 const site = Astro.site || new URL('https://ruangkilas.my.id');
 const imageUrl = article.image.startsWith('http') ? article.image : new URL(assetUrl(article.image), site).toString();
-const schema = { '@type': 'Article', headline: article.title, description: article.description, image: imageUrl, author: { '@type': 'Organization', name: author }, publisher: { '@type': 'Organization', name: 'Ruang Kilas' }, mainEntityOfPage: new URL(assetUrl(path), site).toString() };
+const canonicalUrl = new URL(assetUrl(path), site).toString();
+const modifiedDate = article.updated ?? articleDate;
+const schema = {
+  '@type': 'Article',
+  '@id': `${canonicalUrl}#article`,
+  headline: article.title,
+  description: article.description,
+  image: [imageUrl],
+  author: { '@type': 'Organization', name: author },
+  publisher: { '@type': 'Organization', name: 'Ruang Kilas' },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': `${canonicalUrl}#webpage` },
+  datePublished: modifiedDate,
+  dateModified: modifiedDate,
+};
 ---
 <BaseLayout title={`${article.title} | Ruang Kilas`} description={article.description} ogImage={article.image} ogImageAlt={article.imageAlt} ogType="article" breadcrumbs={breadcrumbs} extraSchema={schema}>
   <SiteHeader active="/artikel/" />

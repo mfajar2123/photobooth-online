@@ -10,13 +10,12 @@ const breadcrumbs = [
   { name: 'Request Undangan', item: '/undangan/custom' },
 ];
 
-const whatsappBase = 'https://wa.me/6282143863319';
+const whatsappBase = 'https://wa.me/6282143863318';
 ---
 
 <BaseLayout
-  title="Request Undangan Digital Custom | Ruang Kilas"
-  description="Pesan undangan pernikahan digital custom: pilih template, kirim detail acara, dan undangan siap dibagikan dalam satu tautan."
-  keywords="request undangan digital, jasa undangan wedding online, undangan custom"
+  title="Jasa Undangan Digital Pernikahan Custom | Ruang Kilas"
+  description="Request undangan digital pernikahan custom: pilih template, kirim detail acara, lalu bagikan undangan interaktif kepada tamu dalam satu tautan."
   breadcrumbs={breadcrumbs}
 >
   <SiteHeader ctaLabel="Buat undangan" ctaHref="/undangan/custom/" />
@@ -100,7 +99,7 @@ const whatsappBase = 'https://wa.me/6282143863319';
     const form = document.querySelector<HTMLFormElement>('#undangan-request');
     const submitLink = document.querySelector<HTMLAnchorElement>('#undangan-submit');
     if (form && submitLink) {
-      const whatsappNumber = '6282143863319';
+      const whatsappNumber = '6282143863318';
 
       const syncLinks = () => {
         const data = new FormData(form);

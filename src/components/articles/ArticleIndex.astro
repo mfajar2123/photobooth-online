@@ -31,6 +31,7 @@ const categories = [...new Set(allArticles.map((article) => article.category))].
   title={`Artikel & Inspirasi Photobooth dan Undangan Digital${page > 1 ? ` — Halaman ${page}` : ''} | Ruang Kilas`}
   description="Temukan panduan photobooth online, ide foto, dan tips undangan digital untuk merayakan momen spesialmu."
   breadcrumbs={breadcrumbs}
+  noindex={page > 1}
 >
   <SiteHeader active="/artikel/" />
   <main>

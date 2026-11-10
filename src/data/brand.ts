@@ -1,8 +1,15 @@
 export const brand = {
   name: 'Ruang Kilas',
   domain: 'ruangkilas.my.id',
-  phone: '0821 4386 3319',
-  whatsapp: '6282143863319',
+  phone: '0821 4386 3318',
+  whatsapp: '6282143863318',
+  email: 'ruangkilas2123@gmail.com',
+  social: {
+    instagram: 'https://www.instagram.com/ruangkilas.my.id/',
+    threads: 'https://www.threads.net/@ruangkilas.my.id',
+    tiktok: 'https://www.tiktok.com/@ruangkilas.my.id',
+    handle: '@ruangkilas.my.id',
+  },
 } as const;
 
 export const faqs = [
