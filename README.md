@@ -9,7 +9,7 @@ Aplikasi photobooth online modern berbasis browser dengan domain resmi [ruangkil
 - Beragam Format Layout: Strip 4 klasik, Grid 2x2, Solo Polaroid, Mini 3, dan Wide 1.
 - Kustomisasi Bingkai: Variasi tema (Retro Analog, Y2K Cyber, Minimalist Editorial, Museum Art, Cinema Ticket, Yearbook), pemilihan warna bebas, dan tekstur latar.
 - Personalisasi: Input nama/caption dan stiker interaktif yang dapat diatur posisinya.
-- Ekspor Fleksibel: Unduh gambar PNG kualitas tinggi, video animasi Boomerang (format WebM), dan pratinjau kartu digital melalui kode QR.
+- Ekspor Fleksibel: Unduh gambar JPG dan, pada browser yang mendukung, video animasi Boomerang. Hasil dapat dibagikan menggunakan fitur berbagi perangkat jika tersedia.
 - Responsif: Mendukung tampilan perangkat desktop, tablet, maupun ponsel dengan opsi layar penuh (fullscreen).
 
 ## Teknologi

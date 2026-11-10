@@ -39,8 +39,8 @@ const howToSchema = {
     {
       '@type': 'HowToStep',
       position: 4,
-      name: 'Unduh foto 300 DPI, Boomerang & scan QR',
-      text: 'Simpan photostrip cetak resolusi tinggi 300 DPI, unduh klip gerak Boomerang (WebM), atau scan kode QR langsung ke smartphone.',
+      name: 'Unduh foto atau Boomerang',
+      text: 'Unduh foto JPG atau Boomerang jika didukung browser, lalu periksa file di perangkat.',
       url: 'https://ruangkilas.my.id/panduan/#step-4',
     },
   ],
@@ -49,7 +49,7 @@ const howToSchema = {
 
 <BaseLayout
   title="Panduan Cara Pakai Studio Photobooth Online - Ruang Kilas"
-  description="Panduan 4 langkah memakai photobooth online Ruang Kilas: pilih efek lensa vintage, bingkai estetik, stiker, hingga unduh foto 300 DPI."
+  description="Panduan memakai photobooth Ruang Kilas: izinkan kamera, pilih bingkai dan stiker, lalu simpan hasil foto."
   keywords="panduan photobooth, cara pakai photobooth online, tutorial photo strip, cara foto photobooth di hp, photobooth studio online panduan"
   breadcrumbs={breadcrumbs}
   extraSchema={howToSchema}
@@ -212,19 +212,19 @@ const howToSchema = {
       <article class="guide-step-card reverse" id="step-4">
         <div class="guide-step-info">
           <span class="guide-step-tag">04 / SIMPAN</span>
-          <h2 class="guide-step-title">Unduh foto, Boomerang & scan QR</h2>
+          <h2 class="guide-step-title">Unduh foto dan Boomerang</h2>
           <ul class="guide-features-list">
             <li>
               <span class="guide-check-icon">✓</span>
-              <div><strong>Unduh foto cetak (300 DPI):</strong> Simpan berkas photostrip resolusi tinggi siap dicetak atau disimpan ke galeri perangkat.</div>
+              <div><strong>Unduh foto JPG:</strong> Simpan hasil ke perangkat, lalu periksa ukuran dan kualitasnya sebelum dicetak.</div>
             </li>
             <li>
               <span class="guide-check-icon">✓</span>
-              <div><strong>Rekaman Boomerang WebM:</strong> Simpan klip video gerak singkat spontan sebelum blitz (durasi 3s atau 4s) untuk dibagikan ke Instagram Story & TikTok.</div>
+              <div><strong>Boomerang:</strong> Pilih durasi 3 atau 4 detik dan unduh video jika browser mendukung ekspor. Format video bergantung pada perangkat dan browser.</div>
             </li>
             <li>
               <span class="guide-check-icon">✓</span>
-              <div><strong>Scan QR langsung ke HP:</strong> Tampilkan kode QR dan pindai langsung lewat kamera ponsel untuk mentransfer berkas foto secara instan tanpa kabel.</div>
+              <div><strong>Bagikan dari perangkat:</strong> Gunakan tombol bagikan jika didukung, atau kirim berkas JPG yang sudah diunduh melalui aplikasi pilihan Anda.</div>
             </li>
             <li>
               <span class="guide-check-icon">✓</span>
@@ -245,7 +245,7 @@ const howToSchema = {
           </div>
           <div class="mock-btn-row">
             <span class="mock-pill poppy">Unduh Foto <span class="nav-arrow">↓</span></span>
-            <span class="mock-pill sky">Scan QR ■</span>
+            <span class="mock-pill sky">Bagikan foto ↗</span>
           </div>
         </div>
       </article>
@@ -285,10 +285,19 @@ const howToSchema = {
           <span class="tip-badge">03</span>
           <h3>100% Privasi di Browser</h3>
           <p>
-            Foto diproses langsung di memori browsermu. Jangan lupa unduh file atau scan QR sebelum menutup jendela browser.
+            Foto diproses langsung di memori browsermu. Unduh berkas sebelum menutup halaman.
           </p>
         </div>
       </div>
+    </section>
+    <section class="guide-tips-section" aria-labelledby="bantuan-studio">
+      <div class="guide-section-head"><p class="section-kicker">BANTUAN</p><h2 id="bantuan-studio">Jika mengalami kendala.</h2></div>
+      <div class="guide-tips-grid">
+        <div class="guide-tip-card"><h3>Kamera tidak muncul</h3><p>Buka situs melalui HTTPS, lalu izinkan kamera saat browser meminta akses. Jika sebelumnya ditolak, ubah izin kamera untuk situs ini di pengaturan browser dan tekan Coba lagi. Tutup aplikasi lain yang sedang memakai kamera.</p></div>
+        <div class="guide-tip-card"><h3>Foto terlalu gelap</h3><p>Hadapkan wajah ke sumber cahaya, bersihkan lensa, dan periksa pratinjau sebelum mengambil ulang foto. Gunakan tombol balik kamera jika perangkat memiliki lebih dari satu kamera.</p></div>
+        <div class="guide-tip-card"><h3>Hasil belum ditemukan</h3><p>Tekan Unduh foto JPG, lalu periksa folder unduhan browser atau aplikasi Berkas. Simpan sebelum menutup halaman. Jika video tidak tersedia di browser, foto JPG tetap dapat diunduh.</p></div>
+      </div>
+      <p>Butuh bantuan lain? <a href={assetUrl('/kontak/')}>Hubungi Ruang Kilas</a>.</p>
     </section>
   </main>
 

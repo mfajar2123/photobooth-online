@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { articleRedirects, articles } from '../src/data/articles';
 
 test.describe('article listing', () => {
   test.beforeEach(async ({ page }) => {
@@ -78,7 +79,7 @@ test.describe('article listing', () => {
     await clear.click();
 
     await expect(category).toHaveValue('');
-    await expect(page.locator('.article-results')).toHaveText('Menampilkan 1–12 dari 82 artikel');
+    await expect(page.locator('.article-results')).toHaveText(`Menampilkan 1–12 dari ${articles.length} artikel`);
     await expect(page.locator('.article-result-item:not([hidden])')).toHaveCount(12);
     await expect(page.locator('.article-pagination')).toBeVisible();
   });
@@ -121,7 +122,7 @@ test.describe('article listing', () => {
     await page.goBack();
     await expect(page).not.toHaveURL(/[?&]page=2/);
     await page.locator('.article-filters .article-clear-filters').click();
-    await expect(page.locator('.article-results')).toHaveText('Menampilkan 1–12 dari 82 artikel');
+    await expect(page.locator('.article-results')).toHaveText(`Menampilkan 1–12 dari ${articles.length} artikel`);
 
     expect(errors).toEqual([]);
   });
@@ -138,4 +139,12 @@ test.describe('article listing', () => {
     const heights = await page.locator('.article-result-item:not([hidden]) .article-card').evaluateAll((nodes) => nodes.map((node) => Math.round(node.getBoundingClientRect().height * 100) / 100));
     expect(Math.max(...heights) - Math.min(...heights)).toBeLessThan(1);
   });
+});
+
+test('consolidated article URLs lead to their retained guides', async ({ page }) => {
+  for (const [oldSlug, targetSlug] of Object.entries(articleRedirects)) {
+    await page.goto(`/artikel/${oldSlug}/`);
+    await expect(page).toHaveURL(new RegExp(`/artikel/${targetSlug}/$`));
+    await expect(page.locator('main article h1')).toBeVisible();
+  }
 });

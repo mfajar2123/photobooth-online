@@ -76,4 +76,21 @@ test.describe('studio camera shows the full sensor frame', () => {
     await expect(page.getByRole('img', { name: 'Hasil foto 1' })).toBeVisible({ timeout: 20_000 });
     await expect(page.getByRole('button', { name: /Lanjut ke Bingkai/i })).toBeEnabled();
   });
+
+  test('captures a photo and downloads the finished JPG', async ({ page }) => {
+    await page.goto('/studio/');
+    await page.getByRole('button', { name: /Nyalakan kamera/i }).click();
+    await expect(page.getByRole('button', { name: /Ambil foto/i })).toBeVisible({ timeout: 15_000 });
+    await page.getByLabel('Timer').selectOption('1');
+    await page.getByRole('button', { name: /Ambil foto/i }).click();
+    await expect(page.getByRole('button', { name: /Lanjut ke Bingkai/i })).toBeEnabled({ timeout: 20_000 });
+    await page.getByRole('button', { name: /Lanjut ke Bingkai/i }).click();
+    await page.getByRole('button', { name: /Lanjut pilih filter/i }).click();
+    await page.getByRole('button', { name: /Lanjut ke Simpan/i }).click();
+    const downloadPromise = page.waitForEvent('download');
+    await page.getByRole('button', { name: /Unduh foto JPG/i }).click();
+    const download = await downloadPromise;
+    expect(download.suggestedFilename()).toMatch(/\.jpg$/i);
+    expect(await download.failure()).toBeNull();
+  });
 });
