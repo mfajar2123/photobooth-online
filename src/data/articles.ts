@@ -33,8 +33,11 @@ export interface Article {
   updated?: string;
   source?: { label: string; url: string };
 }
-export const articleDate = '2026-11-06';
+import { generalArticles } from './article-general/index';
+
+export const articleDate = '2026-11-10';
 const allArticles: Article[] = [
+  ...generalArticles,
   {
     slug: 'panduan-photobooth-digital-untuk-acara-2026', title: 'Panduan Photobooth Digital untuk Acara di 2026', description: 'Rencanakan photobooth digital yang mudah diakses, nyaman dipakai, dan menghargai privasi tamu.', category: 'Photobooth', image: '/images/articles/article-1531058020387.jpg', imageAlt: 'Suasana acara dengan area foto untuk tamu', author: 'Tim Ruang Kilas', updated: '2026-11-06',
     takeaways: ['Pilih alur yang mudah dibuka dari ponsel.', 'Uji QR, kamera, dan bingkai di lokasi acara.', 'Jelaskan cara menyimpan foto dan aturan berbagi.'],
