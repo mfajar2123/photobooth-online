@@ -94,13 +94,19 @@ function drawPhotoContain(
   context.save();
   clipPath(context);
   context.clip();
-  context.fillStyle = '#211713';
-  context.fillRect(x, y, width, height);
   // Mirror inside the aperture only, so the saved photo matches the preview.
   if (mirror) {
     context.translate(x * 2 + width, 0);
     context.scale(-1, 1);
   }
+  // Extend the photo softly behind the complete, uncropped foreground image.
+  const backgroundScale = Math.max(width / sourceWidth, height / sourceHeight) * 1.12;
+  const backgroundWidth = sourceWidth * backgroundScale;
+  const backgroundHeight = sourceHeight * backgroundScale;
+  context.save();
+  context.filter = `blur(${Math.max(2, Math.round(width * 0.025))}px)`;
+  context.drawImage(source, x + (width - backgroundWidth) / 2, y + (height - backgroundHeight) / 2, backgroundWidth, backgroundHeight);
+  context.restore();
   context.drawImage(source, drawX, drawY, drawWidth, drawHeight);
   context.restore();
   return true;

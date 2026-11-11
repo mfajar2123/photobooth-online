@@ -519,7 +519,7 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
     const runId = runIdRef.current;
     const frames = boomerangFramesRef.current;
     if (frames.length < 2) {
-      setNotice('Boomerang belum siap. Coba foto ulang.');
+      setNotice('Video bumerang belum siap. Coba foto ulang.');
       return;
     }
 
@@ -537,7 +537,7 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
           setNotice(
             cause instanceof Error
               ? cause.message
-              : 'Boomerang belum bisa dibuat. Coba lagi atau unduh JPG.',
+              : 'Video bumerang belum bisa dibuat. Coba lagi atau unduh JPG.',
           );
         }
         return;
@@ -585,7 +585,7 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
       }
 
       triggerDownload();
-      setNotice('Share sheet tidak tersedia. Foto sudah diunduh — unggah dari galeri.');
+      setNotice('Menu berbagi tidak tersedia. Foto sudah diunduh — unggah dari galeri.');
     } finally {
       setSharing(false);
     }
@@ -610,10 +610,10 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
 
         <div className="wd-hero-center">
           <article className="wd-card">
-            <span className="wd-card-ribbon">Virtual Photobooth</span>
+            <span className="wd-card-ribbon">Bilik Foto Virtual</span>
             <p className="wd-kicker">
               <span className="wd-kicker-line" aria-hidden="true" />
-              <TypedText text="The Wedding Of" start={0.36} />
+              <TypedText text="Pernikahan" start={0.36} />
               <span className="wd-kicker-line" aria-hidden="true" />
             </p>
             <h1 className="wd-names" id="wd-wedding-title" aria-label="Ripki & Aura">
@@ -630,11 +630,11 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
             </p>
             <div className="wd-status" role="status">
               <span className="wd-status-dot" aria-hidden="true" />
-              <span>Happening now</span>
+              <span>Sedang berlangsung</span>
             </div>
             <button className="wd-cta" type="button" onClick={openCamera}>
               <CameraIcon />
-              <span>Open Camera</span>
+              <span>Buka Kamera</span>
               <span className="wd-cta-arrow" aria-hidden="true">→</span>
             </button>
             <p className="wd-note">Sakinah, Mawaddah, Warahmah.</p>
@@ -643,7 +643,7 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
 
         <footer className="wd-credit">
           <span aria-hidden="true" />
-          <span>Virtual Photobooth · <a href={homeHref}>ruangkilas.my.id</a></span>
+          <span>Bilik Foto Virtual · <a href={homeHref}>ruangkilas.my.id</a></span>
         </footer>
       </section>
 
@@ -654,7 +654,7 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
           tabIndex={-1}
           role="dialog"
           aria-modal="true"
-          aria-label={view === 'camera' ? 'Kamera wedding photobooth' : 'Hasil foto wedding'}
+          aria-label={view === 'camera' ? 'Kamera bilik foto pernikahan' : 'Hasil foto pernikahan'}
         >
           {view === 'camera' ? (
             <div className="wd-cam">
@@ -663,12 +663,12 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
                   <ArrowLeftIcon />
                 </button>
                 <div className="wd-cam-title">
-                  <strong>Photo Booth</strong>
+                  <strong>Bilik Foto</strong>
                   <span>1 jepret · potret</span>
                 </div>
                 <span className={`wd-live-badge ${camera.status === 'live' ? 'is-live' : ''}`}>
                   <i aria-hidden="true" />
-                  {camera.status === 'live' ? 'Live' : 'Ready'}
+                  {camera.status === 'live' ? 'Aktif' : 'Siap'}
                 </span>
               </header>
 
@@ -680,7 +680,7 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
                     width={PREVIEW_WIDTH}
                     height={PREVIEW_HEIGHT}
                     role="img"
-                    aria-label="Pratinjau kamera dengan bingkai wedding Ripki dan Aura"
+                    aria-label="Pratinjau kamera dengan bingkai pernikahan Ripki dan Aura"
                   />
 
                   {countdown !== null && (
@@ -709,7 +709,7 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
                         <>
                           <span className="wd-spinner" aria-hidden="true" />
                           <strong>{camera.status === 'starting' ? 'Sebentar, kamera menyala…' : 'Menyambungkan kamera…'}</strong>
-                          <span>Pilih Izinkan saat browser bertanya.</span>
+                          <span>Pilih Izinkan saat peramban bertanya.</span>
                           {camera.status === 'live' && (
                             <button type="button" onClick={retryCamera}>Coba lagi</button>
                           )}
@@ -784,12 +784,12 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
                 <p className="wd-result-kicker">Sukabumi · 28 November 2026</p>
                 <h2 className="wd-result-title">Fotomu <em>siap.</em></h2>
 
-                <img className="wd-result-img" src={result.url} alt="Foto wedding berbingkai Ripki dan Aura" />
+                <img className="wd-result-img" src={result.url} alt="Foto pernikahan berbingkai Ripki dan Aura" />
 
                 <div className="wd-result-actions">
                   <button className="wd-btn wd-btn-primary" type="button" onClick={() => void sharePhoto()} disabled={sharing} aria-busy={sharing}>
                     <ShareIcon />
-                    <span>{sharing ? 'Membuka menu bagikan…' : 'Bagikan ke WhatsApp / IG Story'}</span>
+                    <span>{sharing ? 'Membuka menu bagikan…' : 'Bagikan ke WhatsApp / Cerita Instagram'}</span>
                   </button>
 
                   <div className="wd-download-row">
@@ -804,10 +804,10 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
                         onClick={() => void downloadBoomerang()}
                         disabled={boomerangBusy}
                         aria-busy={boomerangBusy}
-                        aria-label="Unduh boomerang video"
+                        aria-label="Unduh video bumerang"
                       >
                         <BoomerangIcon />
-                        <span>{boomerangBusy ? 'Membuat…' : 'Unduh Boomerang'}</span>
+                        <span>{boomerangBusy ? 'Membuat…' : 'Unduh video bumerang'}</span>
                       </button>
                     )}
                   </div>
@@ -821,7 +821,7 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
                 <p className="wd-result-note" role="status">
                   {notice || (canNativeShare
                     ? 'Pilih WhatsApp atau Instagram di menu bagikan.'
-                    : 'Browser ini mengunduh file. Unggah ke WhatsApp atau IG dari galeri.')}
+                    : 'Peramban ini mengunduh foto. Unggah ke WhatsApp atau Instagram dari galeri.')}
                 </p>
               </div>
             </div>

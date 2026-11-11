@@ -6,7 +6,7 @@ export type WeddingFacing = 'user' | 'environment';
 function friendlyCameraError(cause: unknown) {
   const name = cause instanceof DOMException ? cause.name : '';
   if (name === 'NotAllowedError' || name === 'SecurityError') {
-    return 'Izin kamera belum diberikan. Aktifkan izin kamera di pengaturan browser, lalu coba lagi.';
+    return 'Izin kamera belum diberikan. Aktifkan izin kamera di pengaturan peramban, lalu coba lagi.';
   }
   if (name === 'NotFoundError' || name === 'DevicesNotFoundError') {
     return 'Kamera tidak ditemukan. Pastikan kamera perangkat aktif, lalu coba lagi.';

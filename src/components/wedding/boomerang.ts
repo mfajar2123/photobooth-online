@@ -35,7 +35,7 @@ function loadImage(source: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new Image();
     image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error('Frame boomerang gagal dimuat. Coba foto ulang.'));
+    image.onerror = () => reject(new Error('Gambar bumerang gagal dimuat. Coba foto ulang.'));
     image.src = source;
     if (image.complete && image.naturalWidth > 0) resolve(image);
   });
@@ -51,12 +51,12 @@ export async function createBoomerangBlob(
   options: { durationSeconds?: number; width?: number; height?: number; fps?: number } = {},
 ): Promise<BoomerangFile> {
   if (!supportsBoomerangRecording()) {
-    throw new Error('Browser ini belum mendukung boomerang. Kamu tetap bisa mengunduh JPG.');
+    throw new Error('Peramban ini belum mendukung video bumerang. Kamu tetap bisa mengunduh JPG.');
   }
 
   const sourceFrames = frames.slice(-14);
   if (sourceFrames.length < 2) {
-    throw new Error('Boomerang belum punya cukup frame. Coba foto ulang.');
+    throw new Error('Video bumerang belum punya cukup gambar. Coba foto ulang.');
   }
 
   const width = options.width ?? 720;
@@ -68,7 +68,7 @@ export async function createBoomerangBlob(
   canvas.width = width;
   canvas.height = height;
   const context = canvas.getContext('2d');
-  if (!context) throw new Error('Boomerang belum bisa dibuat di browser ini.');
+  if (!context) throw new Error('Video bumerang belum bisa dibuat di peramban ini.');
 
   const mimeTypes = supportedMimeTypes();
   const mimeType = mimeTypes[0];
@@ -85,7 +85,7 @@ export async function createBoomerangBlob(
     recorder.ondataavailable = (event) => {
       if (event.data.size > 0) chunks.push(event.data);
     };
-    recorder.onerror = () => reject(new Error('Boomerang gagal direkam. Coba lagi.'));
+    recorder.onerror = () => reject(new Error('Video bumerang gagal direkam. Coba lagi.'));
     recorder.onstop = () => resolve(new Blob(chunks, { type: recorder.mimeType || mimeType || 'video/webm' }));
   });
 
