@@ -16,7 +16,7 @@ const categories = ['Semua', ...invitationTemplates.map((item) => item.name)];
 
 <BaseLayout
   title="Template Undangan Digital Pernikahan | Ruang Kilas"
-  description="Pilih dan coba template undangan digital pernikahan: Serat, Linen, Garden, Monokrom, Kertas, dan Senja sebelum request desain custom."
+  description="Pilih dan coba sembilan tema undangan digital: Serat, Linen, Garden, Monokrom, Kertas, Senja, Pita, Rimba, dan Marmer."
   breadcrumbs={breadcrumbs}
 >
   <SiteHeader ctaLabel="Buat undangan" ctaHref="/undangan/custom/" />
@@ -46,7 +46,7 @@ const categories = ['Semua', ...invitationTemplates.map((item) => item.name)];
       <div class="und-grid und-grid-3" id="template-grid">
         {invitationTemplates.map((template) => (
           <article class="und-card und-template" data-category={template.name}>
-            <a class="und-card-media" href={assetUrl(`/undangan/${template.demoSlug}/`)} aria-label={`Lihat demo ${template.name}`}>
+            <a class="und-card-media und-template-preview" href={assetUrl(`/undangan/${template.demoSlug}/`)} aria-label={`Lihat demo ${template.name}`} data-template-theme={template.slug} data-template-name={template.name} style={`--preview-surface:${template.surface};--preview-accent:${template.accent}`}>
               <img src={assetUrl(template.cover)} alt={`Template ${template.name}`} loading="lazy" decoding="async" />
             </a>
             <div class="und-card-body">

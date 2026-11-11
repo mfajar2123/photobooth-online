@@ -8,14 +8,14 @@ interface Props {
 const { theme } = Astro.props;
 const variants: Record<InvitationTheme, string> = {
   serat: 'botanical',
-  linen: 'botanical',
-  garden: 'botanical',
-  rimba: 'botanical',
+  linen: 'linen',
+  garden: 'garden',
   monokrom: 'deco',
-  marmer: 'deco',
   kertas: 'paper',
   senja: 'sunset',
   pita: 'romantic',
+  rimba: 'foliage',
+  marmer: 'marble',
 };
 const variant = variants[theme] ?? 'botanical';
 const floats = Array.from({ length: 12 }, (_, index) => ({
@@ -56,10 +56,20 @@ const floats = Array.from({ length: 12 }, (_, index) => ({
         <pattern id="inv-lace" width="40" height="18" patternUnits="userSpaceOnUse">
           <path d="M0 18Q20-12 40 18" fill="none" stroke="currentColor" stroke-width="1.4" />
         </pattern>
+        <pattern id="inv-linen-weave" width="18" height="18" patternUnits="userSpaceOnUse">
+          <path d="M0 4H18M0 13H18M4 0V18M13 0V18" fill="none" stroke="currentColor" stroke-width=".65" />
+          <path d="M0 8H18M8 0V18" fill="none" stroke="currentColor" stroke-width=".35" opacity=".55" />
+        </pattern>
+        <pattern id="inv-batik-dots" width="72" height="72" patternUnits="userSpaceOnUse">
+          <path d="M36 7C42 18 53 25 64 36C53 47 42 54 36 65C30 54 19 47 8 36C19 25 30 18 36 7Z" fill="none" stroke="currentColor" stroke-width="1.2" />
+          <circle cx="36" cy="36" r="5" fill="none" stroke="currentColor" stroke-width="1.2" />
+          <circle cx="0" cy="0" r="3" fill="currentColor" /><circle cx="72" cy="72" r="3" fill="currentColor" />
+        </pattern>
       </defs>
 
       {variant === 'botanical' && (
         <>
+          <rect data-depth="1" x="0" y="0" width="1440" height="900" fill="url(#inv-batik-dots)" opacity=".085" />
           <g data-depth="1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
             <rect x="28" y="28" width="1384" height="844" />
             <rect x="38" y="38" width="1364" height="824" opacity=".55" />
@@ -104,6 +114,97 @@ const floats = Array.from({ length: 12 }, (_, index) => ({
               <use href="#inv-flower" transform="translate(560 780) scale(.62)" />
               <use href="#inv-flower" transform="translate(880 780) scale(.62)" />
             </g>
+          </g>
+        </>
+      )}
+
+      {variant === 'linen' && (
+        <>
+          <rect data-depth="1" x="0" y="0" width="1440" height="900" fill="url(#inv-linen-weave)" opacity=".14" />
+          <g data-depth="1" fill="none" stroke="currentColor" stroke-width="1.4">
+            <rect x="34" y="34" width="1372" height="832" stroke-dasharray="3 7" opacity=".62" />
+            <path d="M92 118H350M1090 782H1348" opacity=".55" />
+            <path d="M85 150l40-32 40 32M1275 750l40 32 40-32" />
+            <path d="M80 180V350M1360 550V720" stroke-dasharray="2 8" opacity=".45" />
+          </g>
+          <g data-depth="2" fill="currentColor" opacity=".18">
+            <path d="M112 46l94 0-26 28h-94z" transform="rotate(-4 150 60)" />
+            <path d="M1234 826l94 0-26 28h-94z" transform="rotate(4 1280 840)" />
+          </g>
+          <g data-depth="3" class="inv-drift" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".72">
+            <path d="M1140 155c55-42 104-42 148 0-44 42-93 42-148 0Z" />
+            <path d="M1190 155h50M1215 130v50" />
+            <path d="M150 748c45-34 85-34 120 0-35 34-75 34-120 0Z" />
+            <path d="M190 748h42M211 727v42" />
+          </g>
+        </>
+      )}
+
+      {variant === 'garden' && (
+        <>
+          <g data-depth="1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+            <path d="M30 46H1410V854H30Z" opacity=".5" />
+            <path d="M210 280C155 188 178 105 292 56M1230 280C1285 188 1262 105 1148 56" />
+            <path d="M90 650C170 565 238 560 318 624M1350 650C1270 565 1202 560 1122 624" opacity=".7" />
+            <path d="M240 140c42-38 85-37 125 0M1075 140c42-38 85-37 125 0" opacity=".45" />
+          </g>
+          <g data-depth="2" class="inv-sway" fill="currentColor" opacity=".42">
+            <use href="#inv-leaf" transform="translate(180 205) rotate(-36) scale(1.1)" />
+            <use href="#inv-leaf" transform="translate(235 142) rotate(-18) scale(.9)" />
+            <use href="#inv-leaf" transform="translate(1260 205) rotate(36) scale(1.1)" />
+            <use href="#inv-leaf" transform="translate(1205 142) rotate(18) scale(.9)" />
+            <use href="#inv-leaf" transform="translate(170 622) rotate(-70) scale(.82)" />
+            <use href="#inv-leaf" transform="translate(1270 622) rotate(70) scale(.82)" />
+          </g>
+          <g data-depth="3" class="inv-bloom" fill="currentColor" opacity=".46">
+            <use href="#inv-flower" transform="translate(300 82) scale(.9)" />
+            <use href="#inv-flower" transform="translate(1140 82) scale(.9)" />
+            <use href="#inv-flower" transform="translate(92 760) scale(.65)" />
+            <use href="#inv-flower" transform="translate(1348 760) scale(.65)" />
+          </g>
+        </>
+      )}
+
+      {variant === 'foliage' && (
+        <>
+          <g data-depth="1" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".52">
+            <rect x="26" y="26" width="1388" height="848" />
+            <path d="M65 130C176 220 184 340 112 470M1375 130C1264 220 1256 340 1328 470" />
+            <path d="M70 132l88 38M88 208l76 26M112 285l65 13M1370 132l-88 38M1352 208l-76 26M1328 285l-65 13" />
+            <path d="M94 700C182 622 250 612 320 652M1346 700C1258 622 1190 612 1120 652" opacity=".8" />
+          </g>
+          <g data-depth="2" class="inv-sway" fill="currentColor" opacity=".31">
+            <path d="M0 430C48 348 123 335 188 371C159 386 139 413 126 449C92 425 52 420 0 430Z" />
+            <path d="M0 430l171-48M1440 430c-48-82-123-95-188-59 29 15 49 42 62 78 34-24 74-29 126-19Z" />
+            <path d="M0 430l-171-48" transform="translate(1440 0)" />
+            <path d="M0 0C55 12 85 50 79 100C56 80 31 75 0 80C7 48 6 24 0 0Z" transform="translate(105 720) rotate(-25) scale(1.3)" />
+            <path d="M0 0C55 12 85 50 79 100C56 80 31 75 0 80C7 48 6 24 0 0Z" transform="translate(1335 720) rotate(25) scale(-1.3 1.3)" />
+          </g>
+          <g data-depth="3" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".58">
+            <path d="M102 472c30-34 54-38 82-24M1256 448c28-14 52-10 82 24" />
+            <path d="M180 600c44 12 69 38 83 78M1260 678c14-40 39-66 83-78" />
+          </g>
+        </>
+      )}
+
+      {variant === 'marble' && (
+        <>
+          <g data-depth="1" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".4">
+            <rect x="30" y="30" width="1380" height="840" />
+            <path d="M-40 160C190 230 290 42 480 100S760 240 980 138 1280 20 1490 140" />
+            <path d="M-30 176C180 246 296 62 472 116S770 256 988 154 1280 38 1485 156" opacity=".52" />
+            <path d="M-50 760C150 640 300 860 500 770S780 620 990 745 1270 850 1500 700" />
+            <path d="M-48 778C154 658 300 878 504 788S782 638 994 763 1270 868 1498 718" opacity=".54" />
+          </g>
+          <g data-depth="2" class="inv-shimmer" fill="none" stroke="currentColor" stroke-width="1.1" opacity=".72">
+            <path d="M0 350C130 330 140 470 260 450S370 315 450 350" />
+            <path d="M1440 520c-130-20-140 120-260 100s-110-135-190-100" />
+            <path d="M68 100c70 25 88 70 54 135M1372 800c-70-25-88-70-54-135" />
+          </g>
+          <g data-depth="3" fill="currentColor" opacity=".55">
+            <circle cx="260" cy="450" r="3" /><circle cx="1180" cy="620" r="3" />
+            <path d="M715 55l5 12 12 5-12 5-5 12-5-12-12-5 12-5z" />
+            <path d="M720 810l4 9 9 4-9 4-4 9-4-9-9-4 9-4z" />
           </g>
         </>
       )}

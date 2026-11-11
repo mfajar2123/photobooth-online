@@ -590,7 +590,7 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
               <span>Open Camera</span>
               <span className="wd-cta-arrow" aria-hidden="true">→</span>
             </button>
-            <p className="wd-note">Sekali jepret, langsung berbingkai.</p>
+            <p className="wd-note">Sakinah, Mawaddah, Warahmah.</p>
           </article>
         </div>
 
@@ -635,13 +635,6 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
                     role="img"
                     aria-label="Pratinjau kamera dengan bingkai wedding Ripki dan Aura"
                   />
-
-                  {camera.status === 'live' && ready && !capturing && (
-                    <div className="wd-cam-hud" aria-hidden="true">
-                      <span>Portrait</span>
-                      <span>1 / 1</span>
-                    </div>
-                  )}
 
                   {countdown !== null && (
                     <div className="wd-countdown" key={countdown} aria-live="assertive">
@@ -734,11 +727,6 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
                 <button className="wd-icon-btn" type="button" onClick={goHome} aria-label="Kembali ke undangan">
                   <ArrowLeftIcon />
                 </button>
-                <div className="wd-cam-title">
-                  <strong>Foto Kamu</strong>
-                  <span>Sukabumi</span>
-                </div>
-                <span className="wd-topbar-spacer" aria-hidden="true" />
               </header>
 
               <div className="wd-result-body">

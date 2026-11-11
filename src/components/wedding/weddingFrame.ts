@@ -3,10 +3,9 @@ const CREAM = '#FFF9F0';
 
 export const WEDDING_FRAME_SIZE = { width: 1080, height: 1920 } as const;
 
-/* Coordinate space of the supplied frame artwork (public/images/frame-ripki2.png). */
-const FRAME_ART = { width: 939, height: 1675 } as const;
-const CARD = { left: 66, top: 139, right: 882, bottom: 1406, photoBottom: 1312, radius: 29, inset: 5 } as const;
-const MENU_DOTS = { x: 833.5, ys: [185, 200, 215] as const, radius: 3.8 } as const;
+/* Coordinate space and photo opening of public/images/frame-ripki-baru-hd.png. */
+const FRAME_ART = { width: 941, height: 1672 } as const;
+const CARD = { left: 46, top: 94, right: 895, bottom: 1446, photoBottom: 1447, radius: 40, inset: 0 } as const;
 
 const frameCache = new Map<string, HTMLImageElement>();
 const frameRequests = new Map<string, Promise<HTMLImageElement>>();
@@ -47,26 +46,6 @@ export function loadWeddingFrame(src: string): Promise<HTMLImageElement> {
     frameRequests.delete(src);
   });
   return request;
-}
-
-function roundedTopPath(
-  context: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  radius: number,
-) {
-  const r = Math.max(0, Math.min(radius, width / 2, height / 2));
-  context.beginPath();
-  context.moveTo(x + r, y);
-  context.lineTo(x + width - r, y);
-  context.quadraticCurveTo(x + width, y, x + width, y + r);
-  context.lineTo(x + width, y + height);
-  context.lineTo(x, y + height);
-  context.lineTo(x, y + r);
-  context.quadraticCurveTo(x, y, x + r, y);
-  context.closePath();
 }
 
 function roundedRectPath(
@@ -124,20 +103,6 @@ function drawPhotoCover(
   return true;
 }
 
-function drawMenuDots(context: CanvasRenderingContext2D, sx: number, sy: number) {
-  const x = MENU_DOTS.x * sx;
-  const dotRadius = MENU_DOTS.radius * sx;
-
-  context.save();
-  context.fillStyle = INK;
-  MENU_DOTS.ys.forEach((referenceY) => {
-    context.beginPath();
-    context.arc(x, referenceY * sy, dotRadius, 0, Math.PI * 2);
-    context.fill();
-  });
-  context.restore();
-}
-
 /**
  * Draws the complete 9:16 wedding keepsake around the supplied frame artwork.
  * The live preview and the final JPG use the same function so the result is
@@ -192,12 +157,9 @@ export function drawWeddingComposition(
       photoWidth,
       photoHeight,
       mirror,
-      (ctx) => roundedTopPath(ctx, photoX, photoY, photoWidth, photoHeight, 24 * sx),
+      (ctx) => roundedRectPath(ctx, photoX, photoY, photoWidth, photoHeight, CARD.radius * sx),
     );
   }
-
-  // The HD frame has its own menu dots, but the photo now covers them.
-  drawMenuDots(context, sx, sy);
 
   context.restore();
 }

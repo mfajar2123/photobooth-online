@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
+import SiteFooter from '../components/layout/SiteFooter.astro';
 import PhotoboothStudio from '../components/photobooth/PhotoboothStudio';
 
 const breadcrumbs = [
@@ -14,9 +16,11 @@ const breadcrumbs = [
   breadcrumbs={breadcrumbs}
   includeWebApplication={true}
 >
+  <SiteHeader ctaLabel="Buka photobooth" />
   <main class="studio-page">
     <section class="studio-section section-pad studio-page-section">
       <PhotoboothStudio client:load />
     </section>
   </main>
+  <SiteFooter showPrivacy />
 </BaseLayout>
