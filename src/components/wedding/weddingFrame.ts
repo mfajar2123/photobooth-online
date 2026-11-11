@@ -70,7 +70,7 @@ function roundedRectPath(
   context.closePath();
 }
 
-function drawPhotoContain(
+function drawPhoto(
   context: CanvasRenderingContext2D,
   source: HTMLVideoElement | HTMLImageElement,
   x: number,
@@ -85,7 +85,10 @@ function drawPhotoContain(
   const sourceHeight = 'videoHeight' in source ? source.videoHeight : source.naturalHeight;
   if (!sourceWidth || !sourceHeight) return false;
 
-  const scale = Math.min((width - safeInset * 2) / sourceWidth, (height - safeInset * 2) / sourceHeight);
+  const isCamera = 'videoWidth' in source;
+  const scale = isCamera
+    ? Math.max(width / sourceWidth, height / sourceHeight)
+    : Math.min((width - safeInset * 2) / sourceWidth, (height - safeInset * 2) / sourceHeight);
   const drawWidth = sourceWidth * scale;
   const drawHeight = sourceHeight * scale;
   const drawX = x + (width - drawWidth) / 2;
@@ -99,14 +102,16 @@ function drawPhotoContain(
     context.translate(x * 2 + width, 0);
     context.scale(-1, 1);
   }
-  // Extend the photo softly behind the complete, uncropped foreground image.
-  const backgroundScale = Math.max(width / sourceWidth, height / sourceHeight) * 1.12;
-  const backgroundWidth = sourceWidth * backgroundScale;
-  const backgroundHeight = sourceHeight * backgroundScale;
-  context.save();
-  context.filter = `blur(${Math.max(2, Math.round(width * 0.025))}px)`;
-  context.drawImage(source, x + (width - backgroundWidth) / 2, y + (height - backgroundHeight) / 2, backgroundWidth, backgroundHeight);
-  context.restore();
+  if (!isCamera) {
+    // Keep the whole gallery image visible, with a soft extension behind it.
+    const backgroundScale = Math.max(width / sourceWidth, height / sourceHeight) * 1.12;
+    const backgroundWidth = sourceWidth * backgroundScale;
+    const backgroundHeight = sourceHeight * backgroundScale;
+    context.save();
+    context.filter = `blur(${Math.max(2, Math.round(width * 0.025))}px)`;
+    context.drawImage(source, x + (width - backgroundWidth) / 2, y + (height - backgroundHeight) / 2, backgroundWidth, backgroundHeight);
+    context.restore();
+  }
   context.drawImage(source, drawX, drawY, drawWidth, drawHeight);
   context.restore();
   return true;
@@ -158,7 +163,7 @@ export function drawWeddingComposition(
   const photoHeight = photoBottom - photoY;
 
   if (video) {
-    drawPhotoContain(
+    drawPhoto(
       context,
       video,
       photoX,
