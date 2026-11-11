@@ -78,17 +78,13 @@ function drawPhoto(
   width: number,
   height: number,
   mirror: boolean,
-  safeInset: number,
   clipPath: (context: CanvasRenderingContext2D) => void,
 ) {
   const sourceWidth = 'videoWidth' in source ? source.videoWidth : source.naturalWidth;
   const sourceHeight = 'videoHeight' in source ? source.videoHeight : source.naturalHeight;
   if (!sourceWidth || !sourceHeight) return false;
 
-  const isCamera = 'videoWidth' in source;
-  const scale = isCamera
-    ? Math.max(width / sourceWidth, height / sourceHeight)
-    : Math.min((width - safeInset * 2) / sourceWidth, (height - safeInset * 2) / sourceHeight);
+  const scale = Math.max(width / sourceWidth, height / sourceHeight);
   const drawWidth = sourceWidth * scale;
   const drawHeight = sourceHeight * scale;
   const drawX = x + (width - drawWidth) / 2;
@@ -101,16 +97,6 @@ function drawPhoto(
   if (mirror) {
     context.translate(x * 2 + width, 0);
     context.scale(-1, 1);
-  }
-  if (!isCamera) {
-    // Keep the whole gallery image visible, with a soft extension behind it.
-    const backgroundScale = Math.max(width / sourceWidth, height / sourceHeight) * 1.12;
-    const backgroundWidth = sourceWidth * backgroundScale;
-    const backgroundHeight = sourceHeight * backgroundScale;
-    context.save();
-    context.filter = `blur(${Math.max(2, Math.round(width * 0.025))}px)`;
-    context.drawImage(source, x + (width - backgroundWidth) / 2, y + (height - backgroundHeight) / 2, backgroundWidth, backgroundHeight);
-    context.restore();
   }
   context.drawImage(source, drawX, drawY, drawWidth, drawHeight);
   context.restore();
@@ -171,7 +157,6 @@ export function drawWeddingComposition(
       photoWidth,
       photoHeight,
       mirror,
-      CARD.radius * sx * 0.3,
       (ctx) => roundedRectPath(ctx, photoX, photoY, photoWidth, photoHeight, CARD.radius * sx),
     );
   }
