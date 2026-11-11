@@ -56,6 +56,16 @@ function FlipCameraIcon() {
   );
 }
 
+function GalleryIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <circle cx="8" cy="9" r="1.5" />
+      <path d="m4 18 5-5 3 3 3-4 5 6" />
+    </svg>
+  );
+}
+
 function ShareIcon() {
   return (
     <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -138,6 +148,7 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
   const videoRef = useRef<HTMLVideoElement>(null);
   const previewRef = useRef<HTMLCanvasElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
   const resultRef = useRef<WeddingPhoto | null>(null);
   const runIdRef = useRef(0);
   const busyRef = useRef(false);
@@ -446,6 +457,42 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
     }
   };
 
+  const selectGalleryPhoto = async (file: File) => {
+    if (busyRef.current) return;
+    const runId = ++runIdRef.current;
+    busyRef.current = true;
+    setCapturing(true);
+    setNotice('');
+    const sourceUrl = URL.createObjectURL(file);
+    try {
+      const image = new Image();
+      image.src = sourceUrl;
+      await image.decode();
+      const canvas = await composeWeddingPhoto(image, false, frameSrc);
+      const blob = await canvasToJpegBlob(canvas);
+      if (runIdRef.current !== runId) return;
+      const url = URL.createObjectURL(blob);
+      if (resultRef.current) URL.revokeObjectURL(resultRef.current.url);
+      const photo = { url, blob };
+      resultRef.current = photo;
+      setResult(photo);
+      boomerangFramesRef.current = [];
+      boomerangFileRef.current = null;
+      setBoomerangAvailable(false);
+      camera.stop();
+      setReady(false);
+      setView('result');
+    } catch {
+      if (runIdRef.current === runId) setNotice('Foto tidak dapat dibuka. Coba pilih foto JPG atau PNG lain.');
+    } finally {
+      URL.revokeObjectURL(sourceUrl);
+      if (runIdRef.current === runId) {
+        busyRef.current = false;
+        setCapturing(false);
+      }
+    }
+  };
+
   const retake = () => {
     stopRun();
     setNotice('');
@@ -688,10 +735,14 @@ export default function WeddingBooth({ heroSrc, frameSrc, homeHref }: WeddingBoo
                 </p>
 
                 <div className="wd-shutter-row">
-                  <span className="wd-side-chip" aria-hidden="true">
-                    <b>1</b>
-                    <small>Jepret</small>
-                  </span>
+                  <input ref={galleryInputRef} className="wd-sr-only" type="file" accept="image/*" tabIndex={-1} onChange={(event) => {
+                    const file = event.currentTarget.files?.[0];
+                    event.currentTarget.value = '';
+                    if (file) void selectGalleryPhoto(file);
+                  }} />
+                  <button className="wd-icon-btn wd-icon-btn-round" type="button" onClick={() => galleryInputRef.current?.click()} aria-label="Pilih foto dari galeri" disabled={capturing}>
+                    <GalleryIcon />
+                  </button>
                   <button
                     className="wd-shutter"
                     type="button"

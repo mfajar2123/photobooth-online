@@ -70,21 +70,22 @@ function roundedRectPath(
   context.closePath();
 }
 
-function drawPhotoCover(
+function drawPhotoContain(
   context: CanvasRenderingContext2D,
-  source: CanvasImageSource & { videoWidth?: number; videoHeight?: number },
+  source: HTMLVideoElement | HTMLImageElement,
   x: number,
   y: number,
   width: number,
   height: number,
   mirror: boolean,
+  safeInset: number,
   clipPath: (context: CanvasRenderingContext2D) => void,
 ) {
-  const sourceWidth = source.videoWidth ?? 0;
-  const sourceHeight = source.videoHeight ?? 0;
+  const sourceWidth = 'videoWidth' in source ? source.videoWidth : source.naturalWidth;
+  const sourceHeight = 'videoHeight' in source ? source.videoHeight : source.naturalHeight;
   if (!sourceWidth || !sourceHeight) return false;
 
-  const scale = Math.max(width / sourceWidth, height / sourceHeight);
+  const scale = Math.min((width - safeInset * 2) / sourceWidth, (height - safeInset * 2) / sourceHeight);
   const drawWidth = sourceWidth * scale;
   const drawHeight = sourceHeight * scale;
   const drawX = x + (width - drawWidth) / 2;
@@ -93,6 +94,8 @@ function drawPhotoCover(
   context.save();
   clipPath(context);
   context.clip();
+  context.fillStyle = '#211713';
+  context.fillRect(x, y, width, height);
   // Mirror inside the aperture only, so the saved photo matches the preview.
   if (mirror) {
     context.translate(x * 2 + width, 0);
@@ -110,7 +113,7 @@ function drawPhotoCover(
  */
 export function drawWeddingComposition(
   context: CanvasRenderingContext2D,
-  video: HTMLVideoElement | null,
+  video: HTMLVideoElement | HTMLImageElement | null,
   width: number,
   height: number,
   mirror: boolean,
@@ -149,7 +152,7 @@ export function drawWeddingComposition(
   const photoHeight = photoBottom - photoY;
 
   if (video) {
-    drawPhotoCover(
+    drawPhotoContain(
       context,
       video,
       photoX,
@@ -157,6 +160,7 @@ export function drawWeddingComposition(
       photoWidth,
       photoHeight,
       mirror,
+      CARD.radius * sx * 0.3,
       (ctx) => roundedRectPath(ctx, photoX, photoY, photoWidth, photoHeight, CARD.radius * sx),
     );
   }
@@ -164,7 +168,7 @@ export function drawWeddingComposition(
   context.restore();
 }
 
-export async function composeWeddingPhoto(video: HTMLVideoElement, mirror: boolean, frameSrc: string) {
+export async function composeWeddingPhoto(video: HTMLVideoElement | HTMLImageElement, mirror: boolean, frameSrc: string) {
   const frameImage = await loadWeddingFrame(frameSrc);
   const canvas = document.createElement('canvas');
   canvas.width = WEDDING_FRAME_SIZE.width;

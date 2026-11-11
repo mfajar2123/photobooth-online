@@ -67,9 +67,7 @@ export function useWeddingCamera() {
         audio: false,
         video: {
           facingMode: { ideal: nextFacing },
-          width: { ideal: 1080 },
-          height: { ideal: 1440 },
-          aspectRatio: { ideal: 3 / 4 },
+          width: { ideal: 1920 },
         },
       });
 
