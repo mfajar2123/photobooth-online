@@ -30,7 +30,7 @@ export default function PhotoboothStudio() {
   const [boomerangDuration, setBoomerangDuration] = useState<3 | 4>(3);
   const [isExporting, setIsExporting] = useState(false);
   const [isShareReady, setIsShareReady] = useState(false);
-  const [frame, setFrame] = useState<FramePreset>(frames[0]);
+  const [frame, setFrame] = useState<FramePreset>(frames.find((item) => item.id === 'signature') ?? frames[0]);
   const [category, setCategory] = useState('Semua');
   const [slots, setSlots] = useState<PhotoSlot[]>([]);
   const [targetSlot, setTargetSlot] = useState<number | null>(null);

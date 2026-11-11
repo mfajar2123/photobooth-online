@@ -26,6 +26,14 @@ export const photoFilters: { id: PhotoFilterId; name: string; detail: string; cs
 ];
 
 export const frames: FramePreset[] = [
+  // --- MOMEN INDONESIA ---
+  { id: 'wisuda-nusantara', name: 'Wisuda Nusantara', category: 'Momen Indonesia', background: '#171C3D', foreground: '#FFF7DF', accent: '#E3B84F', motif: 'graduation', caption: 'LANGKAH BARU · 2026' },
+  { id: 'reuni-temu-lagi', name: 'Temu Lagi', category: 'Momen Indonesia', background: '#F6E8C9', foreground: '#173D4A', accent: '#E66A45', motif: 'reunion', caption: 'KAWAN LAMA, CERITA BARU' },
+  { id: 'pesta-ulang-tahun', name: 'Pesta Ceria', category: 'Momen Indonesia', background: '#FFDAE4', foreground: '#4E204D', accent: '#F05B43', motif: 'birthday', caption: 'HARI INI PUNYA KAMU!' },
+  { id: 'merdeka-bersama', name: 'Merdeka Bersama', category: 'Momen Indonesia', background: '#FFF8F0', foreground: '#252525', accent: '#D83232', motif: 'indonesia', caption: 'MERDEKA · 17 AGUSTUS' },
+  { id: 'hari-pahlawan', name: 'Hari Pahlawan · 10 November', category: 'Momen Indonesia', background: '#25272A', foreground: '#FFF4DC', accent: '#C74736', motif: 'pahlawan', caption: 'PAHLAWAN · 10 NOVEMBER 1945' },
+  { id: 'janji-sehidup', name: 'Janji Sehidup', category: 'Momen Indonesia', background: '#F2E7D5', foreground: '#24463D', accent: '#B88A45', motif: 'wedding-id', caption: 'HARI BAHAGIA KITA' },
+
   // --- SIGNATURE ---
   { id: 'signature', name: 'Kilas Butter', category: 'Signature', background: '#FFF3B0', foreground: '#121212', accent: '#E63946', motif: 'star', caption: 'CORE MEMORY' },
   { id: 'atelier', name: 'Atelier Noir', category: 'Signature', background: '#121212', foreground: '#F5EBE1', accent: '#D4AF37', motif: 'atelier', caption: 'HAUTE PHOTOGRAPHIE' },
@@ -50,6 +58,7 @@ export const frames: FramePreset[] = [
 
 export const frameCategories = [
   'Semua',
+  'Momen Indonesia',
   'Signature',
   'Retro',
   'Cute & Pop',

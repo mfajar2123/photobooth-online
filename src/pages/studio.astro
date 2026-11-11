@@ -1,8 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import SiteHeader from '../components/layout/SiteHeader.astro';
 import PhotoboothStudio from '../components/photobooth/PhotoboothStudio';
-import { assetUrl } from '../lib/paths';
 
 const breadcrumbs = [
   { name: 'Beranda', item: '/' },
@@ -16,25 +14,9 @@ const breadcrumbs = [
   breadcrumbs={breadcrumbs}
   includeWebApplication={true}
 >
-    <SiteHeader ctaHref="/" ctaLabel="Kembali ke beranda" />
-
   <main class="studio-page">
     <section class="studio-section section-pad studio-page-section">
-      <a class="studio-back-link" href={assetUrl('/')}>← Kembali ke Ruang Kilas</a>
-      <div class="studio-intro">
-        <h1>Senyum dulu.<br /><em>Pose belakangan.</em></h1>
-      </div>
       <PhotoboothStudio client:load />
-      <p class="studio-privacy-note">Privasi terjaga: Seluruh proses foto berlangsung di browser perangkat Anda tanpa penyimpanan di server.</p>
     </section>
   </main>
-
-  <footer class="studio-page-footer">
-    <a class="wordmark" href={assetUrl('/')}>✦ RUANG <i>KILAS</i></a>
-    <span>FOTO ANDA. PRIVASI ANDA. 100% DIPROSES LOKAL DI PERANGKAT.</span>
-    <div style="display: flex; gap: 16px;">
-      <a href={assetUrl('/panduan')}>Panduan studio</a>
-      <a href={assetUrl('/terms')}>Ketentuan layanan</a>
-    </div>
-  </footer>
 </BaseLayout>

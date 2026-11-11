@@ -1538,3 +1538,26 @@ html.inv-reveal-ready .inv-page .inv-section.is-visible .inv-gift {
   .article-related-grid .article-card-title { font-size:14px; }
   .article-related-grid .article-card-desc { font-size:10px; }
 }
+
+/* Event-ready local frame previews */
+.swatch-graduation { background-image: radial-gradient(circle, #e3b84f 1px, transparent 1.5px), linear-gradient(135deg, #171c3d 0%, #242c55 55%, #171c3d 100%); background-size:12px 12px, auto; }
+.swatch-graduation::before { content:'WISUDA'; position:absolute; top:5%; left:8%; right:8%; padding:5% 2%; color:#171c3d; background:#e3b84f; font:900 6px/1 var(--mono); letter-spacing:.08em; text-align:center; }
+.swatch-reunion { background-image:repeating-linear-gradient(45deg, transparent 0 7px, rgba(230,106,69,.16) 7px 9px), linear-gradient(#f6e8c9,#f6e8c9); }
+.swatch-reunion::before { content:'TEMU LAGI!'; position:absolute; top:6%; left:10%; right:10%; padding:5% 1%; color:white; background:#e66a45; border-radius:10px; font:800 5px/1 var(--mono); text-align:center; }
+.swatch-birthday { background-image:radial-gradient(circle at 15% 17%,#f4b83f 0 3px,transparent 4px),radial-gradient(circle at 80% 25%,#7253a6 0 3px,transparent 4px),radial-gradient(circle at 88% 70%,#4e9a91 0 3px,transparent 4px),linear-gradient(145deg,#ffdae4,#ffc8d8); }
+.swatch-birthday::before { content:'HAPPY DAY'; position:absolute; top:6%; left:9%; right:9%; color:#4e204d; font:900 6px/1 var(--display); text-align:center; }
+.swatch-indonesia { background-image:linear-gradient(to bottom,#d83232 0 8%,#fff 8% 15%,transparent 15% 85%,#d83232 85% 92%,#fff 92%); }
+.swatch-indonesia::before { content:'17 AGUSTUS'; position:absolute; top:4%; left:12%; right:12%; color:#252525; font:900 5px/1 var(--mono); text-align:center; }
+.swatch-pahlawan { background-image:linear-gradient(to bottom,#c74736 0 5%,#f7f0e2 5% 8%,transparent 8%),radial-gradient(circle at 50% 17%,rgba(213,184,121,.35),transparent 30%),linear-gradient(145deg,#25272a,#34302d); }
+.swatch-pahlawan::before { content:'HARI PAHLAWAN'; position:absolute; top:7%; left:10%; right:10%; color:#fff4dc; border-bottom:1px solid #d5b879; font:900 5px/1.5 var(--mono); text-align:center; }
+.swatch-wedding-id { background-image:radial-gradient(ellipse at 8% 10%,#b88a45 0 2px,transparent 3px),radial-gradient(ellipse at 92% 10%,#b88a45 0 2px,transparent 3px),linear-gradient(135deg,#f2e7d5,#e9dcc8); }
+.swatch-wedding-id::before { content:'HARI BAHAGIA'; position:absolute; top:5%; left:8%; right:8%; color:#24463d; border-bottom:1px solid #b88a45; font:700 5px/1.5 serif; text-align:center; }
+
+/* The studio is the whole page surface; the app has its own navigation and privacy cues. */
+.studio-page-section { min-height:100svh; padding:clamp(8px, 1.2vw, 18px); }
+.studio-app { max-width:none; border-width:1.5px; box-shadow:none; }
+
+@media (max-width:700px) {
+  .studio-page-section { min-height:100svh; padding:6px; }
+  .studio-app { border-width:1px; }
+}

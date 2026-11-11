@@ -435,6 +435,85 @@ export function drawFrameBackground(
   context.save();
   const s = width / 1000;
 
+  // Subtle event-specific paper textures stay in the margins around the photos.
+  if (frame.motif === 'graduation') {
+    context.fillStyle = frame.accent;
+    context.globalAlpha = 0.42;
+    for (let y = Math.round(16 * s); y < height; y += Math.round(44 * s)) {
+      context.beginPath(); context.arc(Math.round(18 * s), y, Math.round(2 * s), 0, Math.PI * 2); context.fill();
+      context.beginPath(); context.arc(width - Math.round(18 * s), y + Math.round(13 * s), Math.round(2 * s), 0, Math.PI * 2); context.fill();
+    }
+    context.globalAlpha = 1;
+  }
+
+  if (frame.motif === 'reunion') {
+    context.strokeStyle = frame.accent;
+    context.globalAlpha = 0.25;
+    context.lineWidth = Math.round(1.5 * s);
+    const size = Math.round(16 * s);
+    for (let x = Math.round(12 * s); x < width - Math.round(12 * s); x += size * 2) {
+      for (const y of [Math.round(14 * s), height - Math.round(14 * s)]) {
+        context.beginPath(); context.moveTo(x, y); context.lineTo(x + size, y + size); context.lineTo(x + size * 2, y); context.stroke();
+      }
+    }
+    context.globalAlpha = 1;
+  }
+
+  if (frame.motif === 'birthday') {
+    const colors = ['#F05B43', '#F4B83F', '#7253A6', '#4E9A91'];
+    for (let i = 0; i < 28; i++) {
+      const x = (i * 137 + 31) % width;
+      const y = (i * 211 + 47) % height;
+      if (x > width * 0.12 && x < width * 0.88 && y > height * 0.08 && y < height * 0.9) continue;
+      context.save(); context.translate(x, y); context.rotate((i % 2 ? 1 : -1) * 0.55);
+      context.fillStyle = colors[i % colors.length];
+      context.fillRect(-Math.round(3 * s), -Math.round(7 * s), Math.round(6 * s), Math.round(14 * s));
+      context.restore();
+    }
+  }
+
+  if (frame.motif === 'indonesia') {
+    const stripe = Math.round(14 * s);
+    context.fillStyle = frame.accent;
+    context.fillRect(0, 0, width, stripe);
+    context.fillRect(0, height - stripe, width, stripe);
+    context.fillStyle = '#FFFFFF';
+    context.fillRect(0, stripe, width, stripe);
+    context.fillRect(0, height - stripe * 2, width, stripe);
+  }
+
+  if (frame.motif === 'pahlawan') {
+    context.strokeStyle = '#D5B879';
+    context.globalAlpha = 0.28;
+    context.lineWidth = Math.round(1 * s);
+    for (const side of [0, width]) {
+      for (let i = 0; i < 5; i++) {
+        context.beginPath();
+        context.moveTo(side, Math.round((18 + i * 12) * s));
+        context.lineTo(side === 0 ? Math.round((45 + i * 7) * s) : width - Math.round((45 + i * 7) * s), Math.round(68 * s));
+        context.stroke();
+      }
+    }
+    context.globalAlpha = 1;
+    context.fillStyle = frame.accent;
+    context.fillRect(0, 0, width, Math.round(5 * s));
+    context.fillStyle = '#F7F0E2';
+    context.fillRect(0, Math.round(5 * s), width, Math.round(4 * s));
+  }
+
+  if (frame.motif === 'wedding-id') {
+    context.strokeStyle = frame.accent;
+    context.globalAlpha = 0.23;
+    context.lineWidth = Math.round(1.5 * s);
+    for (let x = Math.round(12 * s); x < width; x += Math.round(32 * s)) {
+      for (const y of [Math.round(10 * s), height - Math.round(10 * s)]) {
+        context.beginPath(); context.moveTo(x, y); context.bezierCurveTo(x + 10 * s, y + 10 * s, x - 10 * s, y + 22 * s, x + 8 * s, y + 32 * s); context.stroke();
+        context.beginPath(); context.ellipse(x + 6 * s, y + 12 * s, 4 * s, 8 * s, 0.7, 0, Math.PI * 2); context.stroke();
+      }
+    }
+    context.globalAlpha = 1;
+  }
+
   // CHECKERBOARD
   if (frame.motif === 'checker') {
     const size = Math.round(36 * s);
@@ -1206,6 +1285,165 @@ export function drawFrameOverlay(
     context.fillStyle = '#000000';
     context.textAlign = 'left';
     context.fillText('EXHIBIT [01/01] - RUANG KILAS ARCHIVE', Math.round(geo.inset), Math.round(32 * s));
+  }
+
+  // Indonesian moments collection: event graphics are drawn in the safe margins.
+  if (frame.motif === 'graduation') {
+    context.strokeStyle = frame.accent;
+    context.lineWidth = Math.round(2 * s);
+    context.strokeRect(Math.round(13 * s), Math.round(13 * s), width - Math.round(26 * s), height - Math.round(26 * s));
+    context.lineWidth = Math.round(1 * s);
+    context.strokeRect(Math.round(20 * s), Math.round(20 * s), width - Math.round(40 * s), height - Math.round(40 * s));
+    context.fillStyle = frame.accent;
+    context.beginPath();
+    context.moveTo(Math.round(38 * s), Math.round(45 * s));
+    context.lineTo(Math.round(62 * s), Math.round(34 * s));
+    context.lineTo(Math.round(86 * s), Math.round(45 * s));
+    context.lineTo(Math.round(62 * s), Math.round(56 * s));
+    context.closePath(); context.fill();
+    context.fillRect(Math.round(59 * s), Math.round(46 * s), Math.round(6 * s), Math.round(13 * s));
+    context.beginPath(); context.arc(Math.round(68 * s), Math.round(60 * s), Math.round(3 * s), 0, Math.PI * 2); context.fill();
+    context.textAlign = 'center';
+    context.font = `800 ${Math.round(14 * s)}px Arial, sans-serif`;
+    context.fillStyle = frame.foreground;
+    context.fillText('WISUDA  ·  LANGKAH BARU', width / 2, Math.round(51 * s));
+    context.font = `600 ${Math.round(9 * s)}px monospace`;
+    context.fillStyle = frame.accent;
+    context.fillText('KENANGAN ANGKATAN', width / 2, height - Math.round(25 * s));
+    draw4PointStar(context, width - Math.round(38 * s), height - Math.round(32 * s), Math.round(10 * s), Math.round(3 * s), frame.accent);
+  }
+
+  if (frame.motif === 'reunion') {
+    context.strokeStyle = frame.accent;
+    context.lineWidth = Math.round(2 * s);
+    context.strokeRect(Math.round(13 * s), Math.round(13 * s), width - Math.round(26 * s), height - Math.round(26 * s));
+    context.fillStyle = frame.accent;
+    context.beginPath(); context.roundRect(width / 2 - 130 * s, 12 * s, 260 * s, 27 * s, 13 * s); context.fill();
+    context.fillStyle = '#FFFFFF';
+    context.textAlign = 'center';
+    context.font = `800 ${Math.round(12 * s)}px Arial, sans-serif`;
+    context.fillText('TEMU LAGI!', width / 2, Math.round(30 * s));
+    context.fillStyle = frame.foreground;
+    context.font = `700 ${Math.round(9 * s)}px monospace`;
+    context.fillText('KAWAN LAMA  ·  CERITA BARU', width / 2, height - Math.round(25 * s));
+    draw4PointStar(context, Math.round(38 * s), Math.round(50 * s), Math.round(11 * s), Math.round(4 * s), frame.accent);
+    draw4PointStar(context, width - Math.round(38 * s), Math.round(50 * s), Math.round(11 * s), Math.round(4 * s), frame.accent);
+  }
+
+  if (frame.motif === 'birthday') {
+    context.strokeStyle = frame.accent;
+    context.lineWidth = Math.round(2 * s);
+    context.strokeRect(Math.round(13 * s), Math.round(13 * s), width - Math.round(26 * s), height - Math.round(26 * s));
+    const colors = ['#F05B43', '#F4B83F', '#7253A6', '#4E9A91'];
+    const step = Math.round(34 * s);
+    for (let x = Math.round(22 * s), i = 0; x < width - Math.round(22 * s); x += step, i++) {
+      context.fillStyle = colors[i % colors.length];
+      context.beginPath(); context.moveTo(x, Math.round(14 * s)); context.lineTo(x + Math.round(14 * s), Math.round(33 * s)); context.lineTo(x + Math.round(28 * s), Math.round(14 * s)); context.closePath(); context.fill();
+    }
+    context.textAlign = 'center';
+    context.fillStyle = frame.foreground;
+    context.font = `900 ${Math.round(13 * s)}px Arial, sans-serif`;
+    context.fillText('HARI INI PUNYA KAMU!', width / 2, Math.round(53 * s));
+    context.font = `700 ${Math.round(9 * s)}px monospace`;
+    context.fillText('TIUP LILIN · BUAT HARAPAN', width / 2, height - Math.round(25 * s));
+    for (let i = 0; i < geo.photoRects.length; i++) {
+      const rect = geo.photoRects[i];
+      context.fillStyle = colors[i % colors.length];
+      context.beginPath(); context.arc(rect.x + rect.w - 12 * s, rect.y + 13 * s, 5 * s, 0, Math.PI * 2); context.fill();
+    }
+  }
+
+  if (frame.motif === 'indonesia') {
+    context.strokeStyle = frame.accent;
+    context.lineWidth = Math.round(2 * s);
+    context.strokeRect(Math.round(15 * s), Math.round(29 * s), width - Math.round(30 * s), height - Math.round(58 * s));
+    context.textAlign = 'center';
+    context.fillStyle = frame.foreground;
+    context.font = `900 ${Math.round(13 * s)}px Arial, sans-serif`;
+    context.fillText('DIRGAHAYU INDONESIA', width / 2, Math.round(55 * s));
+    context.font = `700 ${Math.round(9 * s)}px monospace`;
+    context.fillText('17 AGUSTUS  ·  MERDEKA BERSAMA', width / 2, height - Math.round(25 * s));
+    for (const side of [false, true]) {
+      const poleX = side ? width - 36 * s : 36 * s;
+      context.strokeStyle = '#333333'; context.lineWidth = 1.5 * s;
+      context.beginPath(); context.moveTo(poleX, 38 * s); context.lineTo(poleX, 80 * s); context.stroke();
+      context.fillStyle = frame.accent;
+      context.beginPath(); context.moveTo(poleX, 39 * s); context.lineTo(poleX + (side ? -22 : 22) * s, 43 * s); context.lineTo(poleX, 48 * s); context.closePath(); context.fill();
+      context.fillStyle = '#FFFFFF';
+      context.beginPath(); context.moveTo(poleX, 48 * s); context.lineTo(poleX + (side ? -22 : 22) * s, 52 * s); context.lineTo(poleX, 57 * s); context.closePath(); context.fill();
+    }
+    draw4PointStar(context, width / 2, height - 30 * s, 10 * s, 3 * s, frame.accent);
+  }
+
+  if (frame.motif === 'pahlawan') {
+    context.strokeStyle = '#D5B879';
+    context.lineWidth = Math.round(2 * s);
+    context.strokeRect(Math.round(14 * s), Math.round(14 * s), width - Math.round(28 * s), height - Math.round(28 * s));
+    context.lineWidth = Math.round(1 * s);
+    context.strokeRect(Math.round(21 * s), Math.round(21 * s), width - Math.round(42 * s), height - Math.round(42 * s));
+
+    // Two small Tugu Pahlawan silhouettes with red-and-white flags.
+    for (const side of [false, true]) {
+      const cx = side ? width - 51 * s : 51 * s;
+      const top = Math.round(36 * s);
+      context.fillStyle = '#D5B879';
+      context.beginPath();
+      context.moveTo(cx - 5 * s, top + 34 * s);
+      context.lineTo(cx - 2.5 * s, top + 5 * s);
+      context.lineTo(cx, top);
+      context.lineTo(cx + 2.5 * s, top + 5 * s);
+      context.lineTo(cx + 5 * s, top + 34 * s);
+      context.closePath(); context.fill();
+      context.fillRect(cx - 10 * s, top + 34 * s, 20 * s, 3 * s);
+      context.fillRect(cx - 14 * s, top + 38 * s, 28 * s, 4 * s);
+      const flagX = side ? cx + 2 * s : cx + 2 * s;
+      context.strokeStyle = '#D5B879'; context.lineWidth = 1.2 * s;
+      context.beginPath(); context.moveTo(flagX, top + 3 * s); context.lineTo(flagX, top - 4 * s); context.stroke();
+      context.fillStyle = frame.accent;
+      context.beginPath(); context.moveTo(flagX, top - 4 * s); context.lineTo(flagX + (side ? -13 : 13) * s, top - 1 * s); context.lineTo(flagX, top + 2 * s); context.closePath(); context.fill();
+      context.fillStyle = '#FFF4DC';
+      context.beginPath(); context.moveTo(flagX, top + 2 * s); context.lineTo(flagX + (side ? -13 : 13) * s, top + 5 * s); context.lineTo(flagX, top + 8 * s); context.closePath(); context.fill();
+    }
+
+    context.textAlign = 'center';
+    context.fillStyle = '#D5B879';
+    context.font = `700 ${Math.round(9 * s)}px monospace`;
+    context.fillText('SURABAYA  ·  10 NOVEMBER 1945', width / 2, Math.round(35 * s));
+    context.fillStyle = frame.foreground;
+    context.font = `900 ${Math.round(15 * s)}px Arial, sans-serif`;
+    context.fillText('HARI PAHLAWAN', width / 2, Math.round(59 * s));
+    context.font = `700 ${Math.round(9 * s)}px monospace`;
+    context.fillStyle = '#D5B879';
+    context.fillText('TELADANI SEMANGAT · TERUSKAN PERJUANGAN', width / 2, height - Math.round(25 * s));
+    draw4PointStar(context, width / 2, height - Math.round(47 * s), Math.round(8 * s), Math.round(2.5 * s), frame.accent);
+  }
+
+  if (frame.motif === 'wedding-id') {
+    context.strokeStyle = frame.accent;
+    context.lineWidth = Math.round(2 * s);
+    context.strokeRect(Math.round(14 * s), Math.round(14 * s), width - Math.round(28 * s), height - Math.round(28 * s));
+    context.lineWidth = Math.round(1 * s);
+    context.strokeRect(Math.round(21 * s), Math.round(21 * s), width - Math.round(42 * s), height - Math.round(42 * s));
+    context.textAlign = 'center';
+    context.fillStyle = frame.foreground;
+    context.font = `700 ${Math.round(9 * s)}px serif`;
+    context.fillText('DENGAN CINTA', width / 2, Math.round(31 * s));
+    context.font = `800 ${Math.round(13 * s)}px Arial, sans-serif`;
+    context.fillStyle = frame.accent;
+    context.fillText('HARI BAHAGIA', width / 2, Math.round(52 * s));
+    context.font = `600 ${Math.round(9 * s)}px serif`;
+    context.fillStyle = frame.foreground;
+    context.fillText('AKAD  ·  RESEPSI  ·  KENANGAN', width / 2, height - Math.round(25 * s));
+    const flowerY = height - Math.round(geo.footer * 0.78);
+    for (const x of [Math.round(35 * s), width - Math.round(35 * s)]) {
+      context.fillStyle = '#D78C83';
+      for (let petal = 0; petal < 5; petal++) {
+        const angle = (petal * Math.PI * 2) / 5;
+        context.beginPath(); context.ellipse(x + Math.cos(angle) * 6 * s, flowerY + Math.sin(angle) * 6 * s, 3.5 * s, 6 * s, angle, 0, Math.PI * 2); context.fill();
+      }
+      context.fillStyle = frame.accent;
+      context.beginPath(); context.arc(x, flowerY, 3 * s, 0, Math.PI * 2); context.fill();
+    }
   }
 
   context.restore();
